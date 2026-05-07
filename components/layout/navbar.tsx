@@ -40,7 +40,7 @@ interface ProfileIdentityUpdate {
   image: string | null;
 }
 
-const PROFILE_UPDATED_EVENT = "dogood:profile-updated";
+const PROFILE_UPDATED_EVENT = "neki:profile-updated";
 
 export function Navbar() {
   const pathname = usePathname();

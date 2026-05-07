@@ -23,12 +23,14 @@ export function ImageLightbox({
   onOpenChange,
 }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [prevOpen, setPrevOpen] = useState(open);
 
-  useEffect(() => {
-    if (open) {
-      setCurrentIndex(initialIndex);
-    }
-  }, [open, initialIndex]);
+  if (open && !prevOpen) {
+    setPrevOpen(true);
+    setCurrentIndex(initialIndex);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   const goToPrev = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);

@@ -25,7 +25,7 @@ AUTH_URL="http://localhost:3000"
 AWS_ACCESS_KEY_ID="your-access-key-id"
 AWS_SECRET_ACCESS_KEY="your-secret-access-key"
 AWS_REGION="us-east-1"
-AWS_S3_BUCKET="dogood-uploads"
+AWS_S3_BUCKET="neki-uploads"
 
 SMTP_HOST="smtp.example.com"
 SMTP_PORT="587"
@@ -47,20 +47,20 @@ Notes:
 ### Local database example
 
 ```bash
-createdb dogood
+createdb neki
 ```
 
 If you want a dedicated local user:
 
 ```bash
-psql -d postgres -c "CREATE USER dogood WITH PASSWORD 'dogood123';"
-psql -d postgres -c "CREATE DATABASE dogood OWNER dogood;"
+psql -d postgres -c "CREATE USER neki WITH PASSWORD 'nekineki';"
+psql -d postgres -c "CREATE DATABASE neki OWNER neki;"
 ```
 
 Then update `.env`:
 
 ```env
-DATABASE_URL="postgresql://dogood:dogood123@localhost:5432/dogood"
+DATABASE_URL="postgresql://neki:nekineki@localhost:5432/neki"
 ```
 
 ### Apply the schema
@@ -103,7 +103,7 @@ If you use Gmail, create an App Password instead of using your normal account pa
 Create an S3 bucket for uploaded images and configure an IAM user with access to that bucket.
 
 Recommended checklist:
-- Create a dedicated bucket such as `dogood-uploads`
+- Create a dedicated bucket such as `neki-uploads`
 - Keep the bucket region aligned with `AWS_REGION`
 - Create a dedicated IAM user or role for uploads
 - Grant only the S3 permissions the app needs
@@ -115,7 +115,7 @@ Then set:
 AWS_ACCESS_KEY_ID="your-access-key-id"
 AWS_SECRET_ACCESS_KEY="your-secret-access-key"
 AWS_REGION="us-east-1"
-AWS_S3_BUCKET="dogood-uploads"
+AWS_S3_BUCKET="neki-uploads"
 ```
 
 ## 6. Bootstrap the First Admin

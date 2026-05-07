@@ -28,7 +28,7 @@ export default async function ProfilePage() {
               },
             },
           },
-          likes: { select: { userId: true } },
+          likes: { select: { userId: true, type: true } },
           _count: { select: { likes: true } },
         },
         orderBy: { createdAt: "desc" },

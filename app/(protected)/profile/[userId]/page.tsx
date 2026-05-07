@@ -36,7 +36,7 @@ export default async function UserProfilePage({ params }: Props) {
               },
             },
           },
-          likes: { select: { userId: true } },
+          likes: { select: { userId: true, type: true } },
           _count: { select: { likes: true } },
         },
         orderBy: { createdAt: "desc" },

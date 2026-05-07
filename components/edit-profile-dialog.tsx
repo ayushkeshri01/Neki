@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -27,7 +27,7 @@ interface EditProfileDialogProps {
   initialImage?: string | null;
 }
 
-const PROFILE_UPDATED_EVENT = "dogood:profile-updated";
+const PROFILE_UPDATED_EVENT = "neki:profile-updated";
 
 export function EditProfileDialog({
   children,
@@ -45,16 +45,17 @@ export function EditProfileDialog({
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  const [prevOpen, setPrevOpen] = useState(open);
+
+  if (open && !prevOpen) {
+    setPrevOpen(true);
     setName(initialName || "");
     setBio(initialBio || "");
     setImagePreview(initialImage);
     setImageFile(null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  }, [initialName, initialBio, initialImage, open]);
+  } else if (!open && prevOpen) {
+    setPrevOpen(false);
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

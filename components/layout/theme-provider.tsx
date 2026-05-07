@@ -43,14 +43,30 @@ export function ThemeProvider({
   attribute = "class",
   defaultTheme = "system",
   enableSystem = true,
-  disableTransitionOnChange = false,
   storageKey = "theme",
   themes = ["light", "dark"],
   forcedTheme,
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">("light");
   const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">("light");
+  const [initialized, setInitialized] = React.useState(false);
+
+  if (!initialized && typeof window !== "undefined") {
+    setInitialized(true);
+    const stored = (() => {
+      try {
+        return localStorage.getItem(storageKey) as Theme | null;
+      } catch {
+        return null;
+      }
+    })();
+    if (stored) {
+      setThemeState(stored);
+    }
+    setSystemTheme(
+      window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+    );
+  }
 
   useServerInsertedHTML(() => (
     <script
@@ -90,38 +106,16 @@ export function ThemeProvider({
   );
 
   React.useEffect(() => {
-    const stored = (() => {
-      try {
-        return localStorage.getItem(storageKey) as Theme | null;
-      } catch {
-        return null;
-      }
-    })();
-
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const sysTheme = mql.matches ? "dark" : "light";
-    setSystemTheme(sysTheme);
-
-    const initial = stored || defaultTheme;
-    setThemeState(initial);
-
-    const resolved = initial === "system" ? sysTheme : (initial as "light" | "dark");
-    setResolvedTheme(resolved);
-
     const handleChange = (e: MediaQueryListEvent) => {
-      const newSys = e.matches ? "dark" : "light";
-      setSystemTheme(newSys);
+      setSystemTheme(e.matches ? "dark" : "light");
     };
-
     mql.addEventListener("change", handleChange);
     return () => mql.removeEventListener("change", handleChange);
   }, []);
 
-  React.useEffect(() => {
-    if (theme === "system") {
-      setResolvedTheme(systemTheme);
-    }
-  }, [systemTheme, theme]);
+  const resolvedTheme: "light" | "dark" =
+    theme === "system" ? systemTheme : (theme as "light" | "dark");
 
   React.useEffect(() => {
     const handleStorage = (e: StorageEvent) => {

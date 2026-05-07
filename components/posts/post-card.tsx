@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, Flag, EyeOff, Trash2 } from "lucide-react";
@@ -95,9 +95,12 @@ export function PostCard({
     getReactionState(post, currentUserId)
   );
 
-  useEffect(() => {
+  const [prevPostKey, setPrevPostKey] = useState("");
+  const currentPostKey = `${post.id}-${currentUserId}`;
+  if (currentPostKey !== prevPostKey) {
+    setPrevPostKey(currentPostKey);
     setReactionState(getReactionState(post, currentUserId));
-  }, [post, currentUserId]);
+  }
 
   const { reaction, likeCount } = reactionState;
 

@@ -110,16 +110,18 @@ function LoginContent() {
   const urlError = searchParams.get("error");
   const urlCode = searchParams.get("code");
 
-  useEffect(() => {
-    const parsed = parseBlockedAuthMessage(urlCode || urlError);
-    if (parsed) {
-      setBlockedAccount({
-        open: true,
-        title: parsed.title,
-        message: parsed.message,
-      });
-    }
-  }, [urlCode, urlError]);
+  const [processedUrlKey, setProcessedUrlKey] = useState<string | null>(null);
+  const currentUrlKey = urlCode || urlError;
+  const urlBlockedParsed = parseBlockedAuthMessage(currentUrlKey);
+
+  if (urlBlockedParsed && currentUrlKey !== processedUrlKey) {
+    setProcessedUrlKey(currentUrlKey);
+    setBlockedAccount({
+      open: true,
+      title: urlBlockedParsed.title,
+      message: urlBlockedParsed.message,
+    });
+  }
 
   useEffect(() => {
     fetch("/api/auth/domains")

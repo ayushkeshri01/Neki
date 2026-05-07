@@ -8,7 +8,7 @@
         "s3:GetBucketLocation",
         "s3:ListBucket"
       ],
-      "Resource": "arn:aws:s3:::dogood-uploads"
+      "Resource": "arn:aws:s3:::neki-uploads"
     },
     {
       "Sid": "AllowObjectReadWrite",
@@ -21,7 +21,7 @@
         "s3:ListBucketMultipartUploads",
         "s3:ListMultipartUploadParts"
       ],
-      "Resource": "arn:aws:s3:::dogood-uploads/*"
+      "Resource": "arn:aws:s3:::neki-uploads/*"
     }
   ]
 }

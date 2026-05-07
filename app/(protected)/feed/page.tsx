@@ -49,7 +49,7 @@ export default async function FeedPage() {
         },
       },
       likes: {
-        select: { userId: true },
+        select: { userId: true, type: true },
       },
       _count: {
         select: {

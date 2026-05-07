@@ -79,7 +79,7 @@ Next.js Server
 | `AWS_ACCESS_KEY_ID` | AWS IAM access key | — |
 | `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | — |
 | `AWS_REGION` | AWS region for S3 | `us-east-1` |
-| `AWS_S3_BUCKET` | S3 bucket name | `dogood-uploads` |
+| `AWS_S3_BUCKET` | S3 bucket name | `neki-uploads` |
 
 ### Email (for OTP, password reset)
 
@@ -139,12 +139,12 @@ npm run db:generate      # Generate Prisma client
 ### Step 1: Create S3 Bucket
 
 ```bash
-aws s3 mb s3://dogood-uploads --region <your-region>
+aws s3 mb s3://neki-uploads --region <your-region>
 ```
 
 ### Step 2: Configure public read access
 
-Apply bucket policy (see `scratch/policies/dogood-uploads-bucket-policy.json`):
+Apply bucket policy (see `scratch/policies/neki-uploads-bucket-policy.json`):
 
 ```json
 {
@@ -154,7 +154,7 @@ Apply bucket policy (see `scratch/policies/dogood-uploads-bucket-policy.json`):
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::dogood-uploads/*"
+      "Resource": "arn:aws:s3:::neki-uploads/*"
     }
   ]
 }
@@ -162,7 +162,7 @@ Apply bucket policy (see `scratch/policies/dogood-uploads-bucket-policy.json`):
 
 ### Step 3: Create IAM user
 
-Create an IAM user with programmatic access and attach the uploader policy (see `scratch/policies/dogood-uploader-user-policy.json`).
+Create an IAM user with programmatic access and attach the uploader policy (see `scratch/policies/neki-uploader-user-policy.json`).
 
 ### Step 4: CORS Configuration
 
@@ -339,7 +339,7 @@ Test the OTP signup flow to ensure SMTP is properly configured.
 
 ```bash
 aws s3api put-bucket-lifecycle-configuration \
-  --bucket dogood-uploads \
+  --bucket neki-uploads \
   --lifecycle-configuration '{
     "Rules": [{
       "Id": "delete-old-uploads",

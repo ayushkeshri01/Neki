@@ -32,7 +32,7 @@ AUTH_URL="http://localhost:3000"
 AWS_ACCESS_KEY_ID="..."
 AWS_SECRET_ACCESS_KEY="..."
 AWS_REGION="us-east-1"
-AWS_S3_BUCKET="dogood-uploads"
+AWS_S3_BUCKET="neki-uploads"
 SMTP_HOST="smtp.example.com"
 SMTP_PORT="587"
 SMTP_SECURE="false"
@@ -103,7 +103,7 @@ npm run test:critical # Run the current test suite
 ## Project Structure
 
 ```text
-dogood/
+neki/
 ├── app/
 │   ├── (auth)/          # Login, signup, forgot/reset password
 │   ├── (protected)/     # Authenticated app pages

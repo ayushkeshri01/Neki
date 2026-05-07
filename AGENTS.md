@@ -34,7 +34,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Project Structure
 
 ```
-dogood/
+neki/
 ├── app/
 │   ├── (auth)/                    # Auth routes (public)
 │   │   ├── login/page.tsx        # Login page
@@ -161,7 +161,7 @@ AppSettings  - allowedDomain, dislikeThreshold
 
 ```env
 # Database
-DATABASE_URL="postgresql://dogood:dogood123@localhost:5432/dogood"
+DATABASE_URL="postgresql://neki:nekineki@localhost:5432/neki"
 
 # NextAuth
 AUTH_SECRET="your-secret"
@@ -175,7 +175,7 @@ GOOGLE_CLIENT_SECRET=""
 AWS_ACCESS_KEY_ID=""
 AWS_SECRET_ACCESS_KEY=""
 AWS_REGION="us-east-1"
-AWS_S3_BUCKET="dogood-uploads"
+AWS_S3_BUCKET="neki-uploads"
 ```
 
 ## Available Scripts
@@ -195,8 +195,8 @@ npm run admin:create # Create admin user
 
 ```bash
 # Initial setup
-psql -U postgres -h localhost -c "CREATE USER dogood WITH PASSWORD 'dogood123';"
-psql -U postgres -h localhost -c "CREATE DATABASE dogood OWNER dogood;"
+psql -U postgres -h localhost -c "CREATE USER neki WITH PASSWORD 'nekineki';"
+psql -U postgres -h localhost -c "CREATE DATABASE neki OWNER neki;"
 npm run db:push
 
 # Create admin (edit scripts/create-admin.ts first)

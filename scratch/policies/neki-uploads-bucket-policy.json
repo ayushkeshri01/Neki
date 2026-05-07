@@ -6,13 +6,13 @@
       "Effect": "Allow",
       "Principal": "*",
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::dogood-uploads/*"
+      "Resource": "arn:aws:s3:::neki-uploads/*"
     },
     {
-      "Sid": "AllowDoGoodUploaderFromAccount920534281366",
+      "Sid": "AllowNekiUploaderFromAccount920534281366",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::920534281366:user/DoGood-Uploader"
+        "AWS": "arn:aws:iam::920534281366:user/Neki-Uploader"
       },
       "Action": [
         "s3:GetBucketLocation",
@@ -25,8 +25,8 @@
         "s3:ListMultipartUploadParts"
       ],
       "Resource": [
-        "arn:aws:s3:::dogood-uploads",
-        "arn:aws:s3:::dogood-uploads/*"
+        "arn:aws:s3:::neki-uploads",
+        "arn:aws:s3:::neki-uploads/*"
       ]
     }
   ]
