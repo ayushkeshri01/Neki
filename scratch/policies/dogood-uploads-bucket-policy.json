@@ -1,0 +1,33 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::dogood-uploads/*"
+    },
+    {
+      "Sid": "AllowDoGoodUploaderFromAccount920534281366",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::920534281366:user/DoGood-Uploader"
+      },
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:ListBucket",
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload",
+        "s3:ListBucketMultipartUploads",
+        "s3:ListMultipartUploadParts"
+      ],
+      "Resource": [
+        "arn:aws:s3:::dogood-uploads",
+        "arn:aws:s3:::dogood-uploads/*"
+      ]
+    }
+  ]
+}

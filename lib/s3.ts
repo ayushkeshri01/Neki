@@ -1,0 +1,154 @@
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+
+const awsRegion = process.env.AWS_REGION?.trim() || "us-east-1";
+const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
+const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
+
+if (!awsAccessKeyId || !awsSecretAccessKey) {
+  console.warn("⚠️ AWS credentials are not fully configured in environment variables.");
+} else {
+  const maskedKey = `${awsAccessKeyId.slice(0, 6)}...${awsAccessKeyId.slice(-2)}`;
+  console.log(`📡 Initializing S3 Client with key: ${maskedKey} [Region: ${awsRegion}]`);
+}
+
+export const s3Client = new S3Client({
+  region: awsRegion,
+  credentials: {
+    accessKeyId: awsAccessKeyId!,
+    secretAccessKey: awsSecretAccessKey!,
+  },
+});
+
+function getS3Config() {
+  const bucket = process.env.AWS_S3_BUCKET?.trim();
+  const region = process.env.AWS_REGION?.trim() || "us-east-1";
+
+  if (!bucket) {
+    throw new Error("AWS_S3_BUCKET environment variable is required");
+  }
+
+  return { bucket, region };
+}
+
+function sanitizeFileName(fileName: string): string {
+  const baseName = fileName.split(/[\\/]/).pop()?.trim() || "upload";
+  const sanitized = baseName
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[-.]+/, "");
+
+  return sanitized || "upload";
+}
+
+function encodeKeyPath(key: string): string {
+  return key
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
+
+function safeDecodeSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
+function decodeKeyPath(key: string): string {
+  return key
+    .split("/")
+    .map((segment) => safeDecodeSegment(segment))
+    .join("/");
+}
+
+function normalizeRawKey(input: string): string | null {
+  const trimmed = input.trim();
+  if (!trimmed || trimmed.includes("://")) {
+    return null;
+  }
+
+  return decodeKeyPath(trimmed.replace(/^\/+/, ""));
+}
+
+export function getS3ObjectKey(imageUrlOrKey: string): string | null {
+  const rawKey = normalizeRawKey(imageUrlOrKey);
+  if (rawKey) {
+    return rawKey;
+  }
+
+  try {
+    const { bucket, region } = getS3Config();
+    const url = new URL(imageUrlOrKey);
+    const pathname = decodeKeyPath(url.pathname.replace(/^\/+/, ""));
+
+    if (
+      url.hostname === `${bucket}.s3.${region}.amazonaws.com` ||
+      url.hostname === `${bucket}.s3.amazonaws.com`
+    ) {
+      return pathname || null;
+    }
+
+    if (url.hostname === `s3.${region}.amazonaws.com` || url.hostname === "s3.amazonaws.com") {
+      const [pathBucket, ...keyParts] = pathname.split("/");
+      if (pathBucket === bucket && keyParts.length > 0) {
+        return keyParts.join("/");
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function buildS3PublicUrl(key: string): string {
+  const { bucket, region } = getS3Config();
+  const normalizedKey = key.replace(/^\/+/, "");
+
+  return `https://${bucket}.s3.${region}.amazonaws.com/${encodeKeyPath(normalizedKey)}`;
+}
+
+export async function uploadToS3(
+  file: Buffer,
+  fileName: string,
+  contentType: string
+) {
+  const key = `uploads/${Date.now()}-${sanitizeFileName(fileName)}`;
+  const { bucket } = getS3Config();
+
+  await s3Client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: file,
+      ContentType: contentType,
+    })
+  );
+
+  return buildS3PublicUrl(key);
+}
+
+export async function deleteFromS3(imageUrl: string): Promise<boolean> {
+  try {
+    const key = getS3ObjectKey(imageUrl);
+    if (!key) {
+      return false;
+    }
+
+    const { bucket } = getS3Config();
+    
+    await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      })
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting from S3:", error);
+    return false;
+  }
+}
