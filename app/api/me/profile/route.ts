@@ -8,12 +8,7 @@ const MAX_BIO_LENGTH = 500;
 const MAX_NAME_LENGTH = 100;
 
 export function sanitizeInput(input: string): string {
-  return input
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .trim();
+  return input.trim();
 }
 
 export function normalizeProfileField(input: string): string | null {
@@ -51,6 +46,10 @@ export async function GET() {
         createdAt: true,
       },
     });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     return NextResponse.json(user);
   } catch (error) {

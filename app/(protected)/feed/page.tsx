@@ -2,9 +2,17 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { FeedContent } from "./feed-content";
+import type { Post } from "./feed-content";
 
-export default async function FeedPage() {
+const PAGE_SIZE = 10;
+
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cursor?: string }>;
+}) {
   const session = await auth();
+  const { cursor } = await searchParams;
 
   if (!session?.user) {
     redirect("/login");
@@ -58,14 +66,31 @@ export default async function FeedPage() {
       },
     },
     orderBy: { createdAt: "desc" },
-    take: 50,
+    take: PAGE_SIZE + 1,
+    ...(cursor
+      ? {
+          cursor: { id: cursor },
+          skip: 1,
+        }
+      : {}),
   });
+
+  const hasMore = posts.length > PAGE_SIZE;
+  const visiblePosts = posts.slice(0, PAGE_SIZE);
+  const nextCursor = hasMore ? visiblePosts[visiblePosts.length - 1].id : undefined;
+
+  const serializedPosts = visiblePosts.map(({ createdAt, ...rest }) => ({
+    ...rest,
+    createdAt: createdAt.toISOString(),
+  }));
 
   return (
     <FeedContent
-      posts={posts}
+      posts={serializedPosts}
       currentUserId={session.user.id}
       isAdmin={isAdmin}
+      hasMore={hasMore}
+      nextCursor={nextCursor}
     />
   );
 }

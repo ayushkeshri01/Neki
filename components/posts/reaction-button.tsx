@@ -4,15 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ThumbsUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-
-/* ---------- Reactions ---------- */
-
-export type ReactionType =
-  | "like"
-  | "celebrate"
-  | "love"
-  | "insightful"
-  | "support";
+import type { ReactionType } from "@/lib/reactions";
 
 interface ReactionConfig {
   id: ReactionType;
@@ -364,8 +356,14 @@ function ReactionItem({
 /* ---------- Utils ---------- */
 
 function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  if (n >= 1_000_000) {
+    const val = n / 1_000_000;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}M`;
+  }
+  if (n >= 1_000) {
+    const val = n / 1_000;
+    return `${val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)}K`;
+  }
   return n.toString();
 }
 

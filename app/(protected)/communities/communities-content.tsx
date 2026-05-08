@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CommunityCard } from "@/components/communities/community-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,15 +29,23 @@ export function CommunitiesContent({
   memberCommunityIds,
 }: CommunitiesContentProps) {
   const router = useRouter();
+  const [loadingCommunities, setLoadingCommunities] = useState<Set<string>>(
+    new Set()
+  );
+
+  const getCommunityName = (id: string) =>
+    communities.find((c) => c.id === id)?.name || "community";
 
   const handleJoin = async (communityId: string) => {
+    const name = getCommunityName(communityId);
+    setLoadingCommunities((prev) => new Set(prev).add(communityId));
     try {
       const res = await fetch(`/api/communities/${communityId}/join`, {
         method: "POST",
       });
 
       if (res.ok) {
-        toast.success("Joined community.");
+        toast.success(`Joined ${name}.`);
         router.refresh();
         return;
       }
@@ -44,20 +53,28 @@ export function CommunitiesContent({
       const data = await res
         .json()
         .catch(() => ({ error: `Request failed (${res.status})` }));
-      toast.error(data.error || "Failed to join community.");
+      toast.error(data.error || `Failed to join ${name}.`);
     } catch {
-      toast.error("Failed to join community.");
+      toast.error(`Failed to join ${name}.`);
+    } finally {
+      setLoadingCommunities((prev) => {
+        const next = new Set(prev);
+        next.delete(communityId);
+        return next;
+      });
     }
   };
 
   const handleLeave = async (communityId: string) => {
+    const name = getCommunityName(communityId);
+    setLoadingCommunities((prev) => new Set(prev).add(communityId));
     try {
       const res = await fetch(`/api/communities/${communityId}/leave`, {
         method: "POST",
       });
 
       if (res.ok) {
-        toast.success("Left community.");
+        toast.success(`Left ${name}.`);
         router.refresh();
         return;
       }
@@ -65,9 +82,15 @@ export function CommunitiesContent({
       const data = await res
         .json()
         .catch(() => ({ error: `Request failed (${res.status})` }));
-      toast.error(data.error || "Failed to leave community.");
+      toast.error(data.error || `Failed to leave ${name}.`);
     } catch {
-      toast.error("Failed to leave community.");
+      toast.error(`Failed to leave ${name}.`);
+    } finally {
+      setLoadingCommunities((prev) => {
+        const next = new Set(prev);
+        next.delete(communityId);
+        return next;
+      });
     }
   };
 
@@ -104,6 +127,7 @@ export function CommunitiesContent({
                   community={community}
                   isMember={true}
                   onLeave={handleLeave}
+                  memberActionLoading={loadingCommunities.has(community.id)}
                 />
               ))}
             </div>
@@ -122,6 +146,7 @@ export function CommunitiesContent({
                   community={community}
                   isMember={false}
                   onJoin={handleJoin}
+                  memberActionLoading={loadingCommunities.has(community.id)}
                 />
               ))}
             </div>

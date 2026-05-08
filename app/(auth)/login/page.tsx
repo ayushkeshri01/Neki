@@ -28,6 +28,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -101,27 +108,21 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [blockedAccount, setBlockedAccount] = useState<BlockedAccountState>({
-    open: false,
-    title: "",
-    message: "",
-  });
-
   const urlError = searchParams.get("error");
   const urlCode = searchParams.get("code");
-
-  const [processedUrlKey, setProcessedUrlKey] = useState<string | null>(null);
   const currentUrlKey = urlCode || urlError;
   const urlBlockedParsed = parseBlockedAuthMessage(currentUrlKey);
 
-  if (urlBlockedParsed && currentUrlKey !== processedUrlKey) {
-    setProcessedUrlKey(currentUrlKey);
-    setBlockedAccount({
-      open: true,
-      title: urlBlockedParsed.title,
-      message: urlBlockedParsed.message,
-    });
-  }
+  const [blockedAccount, setBlockedAccount] = useState<BlockedAccountState>(() => {
+    if (urlBlockedParsed) {
+      return {
+        open: true,
+        title: urlBlockedParsed.title,
+        message: urlBlockedParsed.message,
+      };
+    }
+    return { open: false, title: "", message: "" };
+  });
 
   useEffect(() => {
     fetch("/api/auth/domains")
@@ -484,27 +485,27 @@ function LoginContent() {
                           required
                         />
                         <span className="text-muted-foreground font-medium">@</span>
-                        <select
+                        <Select
                           value={domain}
-                          onChange={(e) => setDomain(e.target.value)}
-                          className="flex h-9 w-1/2 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:[color-scheme:dark]"
-                          required
+                          onValueChange={setDomain}
                         >
-                          {allowedDomains.length === 0 && (
-                            <option value="" disabled className="bg-popover text-popover-foreground">
-                              No domains
-                            </option>
-                          )}
-                          {allowedDomains.map((dom) => (
-                            <option
-                              key={dom}
-                              value={dom}
-                              className="bg-popover text-popover-foreground"
-                            >
-                              {dom}
-                            </option>
-                          ))}
-                        </select>
+                          <SelectTrigger aria-label="Email domain" className="w-1/2">
+                            <SelectValue placeholder="Select domain" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {allowedDomains.length === 0 ? (
+                              <SelectItem value="" disabled>
+                                No domains
+                              </SelectItem>
+                            ) : (
+                              allowedDomains.map((dom) => (
+                                <SelectItem key={dom} value={dom}>
+                                  {dom}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <div className="space-y-2">

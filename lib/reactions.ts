@@ -3,6 +3,9 @@ import type { ReactionType as PrismaReactionType } from "@prisma/client";
 /** UI-facing lowercase reaction id used by the ReactionButton component */
 export type ReactionId = "like" | "celebrate" | "love" | "insightful" | "support";
 
+/** Alias for use in UI components */
+export type ReactionType = ReactionId;
+
 const UI_TO_DB: Record<ReactionId, PrismaReactionType> = {
   like: "LIKE",
   celebrate: "CELEBRATE",
@@ -11,7 +14,7 @@ const UI_TO_DB: Record<ReactionId, PrismaReactionType> = {
   support: "SUPPORT",
 };
 
-const DB_TO_UI: Record<PrismaReactionType, ReactionId> = {
+export const DB_TO_UI: Record<PrismaReactionType, ReactionId> = {
   LIKE: "like",
   CELEBRATE: "celebrate",
   LOVE: "love",

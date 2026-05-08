@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,17 @@ export function CreatePostForm({ communities }: CreatePostFormProps) {
   const [previews, setPreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const previewUrlsRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    previewUrlsRef.current = previews;
+  }, [previews]);
+
+  useEffect(() => {
+    return () => {
+      previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   const handleCommunityToggle = (communityId: string) => {
     setSelectedCommunities((prev) =>
@@ -43,16 +54,40 @@ export function CreatePostForm({ communities }: CreatePostFormProps) {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const newImages = files.slice(0, 4 - images.length);
-    setImages((prev) => [...prev, ...newImages].slice(0, 4));
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    const maxSize = 5 * 1024 * 1024;
+    const validFiles = files.filter((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`${file.name} is not a supported format. Use JPEG, PNG, WebP, or GIF.`);
+        return false;
+      }
+      if (file.size > maxSize) {
+        toast.error(`${file.name} exceeds the 5MB limit.`);
+        return false;
+      }
+      return true;
+    });
 
-    const newPreviews = newImages.map((file) => URL.createObjectURL(file));
-    setPreviews((prev) => [...prev, ...newPreviews].slice(0, 4));
+    if (validFiles.length === 0) return;
+
+    setImages((prev) => {
+      const combined = [...prev, ...validFiles];
+      return combined.slice(0, 4);
+    });
+
+    setPreviews((prev) => {
+      const newPreviews = validFiles.map((file) => URL.createObjectURL(file));
+      const combined = [...prev, ...newPreviews];
+      return combined.slice(0, 4);
+    });
   };
 
   const removeImage = (index: number) => {
+    setPreviews((prev) => {
+      URL.revokeObjectURL(prev[index]);
+      return prev.filter((_, i) => i !== index);
+    });
     setImages((prev) => prev.filter((_, i) => i !== index));
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -109,12 +144,16 @@ export function CreatePostForm({ communities }: CreatePostFormProps) {
             {error}
           </div>
         )}
-        <Textarea
-          placeholder="Share your social work, donation, or volunteer activity..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="min-h-[120px] resize-none"
-        />
+        <div className="space-y-1">
+          <Textarea
+            placeholder="Share your social work, donation, or volunteer activity..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[120px] resize-none"
+            maxLength={10000}
+          />
+          <p className="text-xs text-muted-foreground text-right">{content.length}/10000</p>
+        </div>
 
         {/* Image Upload */}
         <div className="space-y-2">

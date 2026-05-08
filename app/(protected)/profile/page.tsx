@@ -49,5 +49,14 @@ export default async function ProfilePage() {
 
   const stats = calculateUserStats(user.posts, user.memberships);
 
-  return <ProfileContent user={user} stats={stats} />;
+  const serializedUser = {
+    ...user,
+    createdAt: user.createdAt.toISOString(),
+    posts: user.posts.map(({ createdAt, ...rest }) => ({
+      ...rest,
+      createdAt: createdAt.toISOString(),
+    })),
+  };
+
+  return <ProfileContent user={serializedUser} stats={stats} />;
 }

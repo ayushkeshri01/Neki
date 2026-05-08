@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
@@ -43,6 +44,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     debug: () => {},
   },
   providers: [
+    Google,
     Credentials({
       name: "Password Logging",
       credentials: {
@@ -97,10 +99,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new AuthClientError(blockedMessage || `Blacklisted:${user.banReason || "Your account has been blacklisted."}`);
         }
 
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() },
-        });
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+          });
+        } catch {
+          // Non-critical — login succeeds regardless
+        }
 
         return { id: user.id, email: user.email, role: user.role, status: user.status };
       }
@@ -127,12 +133,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             : null;
 
       if (userId) {
+        session.user.id = userId;
+        session.user.role = token.role;
+        session.user.status = token.status ?? "ACTIVE";
+
         const dbUser = await prisma.user.findUnique({
           where: { id: userId },
           select: {
-            id: true,
-            role: true,
-            status: true,
             statusReason: true,
             points: true,
             lastLoginAt: true,
@@ -140,9 +147,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         });
         if (dbUser) {
-          session.user.id = dbUser.id;
-          session.user.role = dbUser.role;
-          session.user.status = dbUser.status;
           session.user.statusReason = dbUser.statusReason;
           session.user.points = dbUser.points;
           session.user.lastLoginAt = dbUser.lastLoginAt?.toISOString() || null;

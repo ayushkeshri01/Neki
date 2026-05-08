@@ -29,7 +29,9 @@ export function ChangePasswordDialog({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,7 +101,7 @@ export function ChangePasswordDialog({
               <Label htmlFor="currentPassword">Current Password</Label>
               <Input
                 id="currentPassword"
-                type={showPassword ? "text" : "password"}
+                type={showCurrentPassword ? "text" : "password"}
                 placeholder="Enter current password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -111,7 +113,7 @@ export function ChangePasswordDialog({
               <div className="relative">
                 <Input
                   id="newPassword"
-                  type={showPassword ? "text" : "password"}
+                  type={showNewPassword ? "text" : "password"}
                   placeholder="Enter new password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -122,9 +124,9 @@ export function ChangePasswordDialog({
                   variant="ghost"
                   size="icon"
                   className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowNewPassword(!showNewPassword)}
                 >
-                  {showPassword ? (
+                  {showNewPassword ? (
                     <EyeOff className="h-4 w-4" />
                   ) : (
                     <Eye className="h-4 w-4" />
@@ -136,7 +138,7 @@ export function ChangePasswordDialog({
               <Label htmlFor="confirmPassword">Confirm New Password</Label>
               <Input
                 id="confirmPassword"
-                type={showPassword ? "text" : "password"}
+                type={showConfirmPassword ? "text" : "password"}
                 placeholder="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -159,7 +161,7 @@ export function ChangePasswordDialog({
                   Saving...
                 </>
               ) : (
-                "Save Password"
+                "Change Password"
               )}
             </Button>
           </DialogFooter>

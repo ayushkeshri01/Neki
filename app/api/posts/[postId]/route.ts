@@ -49,9 +49,7 @@ export async function DELETE(
     }
 
     // Delete images from S3
-    for (const imageUrl of post.images) {
-      await deleteFromS3(imageUrl);
-    }
+    await Promise.all(post.images.map(deleteFromS3));
 
     // Revert points from the post author
     if (post.points > 0) {

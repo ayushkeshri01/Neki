@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isActiveUser } from "@/lib/user-access";
 import { LeaderboardContent } from "./leaderboard-content";
 
 interface LeaderRaw {
@@ -19,6 +20,10 @@ export default async function LeaderboardPage() {
     redirect("/login");
   }
 
+  if (!(await isActiveUser(session.user.id))) {
+    redirect("/login");
+  }
+
   const rawLeaders = await prisma.$queryRaw<LeaderRaw[]>`
     SELECT
       u.id,
@@ -28,11 +33,11 @@ export default async function LeaderboardPage() {
       CAST(COUNT(DISTINCT p.id) AS INTEGER) as postcount,
       CAST(COUNT(DISTINCT l.id) AS INTEGER) as likesreceived
     FROM "User" u
-    LEFT JOIN "Post" p ON p."authorId" = u.id
-    LEFT JOIN "Like" l ON l."postId" = p.id
+    LEFT JOIN "Post" p ON p."authorId" = u.id AND p.status = 'VISIBLE'
+    LEFT JOIN "Like" l ON l."postId" = p.id AND p.status = 'VISIBLE'
     WHERE u.banned = false
     GROUP BY u.id
-    ORDER BY (u.points + COUNT(DISTINCT l.id) * 3 + COUNT(DISTINCT p.id) * 10) DESC
+    ORDER BY u.points DESC
     LIMIT 100
   `;
 
@@ -47,33 +52,26 @@ export default async function LeaderboardPage() {
     },
   }));
 
-  const currentUserInTop100 = leaders.findIndex((u) => u.id === session.user.id) + 1;
-  let currentUserRank = currentUserInTop100;
+  let currentUserRank = leaders.findIndex((u) => u.id === session.user.id) + 1;
 
   if (currentUserRank === 0) {
-    const userLikes = await prisma.like.count({
-      where: { post: { authorId: session.user.id } },
-    });
-    const userPosts = await prisma.post.count({
-      where: { authorId: session.user.id },
-    });
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { points: true },
     });
 
-    const userScore = (currentUser?.points ?? 0) + userLikes * 3 + userPosts * 10;
+    const userScore = currentUser?.points ?? 0;
 
     const aboveCount = await prisma.$queryRaw<Array<{ count: number }>>`
       SELECT CAST(COUNT(*) AS INTEGER) as count
       FROM (
         SELECT u.id
         FROM "User" u
-        LEFT JOIN "Post" p ON p."authorId" = u.id
-        LEFT JOIN "Like" l ON l."postId" = p.id
+        LEFT JOIN "Post" p ON p."authorId" = u.id AND p.status = 'VISIBLE'
+        LEFT JOIN "Like" l ON l."postId" = p.id AND p.status = 'VISIBLE'
         WHERE u.banned = false
         GROUP BY u.id
-        HAVING (u.points + COUNT(DISTINCT l.id) * 3 + COUNT(DISTINCT p.id) * 10) > ${userScore}
+        HAVING u.points > ${userScore}
       ) above
     `;
 

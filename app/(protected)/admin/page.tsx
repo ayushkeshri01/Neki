@@ -10,6 +10,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import Link from "next/link";
+import { UserStatus, PostStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,8 +25,8 @@ import { DashboardSkeleton } from "@/components/admin/dashboard-skeleton";
 
 function pctChange(current: number, previous: number): number | undefined {
   if (previous === 0) {
-    if (current === 0) return 0;
-    return undefined;
+    if (current === 0) return undefined;
+    return 100;
   }
   return ((current - previous) / previous) * 100;
 }
@@ -136,8 +137,8 @@ async function DashboardData({
     prisma.user.count({
       where: { lastLoginAt: { gte: sixtyDaysAgo, lt: thirtyDaysAgo } },
     }),
-    prisma.user.count({ where: { status: "BLACKLISTED" } }),
-    prisma.post.count({ where: { status: "HIDDEN" } }),
+    prisma.user.count({ where: { status: UserStatus.BLACKLISTED } }),
+    prisma.post.count({ where: { status: PostStatus.HIDDEN } }),
     prisma.community.count(),
     prisma.communityMember.count(),
     prisma.user.findMany({
@@ -287,7 +288,7 @@ async function DashboardData({
     value: likesByDay.get(b.key) || 0,
   }));
 
-  /* ---- Acquisition sources (illustrative — not tracked in schema) ---- */
+  /* ---- Acquisition sources (sample data placeholder — not based on tracked acquisition sources) ---- */
   const orgShare = Math.round(totalUsers * 0.62);
   const refShare = Math.round(totalUsers * 0.23);
   const socShare = Math.max(0, totalUsers - orgShare - refShare);

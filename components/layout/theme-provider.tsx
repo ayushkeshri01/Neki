@@ -5,6 +5,8 @@ import { useServerInsertedHTML } from "next/navigation";
 
 type Theme = "light" | "dark" | "system";
 
+const DEFAULT_THEMES = ["light", "dark"];
+
 interface ThemeProviderProps {
   children: React.ReactNode;
   attribute?: string;
@@ -44,29 +46,21 @@ export function ThemeProvider({
   defaultTheme = "system",
   enableSystem = true,
   storageKey = "theme",
-  themes = ["light", "dark"],
+  themes = DEFAULT_THEMES,
   forcedTheme,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
-  const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">("light");
-  const [initialized, setInitialized] = React.useState(false);
-
-  if (!initialized && typeof window !== "undefined") {
-    setInitialized(true);
-    const stored = (() => {
-      try {
-        return localStorage.getItem(storageKey) as Theme | null;
-      } catch {
-        return null;
-      }
-    })();
-    if (stored) {
-      setThemeState(stored);
+  const [theme, setThemeState] = React.useState<Theme>(() => {
+    if (typeof window === "undefined") return defaultTheme;
+    try {
+      return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+    } catch {
+      return defaultTheme;
     }
-    setSystemTheme(
-      window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-    );
-  }
+  });
+  const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
   useServerInsertedHTML(() => (
     <script
@@ -127,16 +121,21 @@ export function ThemeProvider({
     return () => window.removeEventListener("storage", handleStorage);
   }, [storageKey, setTheme]);
 
+  const resolvedThemes = React.useMemo(
+    () => enableSystem ? [...themes, "system"] : themes,
+    [themes, enableSystem],
+  );
+
   const contextValue = React.useMemo<ThemeContextValue>(
     () => ({
       theme,
       setTheme,
       forcedTheme,
       resolvedTheme,
-      themes: enableSystem ? [...themes, "system"] : themes,
+      themes: resolvedThemes,
       systemTheme,
     }),
-    [theme, setTheme, forcedTheme, resolvedTheme, themes, enableSystem, systemTheme],
+    [theme, setTheme, forcedTheme, resolvedTheme, resolvedThemes, systemTheme],
   );
 
   return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;

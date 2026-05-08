@@ -26,7 +26,7 @@ export function getAccountBlockMessage(
     return `Blacklisted:${banReason || "Your account has been blacklisted."}`;
   }
 
-  if (banReason) {
+  if (banReason && !banned) {
     return `Blacklisted:${banReason}`;
   }
 

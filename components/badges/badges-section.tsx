@@ -21,29 +21,32 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { BADGE_DEFINITIONS } from "@/lib/badges";
 
-const BADGE_META: Record<
-  string,
-  { name: string; description: string; icon: React.ComponentType<{ className?: string }> }
-> = {
-  FIRST_POST: { name: "First Light", description: "Made your first post", icon: Sparkles },
-  HELPING_HAND: { name: "Helping Hand", description: "Posted 10 times", icon: Heart },
-  COMMUNITY_PILLAR: { name: "Community Pillar", description: "Posted 50 times", icon: Building2 },
-  CHANGEMAKER: { name: "Changemaker", description: "Posted 100 times", icon: Zap },
-  LEGACY_BUILDER: { name: "Legacy Builder", description: "Posted 500 times", icon: Landmark },
-  SPARK: { name: "Spark", description: "Earned 500 GDCs", icon: Flame },
-  TORCHBEARER: { name: "Torchbearer", description: "Earned 2,500 GDCs", icon: Trophy },
-  BEACON: { name: "Beacon", description: "Earned 10,000 GDCs", icon: Lightbulb },
-  LIGHTHOUSE: { name: "Lighthouse", description: "Earned 50,000 GDCs", icon: Award },
-  HEARTFELT: { name: "Heartfelt", description: "Received 100 LOVE reactions", icon: Heart },
-  THOUGHT_LEADER: { name: "Thought Leader", description: "Received 50 INSIGHTFUL reactions", icon: MessageSquare },
-  SUPPORTER: { name: "Supporter", description: "Received 100 SUPPORT reactions", icon: ThumbsUp },
-  CELEBRATED: { name: "Celebrated", description: "Received 50 CELEBRATE reactions", icon: PartyPopper },
-  RISING_STAR: { name: "Rising Star", description: "Received 1,000 total reactions", icon: Star },
-  EXPLORER: { name: "Explorer", description: "Joined 3 communities", icon: Compass },
-  BRIDGE_BUILDER: { name: "Bridge Builder", description: "Joined 10 communities", icon: Users },
-  AMBASSADOR: { name: "Ambassador", description: "Posted in 5 different communities", icon: Globe },
-  PURE_INTENT: { name: "Pure Intent", description: "Posted 10+ times with zero reports", icon: Shield },
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Sparkles,
+  Heart,
+  Building2,
+  Zap,
+  Landmark,
+  Flame,
+  Trophy,
+  Lightbulb,
+  Award,
+  MessageSquare,
+  ThumbsUp,
+  PartyPopper,
+  Star,
+  Compass,
+  Users,
+  Globe,
+  Shield,
 };
 
 interface BadgesSectionProps {
@@ -62,19 +65,29 @@ export function BadgesSection({ badgeIds }: BadgesSectionProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {badgeIds.map((id) => {
-            const meta = BADGE_META[id];
-            if (!meta) return null;
-            const Icon = meta.icon;
-            return (
-              <Badge key={id} variant="secondary" className="gap-1" title={meta.description}>
-                <Icon className="h-3 w-3" />
-                {meta.name}
-              </Badge>
-            );
-          })}
-        </div>
+        <TooltipProvider>
+          <div className="flex flex-wrap gap-2">
+            {badgeIds.map((id) => {
+              const def = BADGE_DEFINITIONS[id];
+              if (!def) return null;
+              const Icon = ICON_MAP[def.icon];
+              if (!Icon) return null;
+              return (
+                <Tooltip key={id}>
+                  <TooltipTrigger asChild>
+                    <Badge variant="secondary" className="gap-1">
+                      <Icon className="h-3 w-3" />
+                      {def.name}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{def.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+        </TooltipProvider>
       </CardContent>
     </Card>
   );

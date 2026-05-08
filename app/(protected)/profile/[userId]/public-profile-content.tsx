@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Heart, FileText, Users, Trophy, Shield } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,23 +8,23 @@ import { Badge } from "@/components/ui/badge";
 import { PostCard } from "@/components/posts/post-card";
 import { BadgesSection } from "@/components/badges/badges-section";
 import { formatDate } from "@/lib/utils";
-import { toast } from "sonner";
 
 interface PublicUser {
   id: string;
   name: string | null;
+  bio: string | null;
   image: string | null;
   points: number;
   role: string;
   badges: string[];
-  createdAt: Date;
+  createdAt: string;
   posts: {
     id: string;
     content: string;
     images: string[];
     points: number;
     status: string;
-    createdAt: Date;
+    createdAt: string;
     communities: {
       community: {
         id: string;
@@ -57,27 +56,7 @@ interface PublicProfileContentProps {
   isOwnProfile: boolean;
 }
 
-export function PublicProfileContent({ user, stats, isOwnProfile }: PublicProfileContentProps) {
-  const router = useRouter();
-
-  const handleDelete = async (postId: string) => {
-    try {
-      const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-      if (res.ok) {
-        toast.success("Post deleted.");
-        router.refresh();
-        return;
-      }
-
-      const data = await res
-        .json()
-        .catch(() => ({ error: `Request failed (${res.status})` }));
-      toast.error(data.error || "Failed to delete post.");
-    } catch {
-      toast.error("Failed to delete post.");
-    }
-  };
-
+export function PublicProfileContent({ user, stats }: PublicProfileContentProps) {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       {/* Profile Header */}
@@ -108,6 +87,11 @@ export function PublicProfileContent({ user, stats, isOwnProfile }: PublicProfil
               <p className="text-xs text-muted-foreground">Good Deed Credits (GDCs)</p>
             </div>
           </div>
+
+          {/* Bio */}
+          {user.bio && (
+            <p className="text-sm text-muted-foreground mt-2">{user.bio}</p>
+          )}
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-3 gap-4">
@@ -175,9 +159,7 @@ export function PublicProfileContent({ user, stats, isOwnProfile }: PublicProfil
                     points: user.points,
                   },
                 }}
-                currentUserId={isOwnProfile ? user.id : undefined}
-                onDelete={handleDelete}
-            />
+              />
             ))}
           </div>
         )}

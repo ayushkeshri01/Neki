@@ -8,6 +8,9 @@ if (process.env.NODE_ENV === "production" && pooledDatabaseUrl) {
   process.env.DATABASE_URL = pooledDatabaseUrl;
 }
 
+const directUrl = process.env.POSTGRES_URL_NON_POOLING?.trim();
+if (directUrl) process.env.DIRECT_URL = directUrl;
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };

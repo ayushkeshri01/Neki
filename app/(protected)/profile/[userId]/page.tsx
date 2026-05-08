@@ -21,6 +21,7 @@ export default async function UserProfilePage({ params }: Props) {
     select: {
       id: true,
       name: true,
+      bio: true,
       image: true,
       points: true,
       role: true,
@@ -65,9 +66,18 @@ export default async function UserProfilePage({ params }: Props) {
 
   const stats = calculateUserStats(user.posts, user.memberships);
 
+  const serializedUser = {
+    ...user,
+    createdAt: user.createdAt.toISOString(),
+    posts: user.posts.map(({ createdAt, ...rest }) => ({
+      ...rest,
+      createdAt: createdAt.toISOString(),
+    })),
+  };
+
   return (
     <PublicProfileContent
-      user={user}
+      user={serializedUser}
       stats={stats}
       isOwnProfile={user.id === session.user.id}
     />

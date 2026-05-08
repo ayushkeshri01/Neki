@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChangePasswordDialog } from "@/components/change-password-dialog";
@@ -9,10 +10,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { KeyRound } from "lucide-react";
 import { PostCard } from "@/components/posts/post-card";
 import { BadgesSection } from "@/components/badges/badges-section";
-import type { ReactionType } from "@/components/posts/reaction-button";
+import type { ReactionType } from "@/lib/reactions";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -25,14 +35,14 @@ interface ProfileUser {
   points: number;
   role: string;
   badges: string[];
-  createdAt: Date;
+  createdAt: string;
   posts: {
     id: string;
     content: string;
     images: string[];
     points: number;
     status: string;
-    createdAt: Date;
+    createdAt: string;
     communities: {
       community: {
         id: string;
@@ -66,6 +76,9 @@ interface ProfileContentProps {
 
 export function ProfileContent({ user, stats }: ProfileContentProps) {
   const router = useRouter();
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [reportPostId, setReportPostId] = useState<string | null>(null);
+  const [reportReason, setReportReason] = useState("");
 
   const handleLike = async (postId: string, reaction: ReactionType | null) => {
     try {
@@ -88,18 +101,26 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
     }
   };
 
-  const handleReport = async (postId: string) => {
-    const reason = prompt("Please provide a reason for reporting this post:");
-    if (!reason) return;
+  const handleReport = (postId: string) => {
+    setReportPostId(postId);
+    setReportReason("");
+    setReportDialogOpen(true);
+  };
+
+  const submitReport = async () => {
+    if (!reportPostId || !reportReason.trim()) return;
 
     try {
-      const res = await fetch(`/api/posts/${postId}/report`, {
+      const res = await fetch(`/api/posts/${reportPostId}/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason }),
+        body: JSON.stringify({ reason: reportReason }),
       });
       if (res.ok) {
         toast.success("Post reported. Thank you for the feedback.");
+        setReportDialogOpen(false);
+        setReportPostId(null);
+        setReportReason("");
         router.refresh();
         return;
       }
@@ -265,6 +286,42 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
           </div>
         )}
       </div>
+
+      {/* Report Dialog */}
+      <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Post</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for reporting this post.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Reason for reporting..."
+              rows={4}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setReportDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={submitReport}
+              disabled={!reportReason.trim()}
+            >
+              Submit Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

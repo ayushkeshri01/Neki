@@ -38,7 +38,7 @@ export function AdminNoticesButton() {
           setNotices(data.notices);
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to fetch admin notices:", err));
   }, [session?.user?.id]);
 
   const activeNotice = notices[0];
@@ -56,6 +56,26 @@ export function AdminNoticesButton() {
 
       if (!res.ok) throw new Error();
       setNotices((prev) => prev.filter((n) => n.id !== noticeId));
+    } catch {
+      toast.error("Failed to acknowledge");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function acknowledgeAllNotices() {
+    if (isSubmitting || notices.length === 0) return;
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/me/notices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ noticeIds: notices.map((n) => n.id) }),
+      });
+
+      if (!res.ok) throw new Error();
+      setNotices([]);
     } catch {
       toast.error("Failed to acknowledge");
     } finally {
@@ -106,14 +126,10 @@ export function AdminNoticesButton() {
 
           <DialogFooter>
             <Button
-              onClick={() => {
-                if (notices[0]) {
-                  acknowledgeNotice(notices[0].id);
-                }
-              }}
+              onClick={acknowledgeAllNotices}
               disabled={isSubmitting}
             >
-              Acknowledge Latest
+              Acknowledge All
             </Button>
           </DialogFooter>
         </DialogContent>

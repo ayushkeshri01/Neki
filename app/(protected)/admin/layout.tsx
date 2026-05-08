@@ -1,10 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import Link from "next/link";
-import { Shield, Users, FolderTree, FileText, Settings } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Shield } from "lucide-react";
 import { getUserAccessState } from "@/lib/user-access";
 import { AdminNoticesButton } from "@/components/layout/admin-notices-button";
+import { SidebarNav } from "@/components/admin/sidebar-nav";
 
 export default async function AdminLayout({
   children,
@@ -31,14 +30,6 @@ export default async function AdminLayout({
     redirect("/feed");
   }
 
-  const navItems = [
-    { href: "/admin", label: "Overview", icon: Shield },
-    { href: "/admin/communities", label: "Communities", icon: FolderTree },
-    { href: "/admin/users", label: "Users", icon: Users },
-    { href: "/admin/posts", label: "Posts", icon: FileText },
-    { href: "/admin/settings", label: "Settings", icon: Settings },
-  ];
-
   return (
     <div className="min-h-screen">
       <div className="container py-8">
@@ -54,23 +45,7 @@ export default async function AdminLayout({
         <div className="flex gap-8">
           {/* Sidebar */}
           <nav className="w-56 shrink-0">
-            <div className="sticky top-24 space-y-1">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </div>
+            <SidebarNav />
           </nav>
 
           {/* Content */}

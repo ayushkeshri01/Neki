@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, Flag, EyeOff, Trash2 } from "lucide-react";
+import { MoreHorizontal, FlagOff, EyeOff, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,15 +15,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn, formatTimeAgo } from "@/lib/utils";
-import {
-  ReactionButton,
-  type ReactionType,
-} from "@/components/posts/reaction-button";
+import { ReactionButton } from "@/components/posts/reaction-button";
+import type { ReactionType } from "@/lib/reactions";
+import { DB_TO_UI } from "@/lib/reactions";
 import { ImageLightbox } from "@/components/posts/image-lightbox";
 
 interface PostLike {
   userId: string;
-  type?: string; // Prisma ReactionType (LIKE | CELEBRATE | LOVE | INSIGHTFUL | SUPPORT)
+  type: string; // Prisma ReactionType (LIKE | CELEBRATE | LOVE | INSIGHTFUL | SUPPORT)
 }
 
 interface PostCardProps {
@@ -33,7 +32,7 @@ interface PostCardProps {
     images: string[];
     points: number;
     status: string;
-    createdAt: Date;
+    createdAt: Date | string;
     author: {
       id: string;
       name: string | null;
@@ -64,21 +63,13 @@ interface ReactionState {
   likeCount: number;
 }
 
-const DB_TO_UI: Record<string, ReactionType> = {
-  LIKE: "like",
-  CELEBRATE: "celebrate",
-  LOVE: "love",
-  INSIGHTFUL: "insightful",
-  SUPPORT: "support",
-};
-
 function getReactionState(
   post: PostCardProps["post"],
   currentUserId?: string
 ): ReactionState {
   const own = post.likes.find((l) => l.userId === currentUserId);
   return {
-    reaction: own ? DB_TO_UI[own.type ?? "LIKE"] ?? "like" : null,
+    reaction: own ? DB_TO_UI[own.type as keyof typeof DB_TO_UI] ?? "like" : null,
     likeCount: post._count.likes,
   };
 }
@@ -95,12 +86,11 @@ export function PostCard({
     getReactionState(post, currentUserId)
   );
 
-  const [prevPostKey, setPrevPostKey] = useState("");
-  const currentPostKey = `${post.id}-${currentUserId}`;
-  if (currentPostKey !== prevPostKey) {
-    setPrevPostKey(currentPostKey);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReactionState(getReactionState(post, currentUserId));
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post.id, currentUserId]);
 
   const { reaction, likeCount } = reactionState;
 
@@ -177,13 +167,14 @@ export function PostCard({
                     Delete
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={() => onReport?.(post.id)}
-                >
-                  <Flag className="mr-2 h-4 w-4" />
-                  Report
-                </DropdownMenuItem>
+                {currentUserId !== post.author.id && (
+                  <DropdownMenuItem
+                    onClick={() => onReport?.(post.id)}
+                  >
+                    <FlagOff className="mr-2 h-4 w-4" />
+                    Report
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

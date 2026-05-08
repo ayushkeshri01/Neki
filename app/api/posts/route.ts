@@ -88,18 +88,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const imageUrls: string[] = [];
-    for (const image of imagesResult.value) {
-      if (image.size > 0) {
-        const buffer = Buffer.from(await image.arrayBuffer());
-        const url = await uploadToS3(
-          buffer,
-          image.name,
-          image.type || "image/jpeg"
-        );
-        imageUrls.push(url);
-      }
-    }
+    const imageUrls = await Promise.all(
+      imagesResult.value
+        .filter((image) => image.size > 0)
+        .map(async (image) => {
+          const buffer = Buffer.from(await image.arrayBuffer());
+          return uploadToS3(
+            buffer,
+            image.name,
+            image.type || "image/jpeg"
+          );
+        })
+    );
 
     const post = await prisma.$transaction(async (tx) => {
       // Check if this is the user's first post
@@ -129,10 +129,16 @@ export async function POST(req: NextRequest) {
 
       // Award "First Post" badge and send appreciation for first-time posters
       if (isFirstPost) {
-        await tx.user.update({
+        const currentUser = await tx.user.findUnique({
           where: { id: session.user.id },
-          data: { badges: { push: "FIRST_POST" } },
+          select: { badges: true },
         });
+        if (!currentUser?.badges.includes("FIRST_POST")) {
+          await tx.user.update({
+            where: { id: session.user.id },
+            data: { badges: { push: "FIRST_POST" } },
+          });
+        }
 
         await tx.userNotice.create({
           data: {
@@ -188,7 +194,11 @@ export async function POST(req: NextRequest) {
     revalidatePath("/leaderboard");
     revalidateCommunityPaths(existingCommunities.map((community) => community.slug));
 
-    await checkAndAwardBadges(session.user.id);
+    try {
+      await checkAndAwardBadges(session.user.id);
+    } catch (badgeError) {
+      console.error("Error awarding badges (non-fatal):", badgeError);
+    }
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
@@ -295,7 +305,7 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        likes: { select: { userId: true } },
+        likes: { select: { userId: true, type: true } },
         _count: { select: { likes: true } },
       },
       orderBy: { createdAt: "desc" },

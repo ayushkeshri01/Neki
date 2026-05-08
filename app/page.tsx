@@ -99,7 +99,7 @@ export default async function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Earn 50 Karma Credits for every post. Climb the leaderboard and
+                  Earn 50 Good Deed Credits (GDCs) for every post. Climb the leaderboard and
                   see who is making the biggest impact.
                 </p>
               </CardContent>

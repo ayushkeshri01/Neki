@@ -102,7 +102,7 @@ model Community {
 
   // Relations
   adminId String
-  admin   User              @relation("CommunityAdmin", fields: [adminId], references: [id])
+  admin   User              @relation("CommunityAdmin", fields: [adminId], references: [id], onDelete: Restrict)
   members CommunityMember[]
   posts   CommunityPost[]
 }
@@ -136,6 +136,9 @@ model Post {
   communities CommunityPost[]
   likes       Like[]
   reports     Report[]
+
+  @@index([authorId])
+  @@index([status])
 }
 
 enum PostStatus {
@@ -168,6 +171,7 @@ model Like {
 
   @@unique([userId, postId])
   @@index([postId, type])
+  @@index([userId])
 }
 
 enum ReactionType {
@@ -191,6 +195,8 @@ model Report {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
+  @@index([status])
+  @@index([postId])
   @@unique([userId, postId])
 }
 
@@ -293,10 +299,12 @@ model UserNotice {
 
 model OTP {
   id        String   @id @default(cuid())
-  email     String   @unique
+  email     String
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  @@unique([email, code])
 }
 
 model PasswordResetToken {

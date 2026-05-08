@@ -223,6 +223,11 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
       case "CELEBRATE":
         celebrateCount = r._count;
         break;
+      default:
+        if (process.env.NODE_ENV === "development") {
+          console.warn(`Unknown reaction type: ${r.type}`);
+        }
+        break;
     }
   }
 

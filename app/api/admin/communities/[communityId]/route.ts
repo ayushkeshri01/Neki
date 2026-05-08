@@ -9,8 +9,11 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (!(await isActiveUser(session.user.id))) {
@@ -27,7 +30,7 @@ export async function PATCH(
     }
 
     if (typeof slug === "string" && slug.trim()) {
-      updateData.slug = slug.trim().toLowerCase().replace(/\s+/g, "-");
+      updateData.slug = slug.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
     }
 
     if (typeof description === "string") {
@@ -80,8 +83,11 @@ export async function DELETE(
 ) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (!(await isActiveUser(session.user.id))) {

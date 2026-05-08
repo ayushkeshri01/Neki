@@ -81,10 +81,20 @@ export default async function CommunityPage({ params }: Props) {
     take: 50,
   });
 
+  const serializedCommunity = {
+    ...community,
+    createdAt: community.createdAt.toISOString(),
+  };
+
+  const serializedPosts = posts.map(({ createdAt, ...rest }) => ({
+    ...rest,
+    createdAt: createdAt.toISOString(),
+  }));
+
   return (
     <CommunityPageContent
-      community={community}
-      posts={posts}
+      community={serializedCommunity}
+      posts={serializedPosts}
       isMember={isMember}
       currentUserId={session.user.id}
       isAdmin={session.user.role === "ADMIN"}

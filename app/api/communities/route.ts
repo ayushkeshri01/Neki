@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isActiveUser } from "@/lib/user-access";
+import { checkAndAwardBadges } from "@/lib/badges";
 import { buildCommunitySlug, validateCommunityCreateBody } from "./validation";
 
 export async function GET() {
@@ -40,8 +41,11 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
+    if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     if (!(await isActiveUser(session.user.id))) {
@@ -101,6 +105,8 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    await checkAndAwardBadges(session.user.id);
 
     return NextResponse.json(community, { status: 201 });
   } catch (error) {

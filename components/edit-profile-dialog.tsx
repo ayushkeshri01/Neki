@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -45,17 +45,16 @@ export function EditProfileDialog({
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [prevOpen, setPrevOpen] = useState(open);
-
-  if (open && !prevOpen) {
-    setPrevOpen(true);
-    setName(initialName || "");
-    setBio(initialBio || "");
-    setImagePreview(initialImage);
-    setImageFile(null);
-  } else if (!open && prevOpen) {
-    setPrevOpen(false);
-  }
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (open) {
+      setName(initialName || "");
+      setBio(initialBio || "");
+      setImagePreview(initialImage);
+      setImageFile(null);
+    }
+  }, [open, initialName, initialBio, initialImage]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -137,7 +136,7 @@ export function EditProfileDialog({
               <div className="relative">
                 <Avatar className="h-24 w-24">
                   <AvatarImage src={imagePreview || ""} />
-                  <AvatarFallback className="text-2xl">
+                  <AvatarFallback className="text-2xl bg-primary/10 text-primary">
                     {name?.charAt(0).toUpperCase() || "?"}
                   </AvatarFallback>
                 </Avatar>
@@ -168,6 +167,7 @@ export function EditProfileDialog({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
+                maxLength={100}
               />
             </div>
 

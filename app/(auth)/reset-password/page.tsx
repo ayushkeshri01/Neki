@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams, redirect } from "next/navigation";
 import Link from "next/link";
 import { Loader2, ArrowLeft, KeyRound, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -28,12 +28,9 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (!token || !email) {
-      toast.error("Invalid reset link");
-      router.push("/forgot-password");
-    }
-  }, [token, email, router]);
+  if (!token || !email) {
+    redirect("/forgot-password");
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,10 +69,6 @@ export default function ResetPasswordPage() {
       setIsLoading(false);
     }
   };
-
-  if (!token || !email) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -119,14 +112,29 @@ export default function ResetPasswordPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type={showPassword ? "text" : "password"}
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
@@ -150,5 +158,22 @@ export default function ResetPasswordPage() {
         </form>
       </Card>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-pulse flex items-center gap-2">
+            <div className="h-4 w-4 bg-primary rounded-full" />
+            Loading...
+          </div>
+        </div>
+      }
+    >
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

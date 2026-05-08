@@ -1,23 +1,32 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
-const awsRegion = process.env.AWS_REGION?.trim() || "us-east-1";
-const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
-const awsSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
+let s3Client: S3Client | null = null;
 
-if (!awsAccessKeyId || !awsSecretAccessKey) {
-  console.warn("⚠️ AWS credentials are not fully configured in environment variables.");
-} else {
-  const maskedKey = `${awsAccessKeyId.slice(0, 6)}...${awsAccessKeyId.slice(-2)}`;
-  console.log(`📡 Initializing S3 Client with key: ${maskedKey} [Region: ${awsRegion}]`);
+function getS3Client(): S3Client {
+  if (!s3Client) {
+    const region = process.env.AWS_REGION?.trim() || "us-east-1";
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY?.trim();
+
+    if (!accessKeyId || !secretAccessKey) {
+      throw new Error("AWS credentials (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY) must be configured");
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      const maskedKey = `${accessKeyId.slice(0, 6)}...${accessKeyId.slice(-2)}`;
+      console.log(`Initializing S3 Client with key: ${maskedKey} [Region: ${region}]`);
+    }
+
+    s3Client = new S3Client({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
+  }
+  return s3Client;
 }
-
-export const s3Client = new S3Client({
-  region: awsRegion,
-  credentials: {
-    accessKeyId: awsAccessKeyId!,
-    secretAccessKey: awsSecretAccessKey!,
-  },
-});
 
 function getS3Config() {
   const bucket = process.env.AWS_S3_BUCKET?.trim();
@@ -118,7 +127,7 @@ export async function uploadToS3(
   const key = `uploads/${Date.now()}-${sanitizeFileName(fileName)}`;
   const { bucket } = getS3Config();
 
-  await s3Client.send(
+  await getS3Client().send(
     new PutObjectCommand({
       Bucket: bucket,
       Key: key,
@@ -139,7 +148,7 @@ export async function deleteFromS3(imageUrl: string): Promise<boolean> {
 
     const { bucket } = getS3Config();
     
-    await s3Client.send(
+    await getS3Client().send(
       new DeleteObjectCommand({
         Bucket: bucket,
         Key: key,

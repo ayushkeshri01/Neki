@@ -15,6 +15,10 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
+  if (!session.user.id) {
+    redirect("/login");
+  }
+
   const accessState = await getUserAccessState(session.user.id);
 
   if (!accessState.isActive) {

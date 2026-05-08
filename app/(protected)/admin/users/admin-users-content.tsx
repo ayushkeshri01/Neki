@@ -31,7 +31,7 @@ interface User {
   points: number;
   banned: boolean;
   banReason: string | null;
-  createdAt: Date;
+  createdAt: string;
   _count: {
     posts: number;
     memberships: number;
@@ -180,116 +180,128 @@ export function AdminUsersContent({
       </div>
 
       <div className="space-y-4">
-        {filteredUsers.map((user) => (
-          <Card
-            key={user.id}
-            className={user.status !== "ACTIVE" ? "opacity-70 border-destructive/40" : ""}
-          >
-            <CardContent className="flex items-center justify-between py-4">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={user.image || ""} />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {user.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{user.name || "Anonymous"}</h3>
-                    {user.role === "ADMIN" && (
-                      <Badge variant="secondary" className="gap-1">
-                        <Shield className="h-3 w-3" />
-                        Admin
-                      </Badge>
-                    )}
-                    {user.status === "BLACKLISTED" && (
-                      <Badge variant="destructive">Blacklisted</Badge>
-                    )}
-                    {user.status === "REMOVED" && (
-                      <Badge variant="destructive">Removed</Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                  <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                    <span>{user.points} points</span>
-                    <span>{user._count.posts} posts</span>
-                    <span>Joined {formatDate(user.createdAt)}</span>
-                  </div>
-                  {user.statusReason && (
-                    <p className="mt-1 text-xs text-muted-foreground">Reason: {user.statusReason}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setSelectedUser(user)}
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Send Message to {user.name}</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 pt-4">
-                      <Textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Enter your message..."
-                        rows={4}
-                      />
-                      <Button onClick={handleSendMessage} className="w-full">
-                        Send Message
-                      </Button>
+        {filteredUsers.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">No users found.</p>
+        ) : (
+          filteredUsers.map((user) => (
+            <Card
+              key={user.id}
+              className={user.status !== "ACTIVE" ? "opacity-70 border-destructive/40" : ""}
+            >
+              <CardContent className="flex items-center justify-between py-4">
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={user.image || ""} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium">{user.name || "Anonymous"}</h3>
+                      {user.role === "ADMIN" && (
+                        <Badge variant="secondary" className="gap-1">
+                          <Shield className="h-3 w-3" />
+                          Admin
+                        </Badge>
+                      )}
+                      {user.status === "BLACKLISTED" && (
+                        <Badge variant="destructive">Blacklisted</Badge>
+                      )}
+                      {user.status === "REMOVED" && (
+                        <Badge variant="destructive">Removed</Badge>
+                      )}
                     </div>
-                  </DialogContent>
-                </Dialog>
+                    <p className="text-sm text-muted-foreground">{user.email}</p>
+                    <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>{user.points} points</span>
+                      <span>{user._count.posts} posts</span>
+                      <span>Joined {formatDate(user.createdAt)}</span>
+                    </div>
+                    {user.statusReason && (
+                      <p className="mt-1 text-xs text-muted-foreground">Reason: {user.statusReason}</p>
+                    )}
+                  </div>
+                </div>
 
-                {user.id !== currentUserId && (
-                  <>
-                    {user.status === "ACTIVE" ? (
-                      <>
+                <div className="flex items-center gap-2">
+                  <Dialog onOpenChange={(open) => {
+                    if (!open) {
+                      setSelectedUser(null);
+                      setMessage("");
+                    }
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setMessage("");
+                        }}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Send Message to {user.name}</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 pt-4">
+                        <Textarea
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder="Enter your message..."
+                          rows={4}
+                        />
+                        <Button onClick={handleSendMessage} className="w-full">
+                          Send Message
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
+                  {user.id !== currentUserId && (
+                    <>
+                      {user.status === "ACTIVE" ? (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openActionDialog("blacklist", user)}
+                            className="gap-2 text-destructive hover:text-destructive"
+                          >
+                            <Ban className="h-4 w-4" />
+                            Blacklist
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openActionDialog("remove", user)}
+                            className="gap-2 text-destructive hover:text-destructive"
+                          >
+                            <UserX className="h-4 w-4" />
+                            Remove
+                          </Button>
+                        </>
+                      ) : (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => openActionDialog("blacklist", user)}
-                          className="gap-2 text-destructive hover:text-destructive"
+                          onClick={() => handleReinstate(user.id)}
+                          className="gap-2"
                         >
-                          <Ban className="h-4 w-4" />
-                          Blacklist
+                          <CheckCircle className="h-4 w-4" />
+                          Reinstate
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openActionDialog("remove", user)}
-                          className="gap-2 text-destructive hover:text-destructive"
-                        >
-                          <UserX className="h-4 w-4" />
-                          Remove
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleReinstate(user.id)}
-                        className="gap-2"
-                      >
-                        <CheckCircle className="h-4 w-4" />
-                        Reinstate
-                      </Button>
-                    )}
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                      )}
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       <Dialog open={actionDialog.open} onOpenChange={(open) => !open && closeActionDialog()}>

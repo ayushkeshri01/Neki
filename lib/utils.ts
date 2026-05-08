@@ -13,7 +13,7 @@ export interface UserStats {
 
 export function calculateUserStats(
   posts: { _count: { likes: number } }[],
-  memberships: unknown[]
+  memberships: { length: number }
 ): UserStats {
   return {
     totalPosts: posts.length,

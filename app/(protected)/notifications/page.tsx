@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Bell, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,17 +16,10 @@ interface Notice {
 }
 
 export default function NotificationsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { data: session } = useSession();
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
 
   useEffect(() => {
     if (!session?.user?.id) {

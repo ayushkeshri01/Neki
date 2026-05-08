@@ -130,11 +130,9 @@ export function Navbar() {
 
           {/* Notifications Bell */}
           {displayUser && (
-            <Link href="/notifications">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-4 w-4" />
-              </Button>
-            </Link>
+            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+              <Bell className="h-4 w-4" />
+            </Button>
           )}
 
           {/* User Menu */}
@@ -162,7 +160,7 @@ export function Navbar() {
                       {displayUser.email}
                     </p>
                     <p className="text-xs text-primary font-medium">
-                      {displayUser.points} Good Deed Credits (GDCs)
+                       {displayUser.points} points
                     </p>
                   </div>
                 </div>

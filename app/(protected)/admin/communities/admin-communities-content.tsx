@@ -34,7 +34,7 @@ interface Community {
   name: string;
   slug: string;
   description: string | null;
-  createdAt: Date;
+  createdAt: string;
   admin: {
     id: string;
     name: string | null;
@@ -70,7 +70,7 @@ export function AdminCommunitiesContent({
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/communities", {
+      const res = await fetch("/api/admin/communities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, description }),

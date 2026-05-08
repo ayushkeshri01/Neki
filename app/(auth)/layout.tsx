@@ -8,7 +8,7 @@ export default async function AuthLayout({
 }) {
   const session = await auth();
 
-  if (session?.user && session.user.status === "ACTIVE") {
+  if (session?.user && session.user.status !== "BLACKLISTED" && session.user.status !== "REMOVED") {
     redirect("/feed");
   }
 

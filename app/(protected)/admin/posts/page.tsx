@@ -29,5 +29,10 @@ export default async function AdminPostsPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  return <AdminPostsContent initialPosts={posts} />;
+  const serialized = posts.map(({ createdAt, ...rest }) => ({
+    ...rest,
+    createdAt: createdAt.toISOString(),
+  }));
+
+  return <AdminPostsContent initialPosts={serialized} />;
 }

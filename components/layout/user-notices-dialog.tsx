@@ -47,6 +47,7 @@ export function UserNoticesDialog() {
   const { data: session } = useSession();
   const [notices, setNotices] = useState<UserNotice[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -77,8 +78,6 @@ export function UserNoticesDialog() {
     };
   }, [session?.user?.id]);
 
-  const activeNotice = notices[0];
-
   async function acknowledgeNotice(noticeId: string) {
     if (isSubmitting) {
       return;
@@ -101,34 +100,43 @@ export function UserNoticesDialog() {
     }
   }
 
-  if (!activeNotice) {
+  if (notices.length === 0 || dismissed) {
     return null;
   }
 
   return (
     <Dialog
-      open={Boolean(activeNotice)}
+      open={true}
       onOpenChange={(open) => {
-        if (!open && activeNotice) {
-          void acknowledgeNotice(activeNotice.id);
-        }
+        if (!open) setDismissed(true);
       }}
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{activeNotice.title}</DialogTitle>
-          <DialogDescription>{activeNotice.body}</DialogDescription>
+          <DialogTitle>Notices</DialogTitle>
+          <DialogDescription>
+            You have {notices.length} notice{notices.length !== 1 ? "s" : ""}
+          </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
-          <Button
-            type="button"
-            onClick={() => void acknowledgeNotice(activeNotice.id)}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Updating..." : "Got it"}
-          </Button>
-        </DialogFooter>
+        <div className="max-h-60 space-y-2 overflow-y-auto">
+          {notices.map((notice) => (
+            <div key={notice.id} className="rounded-lg border p-3">
+              <p className="font-medium">{notice.title}</p>
+              <p className="text-sm text-muted-foreground">{notice.body}</p>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="mt-2"
+                onClick={() => void acknowledgeNotice(notice.id)}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Acknowledging..." : "Acknowledge"}
+              </Button>
+            </div>
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -17,5 +17,10 @@ export default async function AdminCommunitiesPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  return <AdminCommunitiesContent initialCommunities={communities} />;
+  const serialized = communities.map(({ createdAt, ...rest }) => ({
+    ...rest,
+    createdAt: createdAt.toISOString(),
+  }));
+
+  return <AdminCommunitiesContent initialCommunities={serialized} />;
 }

@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Users, Plus } from "lucide-react";
+import { Users, Plus, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PostCard } from "@/components/posts/post-card";
-import type { ReactionType } from "@/components/posts/reaction-button";
+import type { ReactionType } from "@/lib/reactions";
 import { FileQuestion } from "lucide-react";
 import { toast } from "sonner";
 
@@ -33,7 +34,7 @@ interface Post {
   images: string[];
   points: number;
   status: string;
-  createdAt: Date;
+  createdAt: string;
   author: {
     id: string;
     name: string | null;
@@ -69,15 +70,17 @@ export function CommunityPageContent({
   isAdmin,
 }: CommunityPageContentProps) {
   const router = useRouter();
+  const [memberActionLoading, setMemberActionLoading] = useState(false);
 
   const handleJoin = async () => {
+    setMemberActionLoading(true);
     try {
       const res = await fetch(`/api/communities/${community.id}/join`, {
         method: "POST",
       });
 
       if (res.ok) {
-        toast.success("Joined community.");
+        toast.success(`Joined ${community.name}.`);
         router.refresh();
         return;
       }
@@ -85,20 +88,23 @@ export function CommunityPageContent({
       const data = await res
         .json()
         .catch(() => ({ error: `Request failed (${res.status})` }));
-      toast.error(data.error || "Failed to join community.");
+      toast.error(data.error || `Failed to join ${community.name}.`);
     } catch {
-      toast.error("Failed to join community.");
+      toast.error(`Failed to join ${community.name}.`);
+    } finally {
+      setMemberActionLoading(false);
     }
   };
 
   const handleLeave = async () => {
+    setMemberActionLoading(true);
     try {
       const res = await fetch(`/api/communities/${community.id}/leave`, {
         method: "POST",
       });
 
       if (res.ok) {
-        toast.success("Left community.");
+        toast.success(`Left ${community.name}.`);
         router.refresh();
         return;
       }
@@ -106,9 +112,11 @@ export function CommunityPageContent({
       const data = await res
         .json()
         .catch(() => ({ error: `Request failed (${res.status})` }));
-      toast.error(data.error || "Failed to leave community.");
+      toast.error(data.error || `Failed to leave ${community.name}.`);
     } catch {
-      toast.error("Failed to leave community.");
+      toast.error(`Failed to leave ${community.name}.`);
+    } finally {
+      setMemberActionLoading(false);
     }
   };
 
@@ -214,12 +222,28 @@ export function CommunityPageContent({
                     Post
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm" onClick={handleLeave}>
-                  Leave
+                <Button variant="outline" size="sm" onClick={handleLeave} disabled={memberActionLoading}>
+                  {memberActionLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Leaving...
+                    </>
+                  ) : (
+                    "Leave"
+                  )}
                 </Button>
               </div>
             ) : (
-              <Button onClick={handleJoin}>Join Community</Button>
+              <Button onClick={handleJoin} disabled={memberActionLoading}>
+                {memberActionLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Joining...
+                  </>
+                ) : (
+                  "Join Community"
+                )}
+              </Button>
             )}
           </div>
         </div>

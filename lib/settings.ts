@@ -135,19 +135,10 @@ export function parseAdminSettingsInput(
 }
 
 export async function getOrCreateSettings() {
-  const existing = await prisma.appSettings.findUnique({
+  return prisma.appSettings.upsert({
     where: { id: "default" },
-  });
-
-  if (existing) {
-    return {
-      ...existing,
-      ...sanitizeAppSettings(existing),
-    };
-  }
-
-  return prisma.appSettings.create({
-    data: {
+    update: {},
+    create: {
       id: "default",
       allowedDomains: [],
       privacyPolicyVersion: DEFAULT_PRIVACY_POLICY_VERSION,

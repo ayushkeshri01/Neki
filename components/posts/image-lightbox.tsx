@@ -25,14 +25,13 @@ export function ImageLightbox({
   onOpenChange,
 }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [prevOpen, setPrevOpen] = useState(open);
 
-  if (open && !prevOpen) {
-    setPrevOpen(true);
-    setCurrentIndex(initialIndex);
-  } else if (!open && prevOpen) {
-    setPrevOpen(false);
-  }
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentIndex(initialIndex);
+    }
+  }, [open, initialIndex]);
 
   const goToPrev = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
@@ -61,7 +60,7 @@ export function ImageLightbox({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="inset-0 translate-x-0 translate-y-0 h-screen w-screen max-w-none p-0 border-0 bg-black/95 rounded-none sm:rounded-none gap-0 pointer-events-none [&>:last-child]:hidden">
+      <DialogContent className="inset-0 translate-x-0 translate-y-0 h-screen w-screen max-w-none p-0 border-0 bg-black/95 rounded-none sm:rounded-none gap-0 pointer-events-none [&>[data-radix-dialog-close]]:hidden">
         <DialogTitle className="sr-only">
           Image {currentIndex + 1} of {images.length}
         </DialogTitle>

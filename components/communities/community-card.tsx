@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users } from "lucide-react";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,6 +22,7 @@ interface CommunityCardProps {
   isMember: boolean;
   onJoin?: (communityId: string) => void;
   onLeave?: (communityId: string) => void;
+  memberActionLoading?: boolean;
 }
 
 export function CommunityCard({
@@ -29,6 +30,7 @@ export function CommunityCard({
   isMember,
   onJoin,
   onLeave,
+  memberActionLoading,
 }: CommunityCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -37,18 +39,12 @@ export function CommunityCard({
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-md">
       <div className="aspect-[2/1] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-        {community.image ? (
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={community.image} />
-            <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-              {community.name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
-            <Users className="h-8 w-8 text-primary" />
-          </div>
-        )}
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={community.image || undefined} />
+          <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+            {community.name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
       </div>
       <CardContent className="pt-4">
         <Link href={`/communities/${community.slug}`}>
@@ -64,12 +60,14 @@ export function CommunityCard({
               {community.description}
             </p>
             {hasLongDescription && (
-              <button
+              <Button
+                variant="link"
+                className="mt-1 h-auto p-0 text-xs"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-1 text-xs text-primary hover:underline"
+                aria-expanded={isExpanded}
               >
                 {isExpanded ? " Show less" : " Read more"}
-              </button>
+              </Button>
             )}
           </>
         )}
@@ -84,6 +82,7 @@ export function CommunityCard({
             variant="outline"
             className="w-full"
             onClick={() => onLeave?.(community.id)}
+            disabled={memberActionLoading}
           >
             Leave
           </Button>
@@ -91,6 +90,7 @@ export function CommunityCard({
           <Button
             className="w-full"
             onClick={() => onJoin?.(community.id)}
+            disabled={memberActionLoading}
           >
             Join
           </Button>

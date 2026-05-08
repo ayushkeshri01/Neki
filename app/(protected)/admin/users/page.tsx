@@ -1,9 +1,12 @@
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AdminUsersContent } from "./admin-users-content";
 
 export default async function AdminUsersPage() {
   const session = await auth();
+
+  if (!session?.user) redirect("/login");
 
   const users = await prisma.user.findMany({
     include: {
@@ -17,5 +20,10 @@ export default async function AdminUsersPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  return <AdminUsersContent initialUsers={users} currentUserId={session!.user.id} />;
+  const serialized = users.map(({ createdAt, ...rest }) => ({
+    ...rest,
+    createdAt: createdAt.toISOString(),
+  }));
+
+  return <AdminUsersContent initialUsers={serialized} currentUserId={session.user.id} />;
 }

@@ -25,7 +25,7 @@ interface Post {
   content: string;
   status: "VISIBLE" | "HIDDEN" | "REMOVED";
   points: number;
-  createdAt: Date;
+  createdAt: string;
   moderationReason: string | null;
   author: {
     id: string;
@@ -96,7 +96,7 @@ export function AdminPostsContent({ initialPosts: posts }: AdminPostsContentProp
     }
 
     const trimmedReason = reason.trim();
-    if (!trimmedReason) {
+    if (dialogState.action !== "restore" && !trimmedReason) {
       toast.error("Please provide a moderation reason.");
       return;
     }
