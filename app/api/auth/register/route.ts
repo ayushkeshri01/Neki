@@ -11,6 +11,7 @@ import {
 import { getOrCreateSettings } from "@/lib/settings";
 import { isAccountActive } from "@/lib/account-status";
 import { isSignupEmailDomainAllowed } from "@/lib/user-access";
+import { checkAndAwardBadges } from "@/lib/badges";
 
 type RegisterAction = "verify_otp" | "accept_policy_and_register" | "reject_policy";
 
@@ -201,6 +202,7 @@ async function handleAcceptPolicyAndRegister(req: Request, body: Record<string, 
 
   try {
     const settings = await getOrCreateSettings();
+    let registeredUserId: string | undefined;
 
     await prisma.$transaction(async (tx) => {
       if (policyVersion !== settings.privacyPolicyVersion) {
@@ -260,6 +262,8 @@ async function handleAcceptPolicyAndRegister(req: Request, body: Record<string, 
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      let userId: string;
+
       if (existingUser) {
         await tx.user.update({
           where: { id: existingUser.id },
@@ -274,8 +278,10 @@ async function handleAcceptPolicyAndRegister(req: Request, body: Record<string, 
             privacyPolicyVersion: settings.privacyPolicyVersion,
           },
         });
+        userId = existingUser.id;
+        registeredUserId = existingUser.id;
       } else {
-        await tx.user.create({
+        const newUser = await tx.user.create({
           data: {
             email,
             name: email.split("@")[0],
@@ -285,6 +291,22 @@ async function handleAcceptPolicyAndRegister(req: Request, body: Record<string, 
             privacyPolicyAcceptedAt: now,
             privacyPolicyVersion: settings.privacyPolicyVersion,
           },
+        });
+        userId = newUser.id;
+        registeredUserId = newUser.id;
+      }
+
+      const allCommunities = await tx.community.findMany({
+        select: { id: true },
+      });
+
+      if (allCommunities.length > 0) {
+        await tx.communityMember.createMany({
+          data: allCommunities.map((c) => ({
+            userId,
+            communityId: c.id,
+          })),
+          skipDuplicates: true,
         });
       }
 
@@ -303,6 +325,10 @@ async function handleAcceptPolicyAndRegister(req: Request, body: Record<string, 
     // Send confirmation email with privacy policy details (fire & forget - don't await)
     const userName = email.split("@")[0];
     sendConfirmationEmail(email, userName, policyVersion).catch(console.error);
+
+    if (registeredUserId) {
+      checkAndAwardBadges(registeredUserId).catch(console.error);
+    }
 
     return NextResponse.json({ success: true, message: "Registration successful" });
   } catch (error) {
