@@ -24,6 +24,7 @@ export default async function UserProfilePage({ params }: Props) {
       image: true,
       points: true,
       role: true,
+      badges: true,
       createdAt: true,
       banned: true,
       posts: {

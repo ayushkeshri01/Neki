@@ -3,6 +3,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { LeaderboardContent } from "./leaderboard-content";
 
+interface LeaderRaw {
+  id: string;
+  name: string | null;
+  image: string | null;
+  points: number;
+  postcount: number;
+  likesreceived: number;
+}
+
 export default async function LeaderboardPage() {
   const session = await auth();
 
@@ -10,46 +19,65 @@ export default async function LeaderboardPage() {
     redirect("/login");
   }
 
-  const leaders = await prisma.user.findMany({
-    where: {
-      banned: false,
+  const rawLeaders = await prisma.$queryRaw<LeaderRaw[]>`
+    SELECT
+      u.id,
+      u.name,
+      u.image,
+      u.points,
+      CAST(COUNT(DISTINCT p.id) AS INTEGER) as postcount,
+      CAST(COUNT(DISTINCT l.id) AS INTEGER) as likesreceived
+    FROM "User" u
+    LEFT JOIN "Post" p ON p."authorId" = u.id
+    LEFT JOIN "Like" l ON l."postId" = p.id
+    WHERE u.banned = false
+    GROUP BY u.id
+    ORDER BY (u.points + COUNT(DISTINCT l.id) * 3 + COUNT(DISTINCT p.id) * 10) DESC
+    LIMIT 100
+  `;
+
+  const leaders = rawLeaders.map((u) => ({
+    id: u.id,
+    name: u.name,
+    image: u.image,
+    points: u.points,
+    likesReceived: Number(u.likesreceived),
+    _count: {
+      posts: Number(u.postcount),
     },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      points: true,
-      _count: {
-        select: {
-          posts: true,
-        },
-      },
-    },
-    orderBy: {
-      points: "desc",
-    },
-    take: 100,
-  });
+  }));
 
   const currentUserInTop100 = leaders.findIndex((u) => u.id === session.user.id) + 1;
-
   let currentUserRank = currentUserInTop100;
 
   if (currentUserRank === 0) {
+    const userLikes = await prisma.like.count({
+      where: { post: { authorId: session.user.id } },
+    });
+    const userPosts = await prisma.post.count({
+      where: { authorId: session.user.id },
+    });
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { points: true },
     });
 
-    const userCountAbove = await prisma.user.count({
-      where: {
-        banned: false,
-        points: {
-          gt: currentUser?.points || 0,
-        },
-      },
-    });
-    currentUserRank = userCountAbove + 1;
+    const userScore = (currentUser?.points ?? 0) + userLikes * 3 + userPosts * 10;
+
+    const aboveCount = await prisma.$queryRaw<Array<{ count: number }>>`
+      SELECT CAST(COUNT(*) AS INTEGER) as count
+      FROM (
+        SELECT u.id
+        FROM "User" u
+        LEFT JOIN "Post" p ON p."authorId" = u.id
+        LEFT JOIN "Like" l ON l."postId" = p.id
+        WHERE u.banned = false
+        GROUP BY u.id
+        HAVING (u.points + COUNT(DISTINCT l.id) * 3 + COUNT(DISTINCT p.id) * 10) > ${userScore}
+      ) above
+    `;
+
+    currentUserRank = (aboveCount[0]?.count ?? 0) + 1;
   }
 
   return (

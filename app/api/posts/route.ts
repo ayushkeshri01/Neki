@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { checkAndAwardBadges } from "@/lib/badges";
 import { S3ServiceException } from "@aws-sdk/client-s3";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -101,6 +102,12 @@ export async function POST(req: NextRequest) {
     }
 
     const post = await prisma.$transaction(async (tx) => {
+      // Check if this is the user's first post
+      const existingPostCount = await tx.post.count({
+        where: { authorId: session.user.id },
+      });
+      const isFirstPost = existingPostCount === 0;
+
       const newPost = await tx.post.create({
         data: {
           content: contentResult.value,
@@ -119,6 +126,25 @@ export async function POST(req: NextRequest) {
         where: { id: session.user.id },
         data: { points: { increment: 50 } },
       });
+
+      // Award "First Post" badge and send appreciation for first-time posters
+      if (isFirstPost) {
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: { badges: { push: "FIRST_POST" } },
+        });
+
+        await tx.userNotice.create({
+          data: {
+            userId: session.user.id,
+            auditId: newPost.id,
+            noticeType: "ACHIEVEMENT_FIRST_POST",
+            title: "Congratulations on Your First Post!",
+            body: "Thank you for making your first contribution to the community. Every act of kindness makes a difference!",
+            visibleFromLoginAt: new Date(),
+          },
+        });
+      }
 
       // Create notifications for community members
       const author = await tx.user.findUnique({
@@ -161,6 +187,8 @@ export async function POST(req: NextRequest) {
     revalidatePath("/feed");
     revalidatePath("/leaderboard");
     revalidateCommunityPaths(existingCommunities.map((community) => community.slug));
+
+    await checkAndAwardBadges(session.user.id);
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

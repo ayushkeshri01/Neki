@@ -10,6 +10,7 @@ interface Leader {
   name: string | null;
   image: string | null;
   points: number;
+  likesReceived: number;
   _count: {
     posts: number;
   };
@@ -63,7 +64,10 @@ export function LeaderboardContent({
                   {topThree[1].name || "Anonymous"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {topThree[1].points} Good Deed Credits (GDCs)
+                  {topThree[1].points} GDCs
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {topThree[1]._count.posts} posts · {topThree[1].likesReceived} likes
                 </p>
                 <div className="mt-2 h-20 w-16 rounded-t-lg bg-muted-foreground/20 flex items-end justify-center pb-2">
                   <span className="text-2xl font-bold text-muted-foreground">2</span>
@@ -89,7 +93,10 @@ export function LeaderboardContent({
                   {topThree[0].name || "Anonymous"}
                 </p>
                 <p className="text-sm text-primary font-medium">
-                  {topThree[0].points} Good Deed Credits (GDCs)
+                  {topThree[0].points} GDCs
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {topThree[0]._count.posts} posts · {topThree[0].likesReceived} likes
                 </p>
                 <div className="mt-2 h-28 w-20 rounded-t-lg bg-primary/20 flex items-end justify-center pb-2">
                   <span className="text-3xl font-bold text-primary">1</span>
@@ -115,7 +122,10 @@ export function LeaderboardContent({
                   {topThree[2].name || "Anonymous"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {topThree[2].points} Good Deed Credits (GDCs)
+                  {topThree[2].points} GDCs
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {topThree[2]._count.posts} posts · {topThree[2].likesReceived} likes
                 </p>
                 <div className="mt-2 h-16 w-16 rounded-t-lg bg-amber-600/10 flex items-end justify-center pb-2">
                   <span className="text-2xl font-bold text-amber-600">3</span>
@@ -160,14 +170,14 @@ export function LeaderboardContent({
                       {isCurrentUser && " (You)"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {leader._count.posts} posts
+                      {leader._count.posts} posts · {leader.likesReceived} likes
                     </p>
                   </div>
                   <div className="text-right">
                     <p className={cn("font-semibold", isCurrentUser && "text-primary")}>
                       {leader.points}
                     </p>
-                    <p className="text-xs text-muted-foreground">Good Deed Credits (GDCs)</p>
+                    <p className="text-xs text-muted-foreground">GDCs</p>
                   </div>
                 </div>
               );

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isActiveUser } from "@/lib/user-access";
+import { checkAndAwardBadges } from "@/lib/badges";
 
 export async function POST(
   _req: NextRequest,
@@ -54,6 +55,8 @@ export async function POST(
         communityId,
       },
     });
+
+    await checkAndAwardBadges(session.user.id);
 
     revalidatePath("/communities");
     revalidatePath(`/communities/${community.slug}`);

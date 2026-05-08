@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PostCard } from "@/components/posts/post-card";
+import { BadgesSection } from "@/components/badges/badges-section";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -16,6 +17,7 @@ interface PublicUser {
   image: string | null;
   points: number;
   role: string;
+  badges: string[];
   createdAt: Date;
   posts: {
     id: string;
@@ -127,6 +129,8 @@ export function PublicProfileContent({ user, stats, isOwnProfile }: PublicProfil
           </div>
         </CardContent>
       </Card>
+
+      <BadgesSection badgeIds={user.badges} />
 
       {/* Communities */}
       {user.memberships.length > 0 && (

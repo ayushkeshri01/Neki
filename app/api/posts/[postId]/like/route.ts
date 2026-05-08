@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { isActiveUser } from "@/lib/user-access";
 import { parseReactionId, toDbReaction } from "@/lib/reactions";
 import { requireCommunityScopedPost } from "../../access";
+import { checkAndAwardBadges } from "@/lib/badges";
 
 /**
  * POST /api/posts/:postId/like
@@ -94,6 +95,10 @@ export async function POST(
         });
         result = { reacted: true, reaction: "like" };
       }
+    }
+
+    if (result.reacted) {
+      await checkAndAwardBadges(access.post.authorId);
     }
 
     revalidatePath("/");

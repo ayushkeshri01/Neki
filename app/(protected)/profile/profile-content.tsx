@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { KeyRound } from "lucide-react";
 import { PostCard } from "@/components/posts/post-card";
+import { BadgesSection } from "@/components/badges/badges-section";
 import type { ReactionType } from "@/components/posts/reaction-button";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ interface ProfileUser {
   bio: string | null;
   points: number;
   role: string;
+  badges: string[];
   createdAt: Date;
   posts: {
     id: string;
@@ -208,6 +210,8 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
           </div>
         </CardContent>
       </Card>
+
+      <BadgesSection badgeIds={user.badges} />
 
       {/* Communities */}
       {user.memberships.length > 0 && (

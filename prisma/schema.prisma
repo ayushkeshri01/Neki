@@ -20,6 +20,7 @@ model User {
   statusReason            String?
   statusChangedAt         DateTime?
   points                  Int        @default(0)
+  badges                  String[]   @default([])
   banned                  Boolean    @default(false)
   banReason               String?
   adminMessage            String?
@@ -231,6 +232,7 @@ enum UserNoticeType {
   ACCOUNT_REMOVED
   ACCOUNT_REINSTATED
   ADMIN_MESSAGE
+  ACHIEVEMENT_FIRST_POST
 }
 
 model RegistrationToken {
