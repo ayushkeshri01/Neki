@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { Navbar } from "@/components/layout/navbar";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { UserNoticesDialog } from "@/components/layout/user-notices-dialog";
 import { getUserAccessState } from "@/lib/user-access";
 
 export default async function ProtectedLayout({
@@ -33,6 +34,7 @@ export default async function ProtectedLayout({
     <SessionProvider>
       <div className="min-h-screen bg-background">
         <Navbar />
+        <UserNoticesDialog />
         <main className="container py-6 px-4">{children}</main>
       </div>
     </SessionProvider>

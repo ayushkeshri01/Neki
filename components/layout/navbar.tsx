@@ -27,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { NotificationsBell } from "@/components/layout/notifications-bell";
 
 const navItems = [
   { href: "/feed", label: "Feed", icon: Home },
@@ -129,11 +130,7 @@ export function Navbar() {
           <ThemeToggle />
 
           {/* Notifications Bell */}
-          {displayUser && (
-            <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-              <Bell className="h-4 w-4" />
-            </Button>
-          )}
+          {displayUser && <NotificationsBell />}
 
           {/* User Menu */}
           {displayUser ? (
@@ -232,6 +229,12 @@ export function Navbar() {
                     </Link>
                   );
                 })}
+                <Link href="/notifications" onClick={() => setMobileOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start gap-2">
+                    <Bell className="h-4 w-4" />
+                    Notifications
+                  </Button>
+                </Link>
                 {isAdmin && (
                   <Link href="/admin" onClick={() => setMobileOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start gap-2">
