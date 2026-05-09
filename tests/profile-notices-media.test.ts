@@ -50,7 +50,8 @@ test("notice acknowledgement only reports success for ok responses", async () =>
 });
 
 test("S3 helpers sanitize file names and decode bucket keys safely", async () => {
-  const originalSend = s3.s3Client.send;
+  const client = s3.getS3Client();
+  const originalSend = client.send;
   const recordedKeys: string[] = [];
   const mockSend = async (command: { input?: { Key?: string } }) => {
     if (command.input?.Key) {
@@ -60,7 +61,7 @@ test("S3 helpers sanitize file names and decode bucket keys safely", async () =>
     return {};
   };
 
-  (s3.s3Client as typeof s3.s3Client & { send: typeof s3.s3Client.send }).send = mockSend;
+  client.send = mockSend;
 
   const originalNow = Date.now;
   Date.now = () => 1700000000000;
@@ -89,7 +90,7 @@ test("S3 helpers sanitize file names and decode bucket keys safely", async () =>
     assert.equal(deleted, true);
     assert.equal(recordedKeys[1], "uploads/1700000000000-my-avatar.png");
   } finally {
-    (s3.s3Client as typeof s3.s3Client & { send: typeof s3.s3Client.send }).send = originalSend;
+    client.send = originalSend;
     Date.now = originalNow;
   }
 });
