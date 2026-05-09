@@ -86,8 +86,9 @@ async function handleVerifyOtp(req: Request, body: Record<string, unknown>) {
   }
 
   const settings = await getOrCreateSettings();
-  const otpRecord = await prisma.oTP.findUnique({
+  const otpRecord = await prisma.oTP.findFirst({
     where: { email },
+    orderBy: { createdAt: "desc" },
   });
 
   if (!otpRecord || otpRecord.code !== code || otpRecord.expiresAt < new Date()) {
@@ -159,7 +160,7 @@ async function handleVerifyOtp(req: Request, body: Record<string, unknown>) {
       },
     });
 
-    await tx.oTP.delete({ where: { email } });
+    await tx.oTP.deleteMany({ where: { email } });
   });
 
   return NextResponse.json({
