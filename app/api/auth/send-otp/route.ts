@@ -67,8 +67,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const existingOtp = await prisma.oTP.findUnique({
+    const existingOtp = await prisma.oTP.findFirst({
       where: { email: normalizedEmail },
+      orderBy: { createdAt: "desc" },
       select: { expiresAt: true },
     });
 
@@ -95,16 +96,12 @@ export async function POST(req: Request) {
     const code = randomInt(100000, 999999).toString();
 
     // Store in DB, expires in 10 minutes
-    await prisma.oTP.upsert({
-      where: { email: normalizedEmail },
-      create: {
+    await prisma.oTP.deleteMany({ where: { email: normalizedEmail } });
+    await prisma.oTP.create({
+      data: {
         email: normalizedEmail,
         code,
         expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
-      },
-      update: {
-        code,
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       },
     });
 
