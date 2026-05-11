@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -383,9 +384,7 @@ function LoginContent() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background p-4 font-sans">
         <Card className="w-full max-w-md shadow-xl border-primary/10">
           <CardHeader className="text-center space-y-6 pb-4">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-primary/60 text-primary-foreground font-bold text-2xl shadow-lg ring-4 ring-primary/10">
-              NK
-            </div>
+            <Image src="/logo.png" alt="Neki" width={64} height={64} className="mx-auto rounded-2xl" />
             <div className="space-y-2">
               <CardTitle className="text-3xl font-bold tracking-tight">Neki</CardTitle>
               <CardDescription className="text-base">

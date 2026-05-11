@@ -9,6 +9,7 @@ export default async function AdminSettingsPage() {
       initialSettings={{
         allowedDomains: settings.allowedDomains,
         privacyPolicyVersion: settings.privacyPolicyVersion ?? "v1",
+        autoLogoutDays: settings.autoLogoutDays ?? null,
       }}
     />
   );

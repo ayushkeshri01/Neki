@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import { Heart, Users, Trophy, ArrowRight } from "lucide-react";
@@ -15,9 +16,7 @@ export default function AboutPage() {
         <header className="py-6">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                NK
-              </div>
+              <Image src="/logo.png" alt="Neki" width={40} height={40} className="rounded-lg" />
               <span className="text-xl font-semibold">Neki</span>
             </Link>
             <div className="flex items-center gap-3">

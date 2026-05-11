@@ -5,6 +5,7 @@ export const DEFAULT_PRIVACY_POLICY_VERSION = "v1";
 export interface AppSettingsValues {
   allowedDomains: string[];
   privacyPolicyVersion: string;
+  autoLogoutDays: number | null;
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -102,13 +103,23 @@ export function normalizePrivacyPolicyVersion(value: unknown): string {
   return normalizedVersion || DEFAULT_PRIVACY_POLICY_VERSION;
 }
 
+export function normalizeAutoLogoutDays(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+  const num = Number(value);
+  return Number.isInteger(num) && num > 0 ? num : null;
+}
+
 export function sanitizeAppSettings(settings: {
   allowedDomains: string[];
   privacyPolicyVersion: string;
+  autoLogoutDays: number | null;
 }): AppSettingsValues {
   return {
     allowedDomains: sanitizeAllowedDomains(settings.allowedDomains),
     privacyPolicyVersion: normalizePrivacyPolicyVersion(settings.privacyPolicyVersion),
+    autoLogoutDays: normalizeAutoLogoutDays(settings.autoLogoutDays),
   };
 }
 
@@ -119,7 +130,7 @@ export function parseAdminSettingsInput(
     return { error: "Invalid settings payload" };
   }
 
-  const { allowedDomains, privacyPolicyVersion } = input;
+  const { allowedDomains, privacyPolicyVersion, autoLogoutDays } = input;
   const parsedAllowedDomains = parseAllowedDomainsInput(allowedDomains);
 
   if (parsedAllowedDomains.error) {
@@ -130,6 +141,7 @@ export function parseAdminSettingsInput(
     value: {
       allowedDomains: parsedAllowedDomains.allowedDomains,
       privacyPolicyVersion: normalizePrivacyPolicyVersion(privacyPolicyVersion),
+      autoLogoutDays: normalizeAutoLogoutDays(autoLogoutDays),
     },
   };
 }
@@ -142,6 +154,7 @@ export async function getOrCreateSettings() {
       id: "default",
       allowedDomains: [],
       privacyPolicyVersion: DEFAULT_PRIVACY_POLICY_VERSION,
+      autoLogoutDays: null,
     },
   });
 }

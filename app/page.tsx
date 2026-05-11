@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -20,9 +21,7 @@ export default async function HomePage() {
         <header className="py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                NK
-              </div>
+              <Image src="/logo.png" alt="Neki" width={40} height={40} className="rounded-lg" />
               <span className="text-xl font-semibold">Neki</span>
             </div>
               <div className="flex items-center gap-2">

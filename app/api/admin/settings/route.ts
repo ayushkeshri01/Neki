@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: parsedBody.error }, { status: 400 });
     }
 
-    const { allowedDomains, privacyPolicyVersion } = parsedBody.value;
+    const { allowedDomains, privacyPolicyVersion, autoLogoutDays } = parsedBody.value;
 
     await prisma.appSettings.upsert({
       where: { id: "default" },
@@ -35,10 +35,12 @@ export async function PUT(req: NextRequest) {
         id: "default",
         allowedDomains,
         privacyPolicyVersion,
+        autoLogoutDays,
       },
       update: {
         allowedDomains,
         privacyPolicyVersion,
+        autoLogoutDays,
       },
     });
 

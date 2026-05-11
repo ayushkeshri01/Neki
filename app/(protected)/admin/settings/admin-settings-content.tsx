@@ -13,6 +13,7 @@ import { toast } from "sonner";
 interface Settings {
   allowedDomains: string[];
   privacyPolicyVersion: string;
+  autoLogoutDays: number | null;
 }
 
 interface AdminSettingsContentProps {
@@ -180,6 +181,26 @@ export function AdminSettingsContent({
             />
             <p className="text-xs text-muted-foreground">
               New registrations must accept this policy version.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="autoLogoutDays">Auto Logout (Days)</Label>
+            <Input
+              id="autoLogoutDays"
+              type="number"
+              min={1}
+              value={settings.autoLogoutDays ?? ""}
+              onChange={(e) =>
+                setSettings((s) => ({
+                  ...s,
+                  autoLogoutDays: e.target.value ? parseInt(e.target.value) : null,
+                }))
+              }
+              placeholder="e.g. 30"
+            />
+            <p className="text-xs text-muted-foreground">
+              Users will be automatically logged out after this many days since their last login. Leave empty to disable.
             </p>
           </div>
 

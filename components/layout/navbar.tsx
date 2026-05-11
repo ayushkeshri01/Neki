@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -86,9 +87,7 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/feed" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-            NK
-          </div>
+          <Image src="/logo.png" alt="Neki" width={36} height={36} className="rounded-lg" />
           <span className="hidden font-semibold sm:inline-block">Neki</span>
         </Link>
 

@@ -113,13 +113,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user?.id) {
         const userId = String(user.id);
         token.id = userId;
         token.sub = userId;
         token.role = user.role;
         token.status = user.status;
+
+        const dbUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { lastLoginAt: true },
+        });
+        if (dbUser?.lastLoginAt) {
+          token.lastLoginAt = dbUser.lastLoginAt.toISOString();
+        }
+      }
+
+      if (token.sub && token.lastLoginAt && trigger !== "signIn") {
+        const settings = await prisma.appSettings.findUnique({
+          where: { id: "default" },
+          select: { autoLogoutDays: true },
+        });
+        if (settings?.autoLogoutDays && settings.autoLogoutDays > 0) {
+          const lastLogin = new Date(token.lastLoginAt as string);
+          const expiryDate = new Date(
+            lastLogin.getTime() + settings.autoLogoutDays * 24 * 60 * 60 * 1000
+          );
+          if (new Date() > expiryDate) {
+            return null;
+          }
+        }
       }
 
       return token;
