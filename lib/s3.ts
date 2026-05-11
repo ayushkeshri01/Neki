@@ -3,4 +3,5 @@ export {
   deleteFromS3,
   buildS3PublicUrl,
   getS3ObjectKey,
+  getS3Client,
 } from "./storage";

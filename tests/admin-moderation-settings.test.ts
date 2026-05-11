@@ -90,10 +90,12 @@ test("sanitizeAppSettings preserves valid persisted values", () => {
     sanitizeAppSettings({
       allowedDomains: [" Main.Example.com ", "main.example.com", "support.example.org"],
       privacyPolicyVersion: "v3",
+      autoLogoutDays: null,
     }),
     {
       allowedDomains: ["main.example.com", "support.example.org"],
       privacyPolicyVersion: "v3",
+      autoLogoutDays: null,
     }
   );
 });

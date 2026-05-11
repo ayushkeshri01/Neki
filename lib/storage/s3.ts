@@ -3,7 +3,7 @@ import { StorageProvider, UploadResult } from "./provider";
 
 let s3Client: S3Client | null = null;
 
-function getS3Client(): S3Client {
+export function getS3Client(): S3Client {
   if (!s3Client) {
     const region = process.env.AWS_REGION?.trim() || "us-east-1";
     const accessKeyId = process.env.AWS_ACCESS_KEY_ID?.trim();
