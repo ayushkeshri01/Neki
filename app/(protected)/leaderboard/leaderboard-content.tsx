@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Trophy, Medal, Award, Crown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -49,20 +50,24 @@ export function LeaderboardContent({
             {/* Second Place */}
             {topThree[1] && (
               <div className="flex flex-col items-center">
-                <div className="relative">
-                  <Avatar className="h-16 w-16 border-2 border-muted-foreground/50">
-                    <AvatarImage src={topThree[1].image || ""} />
-                    <AvatarFallback className="bg-muted text-lg">
-                      {topThree[1].name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-muted-foreground/20">
-                    <Medal className="h-4 w-4 text-muted-foreground" />
+                <Link href={`/profile/${topThree[1].id}`}>
+                  <div className="relative">
+                    <Avatar className="h-16 w-16 border-2 border-muted-foreground/50">
+                      <AvatarImage src={topThree[1].image || ""} />
+                      <AvatarFallback className="bg-muted text-lg">
+                        {topThree[1].name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-muted-foreground/20">
+                      <Medal className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </div>
-                </div>
-                <p className="mt-2 text-sm font-medium">
-                  {topThree[1].name || "Anonymous"}
-                </p>
+                </Link>
+                <Link href={`/profile/${topThree[1].id}`}>
+                  <p className="mt-2 text-sm font-medium">
+                    {topThree[1].name || "Anonymous"}
+                  </p>
+                </Link>
                 <p className="text-xs text-muted-foreground">
                   {topThree[1].points} GDCs
                 </p>
@@ -78,20 +83,24 @@ export function LeaderboardContent({
             {/* First Place */}
             {topThree[0] && (
               <div className="flex flex-col items-center">
-                <div className="relative">
-                  <Avatar className="h-20 w-20 border-4 border-primary">
-                    <AvatarImage src={topThree[0].image || ""} />
-                    <AvatarFallback className="bg-primary text-xl text-primary-foreground">
-                      {topThree[0].name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-                    <Crown className="h-4 w-4 text-primary-foreground" />
+                <Link href={`/profile/${topThree[0].id}`}>
+                  <div className="relative">
+                    <Avatar className="h-20 w-20 border-4 border-primary">
+                      <AvatarImage src={topThree[0].image || ""} />
+                      <AvatarFallback className="bg-primary text-xl text-primary-foreground">
+                        {topThree[0].name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -top-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary">
+                      <Crown className="h-4 w-4 text-primary-foreground" />
+                    </div>
                   </div>
-                </div>
-                <p className="mt-2 font-semibold">
-                  {topThree[0].name || "Anonymous"}
-                </p>
+                </Link>
+                <Link href={`/profile/${topThree[0].id}`}>
+                  <p className="mt-2 font-semibold">
+                    {topThree[0].name || "Anonymous"}
+                  </p>
+                </Link>
                 <p className="text-sm text-primary font-medium">
                   {topThree[0].points} GDCs
                 </p>
@@ -107,20 +116,24 @@ export function LeaderboardContent({
             {/* Third Place */}
             {topThree[2] && (
               <div className="flex flex-col items-center">
-                <div className="relative">
-                  <Avatar className="h-16 w-16 border-2 border-amber-600/50">
-                    <AvatarImage src={topThree[2].image || ""} />
-                    <AvatarFallback className="bg-amber-600/20 text-lg text-amber-600">
-                      {topThree[2].name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-amber-600/20">
-                    <Award className="h-4 w-4 text-amber-600" />
+                <Link href={`/profile/${topThree[2].id}`}>
+                  <div className="relative">
+                    <Avatar className="h-16 w-16 border-2 border-amber-600/50">
+                      <AvatarImage src={topThree[2].image || ""} />
+                      <AvatarFallback className="bg-amber-600/20 text-lg text-amber-600">
+                        {topThree[2].name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-amber-600/20">
+                      <Award className="h-4 w-4 text-amber-600" />
+                    </div>
                   </div>
-                </div>
-                <p className="mt-2 text-sm font-medium">
-                  {topThree[2].name || "Anonymous"}
-                </p>
+                </Link>
+                <Link href={`/profile/${topThree[2].id}`}>
+                  <p className="mt-2 text-sm font-medium">
+                    {topThree[2].name || "Anonymous"}
+                  </p>
+                </Link>
                 <p className="text-xs text-muted-foreground">
                   {topThree[2].points} GDCs
                 </p>
@@ -158,17 +171,21 @@ export function LeaderboardContent({
                   <div className="w-8 text-center font-medium text-muted-foreground">
                     #{rank}
                   </div>
-                  <Avatar className={cn("h-10 w-10", isCurrentUser && "ring-2 ring-primary")}>
-                    <AvatarImage src={leader.image || ""} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {leader.name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link href={`/profile/${leader.id}`}>
+                    <Avatar className={cn("h-10 w-10", isCurrentUser && "ring-2 ring-primary")}>
+                      <AvatarImage src={leader.image || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {leader.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                   <div className="flex-1">
-                    <p className={cn("font-medium", isCurrentUser && "text-primary")}>
-                      {leader.name || "Anonymous"}
-                      {isCurrentUser && " (You)"}
-                    </p>
+                    <Link href={`/profile/${leader.id}`}>
+                      <p className={cn("font-medium", isCurrentUser && "text-primary")}>
+                        {leader.name || "Anonymous"}
+                        {isCurrentUser && " (You)"}
+                      </p>
+                    </Link>
                     <p className="text-xs text-muted-foreground">
                       {leader._count.posts} posts · {leader.likesReceived} likes
                     </p>
