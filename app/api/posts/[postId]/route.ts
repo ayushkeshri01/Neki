@@ -76,3 +76,61 @@ export async function DELETE(
     return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
   }
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ postId: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!(await isActiveUser(session.user.id))) {
+      return NextResponse.json({ error: "Account is not active" }, { status: 403 });
+    }
+
+    const { postId } = await params;
+    const { content } = await req.json();
+
+    if (!content || typeof content !== "string" || content.trim().length === 0) {
+      return NextResponse.json({ error: "Content is required" }, { status: 400 });
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { 
+        authorId: true,
+        communities: {
+          select: {
+            community: { select: { slug: true } }
+          }
+        }
+      },
+    });
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    if (post.authorId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: { content: content.trim() },
+    });
+
+    revalidatePath("/feed");
+    for (const communityPost of post.communities) {
+      revalidatePath(`/communities/${communityPost.community.slug}`);
+    }
+
+    return NextResponse.json(updatedPost);
+  } catch (error) {
+    console.error("Edit post error:", error);
+    return NextResponse.json({ error: "Failed to update post" }, { status: 500 });
+  }
+}

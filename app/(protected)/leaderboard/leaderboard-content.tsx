@@ -99,9 +99,9 @@ export function LeaderboardContent({
                 <div className="flex flex-col items-center w-1/3 group">
                   <div className="relative mb-6">
                     <Link href={`/profile/${topThree[1].id}`}>
-                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-slate-200 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
+                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-slate-200 dark:border-slate-600 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
                         <AvatarImage src={topThree[1].image || ""} />
-                        <AvatarFallback className="bg-slate-100 text-slate-600 font-bold text-xl">
+                        <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 font-bold text-xl">
                           {topThree[1].name?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -118,7 +118,7 @@ export function LeaderboardContent({
                     </div>
                   </div>
                   <div className="w-full h-24 md:h-32 bg-slate-100 dark:bg-slate-800/50 rounded-t-3xl flex items-start justify-center pt-4 shadow-inner border-t border-x border-slate-200/30">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Silver</span>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">Silver</span>
                   </div>
                 </div>
               )}
@@ -154,8 +154,8 @@ export function LeaderboardContent({
                     </div>
                   </div>
                   <div className="w-full h-32 md:h-48 bg-primary rounded-t-[2.5rem] flex items-start justify-center pt-6 shadow-inner relative overflow-hidden group-hover:bg-primary/90 transition-colors">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
-                    <span className="text-sm font-black text-white uppercase tracking-widest z-10">Gold</span>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 dark:via-black/10 to-transparent" />
+                    <span className="text-sm font-black text-primary-foreground uppercase tracking-widest z-10">Gold</span>
                   </div>
                 </div>
               )}
@@ -165,9 +165,9 @@ export function LeaderboardContent({
                 <div className="flex flex-col items-center w-1/3 group">
                   <div className="relative mb-6">
                     <Link href={`/profile/${topThree[2].id}`}>
-                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-orange-300 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
+                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-orange-300 dark:border-orange-600 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
                         <AvatarImage src={topThree[2].image || ""} />
-                        <AvatarFallback className="bg-orange-50 text-orange-600 font-bold text-xl">
+                        <AvatarFallback className="bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-200 font-bold text-xl">
                           {topThree[2].name?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -184,7 +184,7 @@ export function LeaderboardContent({
                     </div>
                   </div>
                   <div className="w-full h-20 md:h-28 bg-orange-100 dark:bg-orange-900/30 rounded-t-3xl flex items-start justify-center pt-4 shadow-inner border-t border-x border-orange-300/30">
-                    <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Bronze</span>
+                    <span className="text-xs font-bold text-orange-700 dark:text-orange-300 uppercase tracking-widest">Bronze</span>
                   </div>
                 </div>
               )}
@@ -221,14 +221,17 @@ export function LeaderboardContent({
                         </AvatarFallback>
                       </Avatar>
                     </Link>
-                    <div className="flex-1 min-w-0">
-                      <p className={cn("font-bold text-lg truncate group-hover:text-primary transition-colors", isCurrentUser && "text-primary")}>
+                    <div className="flex-1 min-w-0 pr-2">
+                      <p className={cn(
+                        "font-bold text-base md:text-lg group-hover:text-primary transition-colors leading-tight",
+                        isCurrentUser && "text-primary"
+                      )}>
                         {leader.name || "Anonymous"}
                         {isCurrentUser && " (You)"}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                        <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5" /> {leader._count.posts} posts</span>
-                        <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> {leader.likesReceived} likes</span>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] md:text-xs text-muted-foreground mt-1">
+                        <span className="flex items-center gap-1 shrink-0"><Award className="h-3 w-3 md:h-3.5 md:w-3.5" /> {leader._count.posts} posts</span>
+                        <span className="flex items-center gap-1 shrink-0"><Heart className="h-3 w-3 md:h-3.5 md:w-3.5" /> {leader.likesReceived} likes</span>
                       </div>
                     </div>
                     <div className="text-right pr-2">
@@ -251,12 +254,12 @@ export function LeaderboardContent({
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-primary text-white p-8 rounded-[2.5rem] shadow-premium-hover relative overflow-hidden"
+              className="bg-primary text-primary-foreground p-8 rounded-[2.5rem] shadow-premium-hover relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 dark:bg-black/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between">
-                  <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center font-black text-3xl">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 dark:bg-black/20 flex items-center justify-center font-black text-3xl">
                     #{currentUserRank}
                   </div>
                   <Award className="h-10 w-10 opacity-40" />
@@ -268,7 +271,7 @@ export function LeaderboardContent({
                   </p>
                 </div>
                 <Link href="/create-post" className="block">
-                  <Button className="w-full rounded-full bg-white text-primary hover:bg-white/90 font-bold py-6">
+                  <Button className="w-full rounded-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-bold py-6">
                     Post New Impact
                   </Button>
                 </Link>
@@ -308,7 +311,7 @@ export function LeaderboardContent({
           </div>
 
           {/* Promo Card */}
-          <div className="bg-secondary text-white p-8 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
+          <div className="bg-secondary text-secondary-foreground p-8 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
             <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <Star className="h-12 w-12 mb-6 opacity-40 group-hover:scale-110 transition-transform" />
@@ -316,9 +319,6 @@ export function LeaderboardContent({
               <p className="text-sm opacity-80 mb-8 leading-relaxed">
                 Participate in featured community events to earn bonus Good Deed Credits and rise to the top.
               </p>
-              <Button variant="outline" className="w-full rounded-full border-white/40 text-white hover:bg-white/10 font-bold py-6">
-                Explore Initiatives
-              </Button>
             </div>
           </div>
         </div>

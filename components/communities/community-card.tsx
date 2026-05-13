@@ -33,6 +33,7 @@ export function CommunityCard({
   onLeave,
   memberActionLoading,
 }: CommunityCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   return (
     <Card className="bg-card rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500 flex flex-col h-full group border-border/40">
       <div className="h-48 relative overflow-hidden">
@@ -61,9 +62,22 @@ export function CommunityCard({
           </h3>
         </Link>
         
-        <p className="text-muted-foreground font-medium text-sm line-clamp-3 mb-8 leading-relaxed flex-grow">
-          {community.description || "Join this community to start making an impact together."}
-        </p>
+        <div className="flex-grow">
+          <p className={cn(
+            "text-muted-foreground font-medium text-sm leading-relaxed mb-4",
+            !isExpanded && "line-clamp-3"
+          )}>
+            {community.description || "Join this community to start making an impact together."}
+          </p>
+          {community.description && community.description.length > 120 && (
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mb-6"
+            >
+              {isExpanded ? "Show Less" : "Read More"}
+            </button>
+          )}
+        </div>
 
         <div className="grid grid-cols-2 gap-4 mb-8 border-t border-border/40 pt-6">
           <div className="space-y-1">

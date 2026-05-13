@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, FlagOff, EyeOff, Trash2, Star } from "lucide-react";
+import { MoreHorizontal, FlagOff, EyeOff, Trash2, Star, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { cn, formatTimeAgo } from "@/lib/utils";
 import { ReactionButton, REACTIONS } from "@/components/posts/reaction-button";
 import type { ReactionType } from "@/lib/reactions";
@@ -105,9 +116,14 @@ export function PostCard({
   onReport,
   onDelete,
 }: PostCardProps) {
+  const router = useRouter();
   const [reactionState, setReactionState] = useState(() =>
     getReactionState(post, currentUserId)
   );
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [prevPostId, setPrevPostId] = useState(post.id);
   const [prevUserId, setPrevUserId] = useState(currentUserId);
@@ -149,7 +165,38 @@ export function PostCard({
   const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   const isHidden = post.status === "HIDDEN";
-  const canDeletePost = currentUserId === post.author.id || isAdmin;
+  const isAuthor = currentUserId === post.author.id;
+  const canDeletePost = isAuthor || isAdmin;
+
+  const handleEdit = async () => {
+    if (!editContent.trim() || editContent === post.content) {
+      setEditDialogOpen(false);
+      return;
+    }
+
+    setIsEditing(true);
+    try {
+      const res = await fetch(`/api/posts/${post.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: editContent.trim() }),
+      });
+
+      if (res.ok) {
+        toast.success("Post updated successfully.");
+        setEditDialogOpen(false);
+        router.refresh();
+        return;
+      }
+
+      const data = await res.json();
+      toast.error(data.error || "Failed to update post.");
+    } catch {
+      toast.error("Failed to update post.");
+    } finally {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <motion.div
@@ -226,6 +273,15 @@ export function PostCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[160px]">
+                  {isAuthor && (
+                    <DropdownMenuItem
+                      className="font-bold p-3 rounded-xl"
+                      onClick={() => setEditDialogOpen(true)}
+                    >
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit Post
+                    </DropdownMenuItem>
+                  )}
                   {canDeletePost && (
                     <DropdownMenuItem
                       className="text-destructive font-bold p-3 rounded-xl focus:bg-destructive/10 focus:text-destructive"
@@ -381,6 +437,43 @@ export function PostCard({
           open={lightboxOpen}
           onOpenChange={setLightboxOpen}
         />
+
+        {/* Edit Dialog */}
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent className="rounded-[2.5rem] p-8 max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="font-display text-2xl font-black">Edit Impact Story</DialogTitle>
+              <DialogDescription className="font-medium">
+                Refine your story to better inspire the community.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-6">
+              <Textarea
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                placeholder="What's on your mind?"
+                className="min-h-[200px] rounded-2xl border-border/40 focus:ring-primary font-medium text-base p-4"
+              />
+            </div>
+            <DialogFooter className="gap-3">
+              <Button
+                variant="outline"
+                className="rounded-full px-8 py-6 font-bold"
+                onClick={() => setEditDialogOpen(false)}
+                disabled={isEditing}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="rounded-full px-8 py-6 font-bold shadow-premium"
+                onClick={handleEdit}
+                disabled={isEditing || !editContent.trim()}
+              >
+                {isEditing ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Card>
     </motion.div>
   );
