@@ -4,6 +4,9 @@ import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/layout/page-transition";
+import { SessionProvider } from "@/components/providers/session-provider";
+import { auth } from "@/lib/auth";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -85,18 +88,17 @@ export const metadata: Metadata = {
   },
 };
 
-import { PageTransition } from "@/components/layout/page-transition";
-import { SessionProvider } from "@/components/providers/session-provider";
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", plusJakarta.variable, inter.variable)}>
       <body className={cn("min-h-screen bg-background font-sans antialiased", inter.className)}>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

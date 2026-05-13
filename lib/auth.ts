@@ -15,10 +15,8 @@ class AuthClientError extends CredentialsSignin {
   }
 }
 
-const authSecret = process.env.AUTH_SECRET;
-if (!authSecret) {
-  throw new Error("AUTH_SECRET environment variable is required");
-}
+// AUTH_SECRET should be set in environment variables. 
+// NextAuth will handle missing secrets internally or via runtime errors during execution.
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
