@@ -13,11 +13,13 @@ const navItems = [
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
+import { motion } from "framer-motion";
+
 export function SidebarNav() {
   const pathname = usePathname();
 
   return (
-    <div className="sticky top-24 space-y-1">
+    <div className="sticky top-24 space-y-2 pr-4">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
@@ -29,11 +31,20 @@ export function SidebarNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent",
-              isActive && "bg-accent text-accent-foreground"
+              "relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all group",
+              isActive 
+                ? "text-primary bg-primary/10" 
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
-            <Icon className="h-4 w-4" />
+            {isActive && (
+              <motion.div
+                layoutId="sidebar-active"
+                className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"
+                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              />
+            )}
+            <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", isActive && "text-primary")} />
             {item.label}
           </Link>
         );

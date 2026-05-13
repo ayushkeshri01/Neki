@@ -44,6 +44,8 @@ interface ProfileIdentityUpdate {
 
 const PROFILE_UPDATED_EVENT = "neki:profile-updated";
 
+import { motion } from "framer-motion";
+
 export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -83,170 +85,161 @@ export function Navbar() {
       : session?.user;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-      <div className="container flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/feed" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Neki" width={36} height={36} className="rounded-lg" />
-          <span className="hidden font-semibold sm:inline-block">Neki</span>
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-20 items-center justify-between px-margin-desktop max-w-container-max mx-auto">
+        {/* Brand Logo */}
+        <Link 
+          href="/feed" 
+          className="font-display text-2xl font-extrabold text-primary transition-opacity hover:opacity-80"
+        >
+          Neki
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-8 h-full">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={isActive ? "secondary" : "ghost"}
-                  size="sm"
-                  className={cn(
-                    "gap-2",
-                    isActive && "bg-primary/10 text-primary"
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </Button>
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={cn(
+                  "relative flex items-center h-full px-1 text-sm font-medium transition-colors hover:text-primary",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {item.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-indicator"
+                    className="absolute bottom-[-1px] left-0 right-0 h-0.5 bg-primary"
+                    transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                  />
+                )}
               </Link>
             );
           })}
-        </div>
+        </nav>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-2">
-          {displayUser && (
-            <Link href="/create-post">
-              <Button size="sm" className="gap-2">
-                <PlusCircle className="h-4 w-4" />
-                <span className="hidden sm:inline">Post</span>
-              </Button>
-            </Link>
-          )}
-
+        {/* Actions */}
+        <div className="flex items-center gap-4">
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Notifications Bell */}
-          {displayUser && <NotificationsBell />}
-
-          {/* User Menu */}
           {displayUser ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src={displayUser.image || ""} alt={displayUser.name || ""} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {displayUser.name?.charAt(0).toUpperCase() ||
-                        displayUser.email?.charAt(0).toUpperCase() ||
-                        "?"}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
-                    {displayUser.name && (
+            <div className="flex items-center gap-4">
+              <NotificationsBell />
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="relative h-10 w-10 rounded-full border border-border/40 overflow-hidden"
+                  >
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={displayUser.image || ""} alt={displayUser.name || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {displayUser.name?.charAt(0).toUpperCase() || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </motion.button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium">{displayUser.name}</p>
-                    )}
-                    <p className="w-48 truncate text-xs text-muted-foreground">
-                      {displayUser.email}
-                    </p>
-                    <p className="text-xs text-primary font-medium">
-                       {displayUser.points} points
-                    </p>
+                      <p className="w-48 truncate text-xs text-muted-foreground">
+                        {displayUser.email}
+                      </p>
+                      <p className="text-xs text-primary font-semibold">
+                         {displayUser.points} GDCs
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile" className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                {isAdmin && (
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Admin
+                    <Link href="/profile" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
                     </Link>
                   </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer text-destructive focus:text-destructive"
-                  onClick={() => signOut()}
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                    onClick={() => signOut()}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
+              <Link href="/create-post" className="hidden sm:block">
+                <motion.div
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <Button className="rounded-full px-6 font-semibold shadow-premium hover:shadow-premium-hover">
+                    Get Started
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
           ) : (
-            <Link href="/login">
-              <Button size="sm">Sign In</Button>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/login">
+                <Button variant="ghost" className="rounded-full px-6">Log In</Button>
+              </Link>
+              <Link href="/register">
+                <Button className="rounded-full px-6 shadow-premium hover:shadow-premium-hover">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
+                <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <SheetHeader className="sr-only">
-                <SheetTitle>Navigation Menu</SheetTitle>
-                <SheetDescription>
-                  Access and navigate through different sessions of the community.
-                </SheetDescription>
+            <SheetContent side="right" className="w-80">
+              <SheetHeader>
+                <SheetTitle className="font-display text-left">Neki</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 pt-4">
+              <div className="flex flex-col gap-2 pt-8">
                 {navItems.map((item) => {
-                  const Icon = item.icon;
                   const isActive = pathname === item.href;
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "flex items-center py-4 px-4 rounded-xl text-lg font-medium transition-colors",
+                        isActive ? "bg-primary/10 text-primary" : "hover:bg-muted"
+                      )}
                     >
-                      <Button
-                        variant={isActive ? "secondary" : "ghost"}
-                        className={cn(
-                          "w-full justify-start gap-2",
-                          isActive && "bg-primary/10 text-primary"
-                        )}
-                      >
-                        <Icon className="h-4 w-4" />
-                        {item.label}
-                      </Button>
+                      {item.label}
                     </Link>
                   );
                 })}
-                <Link href="/notifications" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start gap-2">
-                    <Bell className="h-4 w-4" />
-                    Notifications
-                  </Button>
-                </Link>
-                {isAdmin && (
-                  <Link href="/admin" onClick={() => setMobileOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start gap-2">
-                      <Shield className="h-4 w-4" />
-                      Admin Panel
-                    </Button>
-                  </Link>
-                )}
               </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
