@@ -55,7 +55,7 @@ export default function AboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <Link href="/register">
+                <Link href="/login">
                   <Button size="lg" className="rounded-full px-10 h-16 text-lg font-bold shadow-premium hover:shadow-premium-hover flex items-center gap-2 group">
                     Join the Movement
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -208,7 +208,7 @@ export default function AboutPage() {
               {...fadeIn}
               transition={{ delay: 0.1 }}
             >
-              <Link href="/register">
+              <Link href="/login">
                 <Button size="lg" className="rounded-full px-12 h-16 text-xl font-bold shadow-premium hover:shadow-premium-hover flex items-center gap-2 mx-auto transition-transform hover:scale-105 active:scale-95 group">
                   Get Started
                   <Sparkles className="h-5 w-5 transition-transform group-hover:rotate-12" />

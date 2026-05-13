@@ -56,7 +56,7 @@ export function Hero() {
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href="/about">
+          <Link href="/initiatives">
             <Button variant="outline" size="lg" className="rounded-full px-8 py-7 text-lg font-semibold border-border hover:bg-muted transition-all">
               Explore Initiatives
             </Button>

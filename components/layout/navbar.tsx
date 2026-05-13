@@ -33,7 +33,6 @@ import { motion } from "framer-motion";
 
 const navItems = [
   { href: "/feed", label: "Feed", icon: Home },
-  { href: "/initiatives", label: "Initiatives", icon: Shield },
   { href: "/communities", label: "Communities", icon: Users },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
@@ -50,11 +49,12 @@ const PROFILE_UPDATED_EVENT = "neki:profile-updated";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileIdentity, setProfileIdentity] = useState<ProfileIdentityUpdate | null>(null);
 
   const isAdmin = session?.user?.role === "ADMIN";
+  const isLoading = status === "loading";
 
   useEffect(() => {
     function handleProfileUpdate(event: Event) {
@@ -128,8 +128,19 @@ export function Navbar() {
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {displayUser ? (
+          {isLoading ? (
+            <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+          ) : displayUser ? (
             <div className="flex items-center gap-4">
+              <Link href="/create-post">
+                <Button className="hidden sm:flex rounded-full px-6 font-bold shadow-premium hover:shadow-premium-hover gap-2">
+                  <PlusCircle className="h-4 w-4" />
+                  Create Post
+                </Button>
+                <Button size="icon" className="sm:hidden rounded-full shadow-premium">
+                  <PlusCircle className="h-5 w-5" />
+                </Button>
+              </Link>
               <NotificationsBell />
               
               <DropdownMenu>
@@ -185,23 +196,13 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
               
-              <Link href="/create-post" className="hidden sm:block">
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button className="rounded-full px-6 font-semibold shadow-premium hover:shadow-premium-hover">
-                    Get Started
-                  </Button>
-                </motion.div>
-              </Link>
             </div>
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login">
                 <Button variant="ghost" className="rounded-full px-6">Log In</Button>
               </Link>
-              <Link href="/register">
+              <Link href="/login">
                 <Button className="rounded-full px-6 shadow-premium hover:shadow-premium-hover">
                   Get Started
                 </Button>
@@ -234,10 +235,71 @@ export function Navbar() {
                         isActive ? "bg-primary/10 text-primary" : "hover:bg-muted"
                       )}
                     >
+                      <item.icon className="mr-3 h-5 w-5" />
                       {item.label}
                     </Link>
                   );
                 })}
+                
+                {displayUser && (
+                  <>
+                    <div className="h-px bg-border my-4 mx-4" />
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        "flex items-center py-4 px-4 rounded-xl text-lg font-medium transition-colors hover:bg-muted",
+                        pathname === "/profile" ? "text-primary" : ""
+                      )}
+                    >
+                      <User className="mr-3 h-5 w-5" />
+                      Profile
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMobileOpen(false)}
+                        className={cn(
+                          "flex items-center py-4 px-4 rounded-xl text-lg font-medium transition-colors hover:bg-muted",
+                          pathname === "/admin" ? "text-primary" : ""
+                        )}
+                      >
+                        <Shield className="mr-3 h-5 w-5" />
+                        Admin
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        signOut();
+                      }}
+                      className="flex items-center py-4 px-4 rounded-xl text-lg font-medium text-destructive transition-colors hover:bg-destructive/10"
+                    >
+                      <LogOut className="mr-3 h-5 w-5" />
+                      Log out
+                    </button>
+                  </>
+                )}
+                
+                {!displayUser && (
+                  <>
+                    <div className="h-px bg-border my-4 mx-4" />
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center py-4 px-4 rounded-xl text-lg font-medium transition-colors hover:bg-muted"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center py-4 px-4 rounded-xl text-lg font-medium text-primary transition-colors hover:bg-primary/10"
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>

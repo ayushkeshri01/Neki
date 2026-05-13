@@ -1,33 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Search, 
   Leaf, 
   GraduationCap, 
   HeartPulse, 
   Users2, 
   Star, 
-  Trophy, 
-  ChevronRight, 
   ArrowRight,
-  TrendingUp,
-  Sparkles
+  TrendingUp
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-
-const categories = [
-  { id: "all", label: "All Categories", icon: null },
-  { id: "environment", label: "Environment", icon: Leaf },
-  { id: "education", label: "Education", icon: GraduationCap },
-  { id: "health", label: "Health", icon: HeartPulse },
-  { id: "community", label: "Community", icon: Users2 },
-];
 
 const featuredInitiative = {
   id: "featured-1",
@@ -36,54 +22,63 @@ const featuredInitiative = {
   description: "Join our city-wide effort to plant 10,000 trees this quarter. Help us improve air quality, create green spaces, and foster community resilience.",
   image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop",
   points: 500,
-  progress: 65,
   joinedCount: 243,
 };
 
-const otherInitiatives = [
+const initialInitiatives = [
   {
     id: "2",
     title: "Tech Literacy for Youth",
-    category: "Education",
     description: "Volunteer 2 hours a week to mentor high school students in basic coding and digital literacy skills.",
     image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=2132&auto=format&fit=crop",
-    points: 200,
-    icon: GraduationCap,
   },
   {
     id: "3",
     title: "Local Food Bank Drive",
-    category: "Health",
     description: "Help sort and pack fresh produce for distribution to families facing food insecurity in our immediate community.",
     image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop",
-    points: 150,
-    icon: HeartPulse,
   },
   {
     id: "4",
     title: "Coastal Cleanup Day",
-    category: "Environment",
     description: "Join the weekend team to remove plastic waste from local beaches. Equipment and transportation provided.",
-    image: "https://images.unsplash.com/photo-1618477461853-cf6ed80fafa5?q=80&w=2070&auto=format&fit=crop",
-    points: 300,
-    icon: Leaf,
+    image: "/brain/68fc043e-06ba-4ae6-9121-5653a8cac7c4/coastal_cleanup_premium_1778698638672.png",
+  },
+];
+
+const moreInitiatives = [
+  {
+    id: "5",
+    title: "Senior Companion Program",
+    description: "Visit local senior centers to provide companionship and assistance with daily tasks.",
+    image: "https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "6",
+    title: "Animal Shelter Support",
+    description: "Help our local animal shelter with walking dogs, cleaning facilities, and socializing animals.",
+    image: "/brain/68fc043e-06ba-4ae6-9121-5653a8cac7c4/animal_shelter_support_premium_1778698615875.png",
+  },
+  {
+    id: "7",
+    title: "Community Garden Maintenance",
+    description: "Help maintain our neighborhood garden. Tasks include weeding, planting, and seasonal harvesting.",
+    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=2070&auto=format&fit=crop",
   },
 ];
 
 export function InitiativesContent() {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [initiatives, setInitiatives] = useState(initialInitiatives);
+  const [hasLoadedMore, setHasLoadedMore] = useState(false);
 
-  const filteredInitiatives = otherInitiatives.filter(item => {
-    const matchesCategory = activeCategory === "all" || item.category.toLowerCase() === activeCategory;
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         item.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const handleLoadMore = () => {
+    setInitiatives([...initialInitiatives, ...moreInitiatives]);
+    setHasLoadedMore(true);
+  };
 
   return (
     <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop py-12 space-y-16">
-      {/* Header & Search */}
+      {/* Header */}
       <section className="space-y-10">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
           <motion.div 
@@ -96,54 +91,10 @@ export function InitiativesContent() {
             </h1>
             <p className="text-xl text-muted-foreground font-medium leading-relaxed">
               Find causes that matter to you and join your colleagues in making a tangible difference. 
-              Every action earns Global Do-Gooder Credits (GDCs).
+              Every action earns Good Deed Credits (GDCs).
             </p>
           </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full lg:w-96"
-          >
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <Input 
-                className="pl-12 pr-4 py-6 bg-card border-border/40 rounded-full shadow-premium focus:ring-primary/20 transition-all text-lg"
-                placeholder="Search causes or keywords..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </motion.div>
         </div>
-
-        {/* Filters */}
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex flex-wrap gap-3"
-        >
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={cn(
-                  "px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 flex items-center gap-2 border",
-                  isActive 
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/25" 
-                    : "bg-card text-muted-foreground border-border/40 hover:border-primary/50 hover:text-foreground shadow-sm"
-                )}
-              >
-                {Icon && <Icon className="h-4 w-4" />}
-                {cat.label}
-              </button>
-            );
-          })}
-        </motion.div>
       </section>
 
       {/* Featured Bento Banner */}
@@ -161,12 +112,8 @@ export function InitiativesContent() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           <div className="absolute inset-0 p-10 flex flex-col justify-end">
             <div className="flex items-center gap-3 mb-6">
-              <Badge className="bg-primary text-white font-black text-[10px] uppercase tracking-widest px-4 py-1.5 border-none">
-                <Star className="h-3 w-3 fill-current mr-1.5 inline" /> Featured
-              </Badge>
-              <Badge className="bg-white/10 backdrop-blur-xl text-white border-white/20 font-bold text-[10px] uppercase tracking-widest px-4 py-1.5">
-                {featuredInitiative.category}
-              </Badge>
+              <Star className="h-4 w-4 text-primary fill-current" />
+              <span className="text-xs font-black uppercase tracking-widest text-white/80">Featured Initiative</span>
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
               {featuredInitiative.title}
@@ -195,33 +142,18 @@ export function InitiativesContent() {
             </div>
 
             <div className="space-y-4">
-              <h3 className="font-display text-2xl font-black text-foreground">Current Progress</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between items-end">
-                  <span className="text-sm font-bold text-muted-foreground">6,500 trees funded</span>
-                  <span className="font-display text-2xl font-black text-primary">{featuredInitiative.progress}%</span>
-                </div>
-                <div className="w-full bg-white dark:bg-black/20 rounded-full h-4 p-1 border border-border/20 shadow-inner">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${featuredInitiative.progress}%` }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="bg-primary h-full rounded-full relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent w-full -skew-x-12 translate-x-[-100%] animate-[shimmer_2s_infinite]" />
-                  </motion.div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                <Users2 className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-primary font-bold text-lg mt-8">
+                <Users2 className="h-5 w-5" />
                 {featuredInitiative.joinedCount} colleagues joined
               </div>
             </div>
           </div>
 
-          <Button className="w-full bg-primary text-white hover:bg-primary/90 font-black text-sm uppercase tracking-widest py-8 rounded-2xl shadow-xl shadow-primary/20 relative z-10 transition-all hover:scale-[1.02] active:scale-[0.98]">
-            Join Initiative <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
+          <Link href="/login" className="w-full">
+            <Button className="w-full bg-primary text-white hover:bg-primary/90 font-black text-sm uppercase tracking-widest py-8 rounded-2xl shadow-xl shadow-primary/20 relative z-10 transition-all hover:scale-[1.02] active:scale-[0.98]">
+              Join Initiative <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </Link>
         </Card>
       </motion.section>
 
@@ -238,7 +170,7 @@ export function InitiativesContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
-            {filteredInitiatives.map((item, i) => (
+            {initiatives.map((item, i) => (
               <motion.div
                 key={item.id}
                 layout
@@ -254,11 +186,6 @@ export function InitiativesContent() {
                       style={{ backgroundImage: `url(${item.image})` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute top-6 left-6">
-                      <Badge className="bg-white/10 backdrop-blur-xl text-white border-white/20 font-bold text-[10px] uppercase tracking-widest px-4 py-1.5">
-                        {item.icon && <item.icon className="h-3 w-3 mr-1.5 inline" />} {item.category}
-                      </Badge>
-                    </div>
                   </div>
                   
                   <CardContent className="p-8 flex flex-col flex-grow space-y-4">
@@ -268,16 +195,6 @@ export function InitiativesContent() {
                     <p className="text-muted-foreground font-medium flex-grow leading-relaxed">
                       {item.description}
                     </p>
-                    
-                    <div className="flex items-center justify-between pt-6 border-t border-border/40">
-                      <div className="flex items-center gap-2 bg-primary/5 dark:bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/10">
-                        <Sparkles className="h-4 w-4 text-primary fill-current" />
-                        <span className="text-primary font-black text-xs">+{item.points} GDCs</span>
-                      </div>
-                      <Button variant="ghost" className="text-primary font-black text-xs uppercase tracking-widest hover:bg-primary/5 p-0">
-                        View Details <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -285,16 +202,22 @@ export function InitiativesContent() {
           </AnimatePresence>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex justify-center pt-8"
-        >
-          <Button variant="outline" className="px-10 py-8 border-border/40 text-foreground font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-muted/50 transition-all">
-            Load More Initiatives
-          </Button>
-        </motion.div>
+        {!hasLoadedMore && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex justify-center pt-8"
+          >
+            <Button 
+              onClick={handleLoadMore}
+              variant="outline" 
+              className="px-10 py-8 border-border/40 text-foreground font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-muted/50 transition-all cursor-pointer"
+            >
+              Load More Initiatives
+            </Button>
+          </motion.div>
+        )}
       </section>
     </div>
   );

@@ -57,7 +57,16 @@ export default async function FeedPage({
         },
       },
       likes: {
-        select: { userId: true, type: true },
+        select: { 
+          userId: true, 
+          type: true,
+          user: {
+            select: {
+              name: true,
+              image: true,
+            }
+          }
+        },
       },
       _count: {
         select: {

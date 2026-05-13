@@ -5,7 +5,6 @@ import Link from "next/link";
 const footerLinks = {
   platform: [
     { label: "About Us", href: "/about" },
-    { label: "Contact Support", href: "/support" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },

@@ -171,7 +171,9 @@ export async function POST(req: NextRequest) {
           communityId: { in: communities },
           userId: { not: session.user.id },
         },
-        select: { userId: true },
+        select: { 
+          userId: true, 
+        },
         distinct: ["userId"],
       });
 
@@ -305,7 +307,18 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-        likes: { select: { userId: true, type: true } },
+        likes: { 
+          select: { 
+            userId: true, 
+            type: true,
+            user: {
+              select: {
+                name: true,
+                image: true,
+              }
+            }
+          } 
+        },
         _count: { select: { likes: true } },
       },
       orderBy: { createdAt: "desc" },

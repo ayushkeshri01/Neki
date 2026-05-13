@@ -4,18 +4,16 @@ import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { 
-  Gavel, 
-  UserCheck, 
-  ShieldAlert, 
-  RefreshCw,
-  Sparkles,
-  ArrowLeft,
-  FileCheck
+  Lock, 
+  Database, 
+  Eye, 
+  ShieldCheck,
+  FileText,
+  Clock,
+  Sparkles
 } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-export default function TermsPage() {
+export default function PrivacyPolicyPage() {
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -25,28 +23,28 @@ export default function TermsPage() {
 
   const sections = [
     {
-      title: "Account Responsibilities",
-      content: "Neki is a dedicated company community platform. Users must provide accurate account details and maintain the security of their credentials. You are responsible for all activities that occur under your account.",
-      icon: UserCheck,
+      title: "Data Collection",
+      content: "Neki collects account profile details, authentication metadata, and community activity (posts, likes, and moderation outcomes) to operate the platform safely.",
+      icon: Database,
       color: "bg-primary/10 text-primary"
     },
     {
-      title: "Content & Conduct",
-      content: "All contributions must comply with our Community Guidelines and organizational policies. We strictly prohibit harassment, fraud, and the distribution of unauthorized or illegal content.",
-      icon: FileCheck,
+      title: "Usage & Purpose",
+      content: "We use this information to provide community features, enforce platform rules, detect abuse, and keep an auditable record of moderation decisions.",
+      icon: Eye,
       color: "bg-blue-500/10 text-blue-500"
     },
     {
-      title: "Moderation Authority",
-      content: "Administrators reserve the right to hide, remove, or modify any content. We may also restrict or terminate accounts that violate our terms or pose a risk to the community's integrity.",
-      icon: ShieldAlert,
+      title: "Moderation Records",
+      content: "If your account is moderated, we may store notices and audit entries describing the action and reason. These records are retained to support security and compliance.",
+      icon: ShieldCheck,
       color: "bg-red-500/10 text-red-500"
     },
     {
-      title: "Platform Evolution",
-      content: "We continuously improve Neki. Your continued use of the platform indicates acceptance of these terms and any future updates. We will notify users of significant changes to our policies.",
-      icon: RefreshCw,
-      color: "bg-purple-500/10 text-purple-500"
+      title: "Governance & Security",
+      content: "By using Neki, you agree that your data may be processed for account security, fraud prevention, and community governance.",
+      icon: Lock,
+      color: "bg-green-500/10 text-green-500"
     }
   ];
 
@@ -64,14 +62,14 @@ export default function TermsPage() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 mb-8"
             >
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-xs font-black uppercase tracking-widest text-primary">Platform Agreement</span>
+              <span className="text-xs font-black uppercase tracking-widest text-primary">Your Data, Protected</span>
             </motion.div>
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="font-display text-5xl lg:text-7xl font-black mb-8 leading-tight text-primary"
             >
-              Terms of <span className="italic">Service</span>
+              Privacy <span className="italic">Policy</span>
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -79,13 +77,13 @@ export default function TermsPage() {
               transition={{ delay: 0.1 }}
               className="text-xl text-muted-foreground font-medium leading-relaxed"
             >
-              Please review the rules and expectations for using Neki. 
-              These terms govern our relationship and ensure a fair experience for all changemakers.
+              At Neki, we are committed to transparency and the security of your information. 
+              This policy explains how we handle your data to ensure a safe community experience.
             </motion.p>
           </div>
         </section>
 
-        {/* Terms Grid */}
+        {/* Content Sections */}
         <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {sections.map((section, i) => (
@@ -109,25 +107,6 @@ export default function TermsPage() {
           </div>
         </section>
 
-        {/* Acceptance Section */}
-        <section className="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop mt-24 text-center">
-          <motion.div 
-            {...fadeIn}
-            className="p-12 rounded-[3rem] bg-primary/[0.03] border border-primary/10"
-          >
-            <Gavel className="h-10 w-10 text-primary mx-auto mb-6" />
-            <p className="text-muted-foreground font-bold text-lg leading-relaxed mb-10">
-              By accessing Neki, you acknowledge that you have read, understood, and agreed to be bound by these terms. 
-              Abuse of the platform may result in immediate account termination.
-            </p>
-            <Link href="/login">
-              <Button variant="ghost" className="rounded-full gap-2 font-bold group">
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to Login
-              </Button>
-            </Link>
-          </motion.div>
-        </section>
       </main>
 
       <Footer />

@@ -27,14 +27,6 @@ interface CommunitiesContentProps {
   memberCommunityIds: string[];
 }
 
-const CATEGORIES = [
-  "All Categories",
-  "Education",
-  "Environment",
-  "Health",
-  "Animal Welfare",
-  "Technology"
-];
 
 export function CommunitiesContent({
   communities,
@@ -43,7 +35,6 @@ export function CommunitiesContent({
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"explore" | "my">("explore");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All Categories");
   const [loadingCommunities, setLoadingCommunities] = useState<Set<string>>(new Set());
 
   const getCommunityName = (id: string) =>
@@ -113,14 +104,10 @@ export function CommunitiesContent({
       const matchesTab = activeTab === "my" ? isMember : true;
       const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            (c.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
-      // Category filter is visual for now as schema doesn't support it, but we can filter by description/name if needed
-      const matchesCategory = activeCategory === "All Categories" || 
-                             (c.description?.toLowerCase().includes(activeCategory.toLowerCase()) ?? false) ||
-                             c.name.toLowerCase().includes(activeCategory.toLowerCase());
       
-      return matchesTab && matchesSearch && matchesCategory;
+      return matchesTab && matchesSearch;
     });
-  }, [communities, memberCommunityIds, activeTab, searchQuery, activeCategory]);
+  }, [communities, memberCommunityIds, activeTab, searchQuery]);
 
   return (
     <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop py-12 space-y-16">
@@ -193,23 +180,6 @@ export function CommunitiesContent({
           </div>
         </div>
 
-        {/* Category Chips */}
-        <div className="flex flex-wrap gap-3">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 border",
-                activeCategory === cat 
-                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/25" 
-                  : "bg-card text-muted-foreground border-border/40 hover:border-primary/50 hover:text-foreground"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
       </section>
 
       {/* Community Grid */}

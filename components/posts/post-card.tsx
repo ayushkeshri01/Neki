@@ -15,7 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn, formatTimeAgo } from "@/lib/utils";
-import { ReactionButton } from "@/components/posts/reaction-button";
+import { ReactionButton, REACTIONS } from "@/components/posts/reaction-button";
 import type { ReactionType } from "@/lib/reactions";
 import { DB_TO_UI } from "@/lib/reactions";
 import { ImageLightbox } from "@/components/posts/image-lightbox";
@@ -23,7 +23,11 @@ import { motion } from "framer-motion";
 
 interface PostLike {
   userId: string;
-  type: string; // Prisma ReactionType (LIKE | CELEBRATE | LOVE | INSIGHTFUL | SUPPORT)
+  type: string; // Prisma ReactionType
+  user: {
+    name: string | null;
+    image: string | null;
+  };
 }
 
 interface PostCardProps {
@@ -62,16 +66,32 @@ interface PostCardProps {
 interface ReactionState {
   reaction: ReactionType | null;
   likeCount: number;
+  counts: Record<ReactionType, number>;
 }
 
 function getReactionState(
   post: PostCardProps["post"],
   currentUserId?: string
-): ReactionState {
+): ReactionState & { counts: Record<ReactionType, number> } {
   const own = post.likes.find((l) => l.userId === currentUserId);
+  
+  const counts: Record<ReactionType, number> = {
+    like: 0,
+    celebrate: 0,
+    love: 0,
+    insightful: 0,
+    support: 0
+  };
+
+  post.likes.forEach(l => {
+    const uiType = DB_TO_UI[l.type as keyof typeof DB_TO_UI] as ReactionType;
+    if (uiType) counts[uiType]++;
+  });
+
   return {
     reaction: own ? DB_TO_UI[own.type as keyof typeof DB_TO_UI] ?? "like" : null,
     likeCount: post._count.likes,
+    counts
   };
 }
 
@@ -106,9 +126,21 @@ export function PostCard({
       const wasReacted = s.reaction !== null;
       const willReact = next !== null;
       let nextCount = s.likeCount;
+      const nextCounts = { ...s.counts };
+
+      // Update total count
       if (!wasReacted && willReact) nextCount += 1;
       else if (wasReacted && !willReact) nextCount = Math.max(0, nextCount - 1);
-      return { reaction: next, likeCount: nextCount };
+
+      // Update individual counts
+      if (wasReacted && s.reaction) {
+        nextCounts[s.reaction] = Math.max(0, nextCounts[s.reaction] - 1);
+      }
+      if (willReact && next) {
+        nextCounts[next] = (nextCounts[next] || 0) + 1;
+      }
+
+      return { reaction: next, likeCount: nextCount, counts: nextCounts };
     });
     onLike?.(post.id, next);
   };
@@ -286,12 +318,32 @@ export function PostCard({
           {/* Actions */}
           <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <ReactionButton
-                reaction={reaction}
-                count={likeCount}
-                onChange={handleReactionChange}
-                disabled={!currentUserId}
-              />
+              <div className="flex items-center gap-3">
+                <ReactionButton
+                  reaction={reaction}
+                  count={likeCount}
+                  onChange={handleReactionChange}
+                  disabled={!currentUserId}
+                  hideCount
+                />
+                
+                {/* Individual Reaction Counts */}
+                <div className="flex items-center gap-2 px-3 py-1 bg-muted/50 rounded-full border border-border/20">
+                  {Object.entries(reactionState.counts).map(([type, count]) => {
+                    if (count === 0) return null;
+                    const config = REACTIONS.find(r => r.id === type);
+                    return (
+                      <div key={type} className="flex items-center gap-1 group/reaction">
+                        <span className="text-sm">{config?.emoji}</span>
+                        <span className="text-xs font-black text-muted-foreground">{count}</span>
+                      </div>
+                    );
+                  })}
+                  {likeCount === 0 && (
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">No reactions yet</span>
+                  )}
+                </div>
+              </div>
             </div>
             
             {/* Social Proof */}
@@ -302,15 +354,14 @@ export function PostCard({
                 className="flex items-center gap-3"
               >
                 <div className="flex -space-x-3">
-                  {[1, 2, 3].slice(0, Math.min(likeCount, 3)).map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden ring-2 ring-primary/5 shadow-sm">
-                      <Image 
-                        src={`https://i.pravatar.cc/150?u=${post.id}${i}`} 
-                        alt="Liker" 
-                        width={32} 
-                        height={32} 
-                        className="object-cover"
-                      />
+                  {post.likes.slice(0, 3).map((like, i) => (
+                    <div key={like.userId} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden ring-2 ring-primary/5 shadow-sm">
+                      <Avatar className="h-full w-full">
+                        <AvatarImage src={like.user?.image || ""} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                          {like.user?.name?.charAt(0).toUpperCase() || "?"}
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
                   ))}
                   {likeCount > 3 && (
@@ -319,9 +370,6 @@ export function PostCard({
                     </div>
                   )}
                 </div>
-                <span className="text-xs font-bold text-muted-foreground hidden sm:block">
-                  Celebrating impact
-                </span>
               </motion.div>
             )}
           </div>

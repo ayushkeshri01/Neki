@@ -43,7 +43,7 @@ export interface Post {
   _count: {
     likes: number;
   };
-  likes: { userId: string; type: string }[];
+  likes: { userId: string; type: string; user: { name: string | null; image: string | null } }[];
 }
 
 interface FeedContentProps {
