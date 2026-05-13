@@ -338,7 +338,7 @@ async function DashboardData({
           label="Total Users"
           value={formatNumber(totalUsers)}
           delta={totalUsersDelta}
-          icon={Users}
+          icon="users"
           iconColor="text-primary"
           trend={usersSpark}
           trendColor="text-primary"
@@ -347,7 +347,7 @@ async function DashboardData({
           label="DAU"
           value={formatNumber(dau)}
           delta={dauDelta}
-          icon={Activity}
+          icon="activity"
           iconColor="text-primary"
           trend={dauSpark}
           trendColor="text-primary"
@@ -356,7 +356,7 @@ async function DashboardData({
           label="MAU"
           value={formatNumber(mau)}
           delta={mauDelta}
-          icon={UsersRound}
+          icon="usersRound"
           iconColor="text-primary"
           trend={mauSpark}
           trendColor="text-primary"
@@ -365,7 +365,7 @@ async function DashboardData({
           label="Total Posts"
           value={formatNumber(totalPosts)}
           delta={totalPostsDelta}
-          icon={FileText}
+          icon="fileText"
           iconColor="text-primary"
           trend={postsSpark}
           trendColor="text-primary"
@@ -374,7 +374,7 @@ async function DashboardData({
           label="Engagement"
           value={`${engagementRate.toFixed(1)}%`}
           delta={engagementRateDelta}
-          icon={UserCheck}
+          icon="userCheck"
           iconColor="text-primary"
           trend={likesSpark}
           trendColor="text-primary"
@@ -384,7 +384,7 @@ async function DashboardData({
           label="Impact Actions"
           value={formatNumber(impactCurrent)}
           delta={impactDelta}
-          icon={Sparkles}
+          icon="sparkles"
           iconColor="text-primary"
           helper="posts + likes"
         />

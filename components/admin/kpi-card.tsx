@@ -1,33 +1,56 @@
 "use client";
 
-import { ArrowDownRight, ArrowUpRight, Minus, type LucideIcon } from "lucide-react";
+import { 
+  ArrowDownRight, 
+  ArrowUpRight, 
+  Minus, 
+  Users, 
+  Activity, 
+  UsersRound, 
+  FileText, 
+  UserCheck, 
+  Sparkles,
+  Heart
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkline } from "@/components/admin/charts";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+
+const ICON_MAP = {
+  users: Users,
+  activity: Activity,
+  usersRound: UsersRound,
+  fileText: FileText,
+  userCheck: UserCheck,
+  sparkles: Sparkles,
+  heart: Heart,
+} as const;
+
+export type KpiIconName = keyof typeof ICON_MAP;
 
 interface KpiCardProps {
   label: string;
   value: string | number;
   delta?: number; // percentage change vs prior period
-  icon: LucideIcon;
+  icon: KpiIconName;
   iconColor?: string;
   trend?: number[];
   trendColor?: string;
   helper?: string;
 }
 
-import { motion } from "framer-motion";
-
 export function KpiCard({
   label,
   value,
   delta,
-  icon: Icon,
+  icon,
   iconColor = "text-primary",
   trend,
   trendColor,
   helper,
 }: KpiCardProps) {
+  const Icon = ICON_MAP[icon] || Activity;
   const hasDelta = typeof delta === "number" && Number.isFinite(delta);
   const positive = hasDelta && delta! > 0;
   const negative = hasDelta && delta! < 0;
