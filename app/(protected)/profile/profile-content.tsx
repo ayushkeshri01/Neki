@@ -153,167 +153,201 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      {/* Profile Header */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <Avatar className="h-24 w-24">
+    <div className="mx-auto max-w-4xl px-4 py-12">
+      {/* Profile Header Card */}
+      <Card className="overflow-hidden border-border/40 shadow-premium rounded-[2.5rem] bg-card mb-12">
+        {/* Banner Area */}
+        <div className="h-48 w-full bg-gradient-to-r from-primary/30 via-primary to-primary/30 relative">
+          <div className="absolute inset-0 bg-grid-white/10" />
+        </div>
+        
+        <CardContent className="pt-0 px-8 pb-8 relative">
+          <div className="flex flex-col md:flex-row items-end gap-6 -mt-16 mb-8">
+            <Avatar className="h-32 w-32 border-8 border-card shadow-2xl ring-8 ring-primary/5">
               <AvatarImage src={user.image || ""} />
-              <AvatarFallback className="text-3xl bg-primary/10 text-primary">
-                {user.name?.charAt(0).toUpperCase() ||
-                  user.email?.charAt(0).toUpperCase() ||
-                  "?"}
+              <AvatarFallback className="text-4xl font-black bg-primary/10 text-primary">
+                {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="text-center sm:text-left flex-1">
-              <h1 className="text-2xl font-bold">{user.name || "Anonymous"}</h1>
-              <p className="text-muted-foreground">{user.email}</p>
-              <div className="mt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Joined {formatDate(user.createdAt)}
-                </span>
-                {user.role === "ADMIN" && (
-                  <Badge variant="secondary">Admin</Badge>
-                )}
-              </div>
-            </div>
-            <div className="text-center p-4 rounded-lg bg-primary/10 min-w-[80px]">
-              <Trophy className="h-6 w-6 text-primary mx-auto mb-1" />
-              <p className="text-2xl font-bold text-primary">{user.points}</p>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Good Deed Credits (GDCs)</p>
-            </div>
             
-            <div className="flex flex-col gap-2 w-full sm:w-auto">
-              <EditProfileDialog
-                asChild
-                initialName={user.name}
-                initialBio={user.bio}
-                initialImage={user.image}
-              >
-                <Button variant="outline" size="sm" className="w-full justify-start">
-                  <User className="h-4 w-4 mr-2" />
-                  Edit Profile
-                </Button>
-              </EditProfileDialog>
-              <ChangePasswordDialog asChild>
-                <Button variant="outline" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">
-                  <KeyRound className="h-4 w-4 mr-2" />
-                  Change Password
-                </Button>
-              </ChangePasswordDialog>
+            <div className="flex-1 pb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="font-display text-3xl font-black tracking-tight">{user.name || "Anonymous"}</h1>
+                  <p className="text-muted-foreground font-medium">{user.email}</p>
+                </div>
+                
+                <div className="flex flex-wrap gap-3">
+                  <EditProfileDialog
+                    asChild
+                    initialName={user.name}
+                    initialBio={user.bio}
+                    initialImage={user.image}
+                  >
+                    <Button variant="outline" className="rounded-full px-6 font-bold border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all">
+                      <User className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                  </EditProfileDialog>
+                  
+                  <ChangePasswordDialog asChild>
+                    <Button variant="ghost" className="rounded-full px-6 font-bold text-muted-foreground hover:text-foreground">
+                      <KeyRound className="h-4 w-4 mr-2" />
+                      Security
+                    </Button>
+                  </ChangePasswordDialog>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Bio */}
-          {user.bio && (
-            <p className="text-sm text-muted-foreground mt-2">{user.bio}</p>
-          )}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="lg:col-span-8 space-y-6">
+              {user.bio && (
+                <div>
+                  <h3 className="font-black text-[10px] uppercase tracking-widest text-muted-foreground mb-3">About Me</h3>
+                  <p className="text-lg leading-relaxed text-foreground/80 font-medium">
+                    {user.bio}
+                  </p>
+                </div>
+              )}
+              
+              <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2 font-bold">
+                  <Calendar className="h-4 w-4 text-primary" />
+                  Joined {formatDate(user.createdAt)}
+                </span>
+                {user.role === "ADMIN" && (
+                  <Badge className="bg-primary/10 text-primary border-none font-black text-[10px] px-3 py-1 uppercase tracking-widest">
+                    Administrator
+                  </Badge>
+                )}
+              </div>
+            </div>
 
-          {/* Stats */}
-          <div className="mt-6 grid grid-cols-3 gap-4">
-            <div className="text-center p-3 rounded-lg bg-muted/50">
-              <FileText className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xl font-bold">{stats.totalPosts}</p>
-              <p className="text-xs text-muted-foreground">Posts</p>
+            <div className="lg:col-span-4 bg-primary/5 rounded-3xl p-6 border border-primary/10 flex flex-col items-center text-center">
+              <Trophy className="h-10 w-10 text-primary mb-4" />
+              <div className="font-display text-4xl font-black text-primary mb-1">{user.points}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-primary/60">Good Deed Credits</div>
+              <p className="text-[10px] mt-4 text-muted-foreground leading-relaxed">
+                Impact score based on verified social work and community engagement.
+              </p>
             </div>
-            <div className="text-center p-3 rounded-lg bg-muted/50">
-              <Heart className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xl font-bold">{stats.totalLikes}</p>
-              <p className="text-xs text-muted-foreground">Likes</p>
+          </div>
+
+          {/* Detailed Stats Grid */}
+          <div className="mt-12 grid grid-cols-3 gap-4 md:gap-8">
+            <div className="text-center p-6 rounded-3xl bg-muted/30 border border-border/40 hover:bg-muted/50 transition-colors group">
+              <FileText className="h-6 w-6 mx-auto mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="text-2xl font-black">{stats.totalPosts}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Impact Stories</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-muted/50">
-              <Users className="h-5 w-5 mx-auto mb-1 text-muted-foreground" />
-              <p className="text-xl font-bold">{stats.totalCommunities}</p>
-              <p className="text-xs text-muted-foreground">Communities</p>
+            <div className="text-center p-6 rounded-3xl bg-muted/30 border border-border/40 hover:bg-muted/50 transition-colors group">
+              <Heart className="h-6 w-6 mx-auto mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="text-2xl font-black">{stats.totalLikes}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Appreciation</div>
+            </div>
+            <div className="text-center p-6 rounded-3xl bg-muted/30 border border-border/40 hover:bg-muted/50 transition-colors group">
+              <Users className="h-6 w-6 mx-auto mb-3 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="text-2xl font-black">{stats.totalCommunities}</div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Circles</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <BadgesSection badgeIds={user.badges} />
-
-      {/* Communities */}
-      {user.memberships.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Communities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {user.memberships.map(({ community }) => (
-                <Link key={community.id} href={`/communities/${community.slug}`}>
-                  <Badge variant="outline" className="hover:bg-accent">
-                    {community.name}
-                  </Badge>
-                </Link>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* Main Feed Column */}
+        <div className="lg:col-span-8 space-y-8">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="font-display text-2xl font-black">My Impact Stories</h2>
+            <Link href="/create-post">
+              <Button variant="link" className="text-primary font-bold">New Post</Button>
+            </Link>
+          </div>
+          
+          {user.posts.length === 0 ? (
+            <div className="bg-card/50 rounded-[2.5rem] border border-dashed border-border/60 py-24 text-center">
+              <p className="text-muted-foreground font-bold">No stories shared yet.</p>
+              <Button asChild className="mt-6 rounded-full px-8 py-6 font-bold shadow-premium">
+                <Link href="/create-post">Start Your Story</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {user.posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={{
+                    ...post,
+                    author: {
+                      id: user.id,
+                      name: user.name,
+                      image: user.image,
+                      points: user.points,
+                    },
+                  }}
+                  currentUserId={user.id}
+                  onLike={handleLike}
+                  onReport={handleReport}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+        </div>
 
-      {/* Posts */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4">My Posts</h2>
-        {user.posts.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              No posts yet. Start sharing your social work!
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {user.posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={{
-                  ...post,
-                  author: {
-                    id: user.id,
-                    name: user.name,
-                    image: user.image,
-                    points: user.points,
-                  },
-                }}
-                currentUserId={user.id}
-                onLike={handleLike}
-                onReport={handleReport}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
+        {/* Sidebar Column */}
+        <div className="lg:col-span-4 space-y-10">
+          <BadgesSection badgeIds={user.badges} />
+          
+          {user.memberships.length > 0 && (
+            <div className="bg-card border border-border/40 shadow-premium rounded-[2.5rem] p-8">
+              <h3 className="font-display text-xl font-black mb-6">My Circles</h3>
+              <div className="flex flex-wrap gap-2">
+                {user.memberships.map(({ community }) => (
+                  <Link key={community.id} href={`/communities/${community.slug}`}>
+                    <Badge variant="outline" className="rounded-full px-4 py-1.5 border-2 border-primary/10 text-primary hover:bg-primary/5 transition-all text-xs font-bold">
+                      {community.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Report Dialog */}
       <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
-        <DialogContent>
+        <DialogContent className="rounded-[2.5rem] p-8">
           <DialogHeader>
-            <DialogTitle>Report Post</DialogTitle>
-            <DialogDescription>
-              Please provide a reason for reporting this post.
+            <DialogTitle className="font-display text-2xl font-black">Report Post</DialogTitle>
+            <DialogDescription className="font-medium">
+              Help us keep the community safe and positive.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-6">
             <Textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="Reason for reporting..."
               rows={4}
+              className="rounded-2xl border-border/40 focus:ring-primary"
             />
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-3">
             <Button
               type="button"
               variant="outline"
+              className="rounded-full px-8 py-6 font-bold"
               onClick={() => setReportDialogOpen(false)}
             >
               Cancel
             </Button>
             <Button
               type="button"
+              className="rounded-full px-8 py-6 font-bold shadow-premium"
               onClick={submitReport}
               disabled={!reportReason.trim()}
             >

@@ -32,67 +32,56 @@ export function CommunityCard({
   onLeave,
   memberActionLoading,
 }: CommunityCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const hasLongDescription = community.description && community.description.length > 80;
-
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-md">
-      <div className="aspect-[2/1] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-        <Avatar className="h-16 w-16">
-          <AvatarImage src={community.image || undefined} />
-          <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-            {community.name.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
+    <Card className="overflow-hidden group border-border/40 shadow-premium transition-all hover:shadow-premium-hover rounded-[2rem] bg-card flex flex-col h-full">
+      <div className="relative aspect-[2/1] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-primary/5 transition-transform duration-700 group-hover:scale-110" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Avatar className="h-20 w-20 border-4 border-card shadow-xl ring-4 ring-primary/5">
+            <AvatarImage src={community.image || undefined} />
+            <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-black">
+              {community.name.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+        </div>
       </div>
-      <CardContent className="pt-4">
+      <CardContent className="pt-8 flex-grow">
         <Link href={`/communities/${community.slug}`}>
-          <h3 className="font-semibold hover:text-primary">{community.name}</h3>
+          <h3 className="font-display font-black text-xl hover:text-primary transition-colors mb-2">{community.name}</h3>
         </Link>
         {community.description && (
-          <>
-            <p
-              className={`mt-1 text-sm text-muted-foreground ${
-                !isExpanded ? "line-clamp-2" : ""
-              }`}
-            >
-              {community.description}
-            </p>
-            {hasLongDescription && (
-              <Button
-                variant="link"
-                className="mt-1 h-auto p-0 text-xs"
-                onClick={() => setIsExpanded(!isExpanded)}
-                aria-expanded={isExpanded}
-              >
-                {isExpanded ? " Show less" : " Read more"}
-              </Button>
-            )}
-          </>
+          <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed mb-6 font-medium">
+            {community.description}
+          </p>
         )}
-        <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
-          <span>{community._count.members} members</span>
-          <span>{community._count.posts} posts</span>
+        <div className="flex items-center gap-6 mt-auto">
+          <div className="flex flex-col">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Members</span>
+            <span className="font-bold text-foreground">{community._count.members.toLocaleString()}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Posts</span>
+            <span className="font-bold text-foreground">{community._count.posts.toLocaleString()}</span>
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="pt-0">
+      <CardFooter className="p-6 pt-0 mt-4">
         {isMember ? (
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full rounded-full border-2 border-primary/20 text-primary hover:bg-primary/5 font-bold py-6 transition-all"
             onClick={() => onLeave?.(community.id)}
             disabled={memberActionLoading}
           >
-            Leave
+            Leave Community
           </Button>
         ) : (
           <Button
-            className="w-full"
+            className="w-full rounded-full font-bold py-6 shadow-premium hover:shadow-premium-hover transition-all"
             onClick={() => onJoin?.(community.id)}
             disabled={memberActionLoading}
           >
-            Join
+            Join Community
           </Button>
         )}
       </CardFooter>

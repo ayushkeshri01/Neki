@@ -29,9 +29,11 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescri
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { NotificationsBell } from "@/components/layout/notifications-bell";
+import { motion } from "framer-motion";
 
 const navItems = [
   { href: "/feed", label: "Feed", icon: Home },
+  { href: "/initiatives", label: "Initiatives", icon: Shield },
   { href: "/communities", label: "Communities", icon: Users },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
@@ -44,7 +46,7 @@ interface ProfileIdentityUpdate {
 
 const PROFILE_UPDATED_EVENT = "neki:profile-updated";
 
-import { motion } from "framer-motion";
+
 
 export function Navbar() {
   const pathname = usePathname();
@@ -217,6 +219,7 @@ export function Navbar() {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="font-display text-left">Neki</SheetTitle>
+                <SheetDescription className="hidden">Navigation menu for mobile devices.</SheetDescription>
               </SheetHeader>
               <div className="flex flex-col gap-2 pt-8">
                 {navItems.map((item) => {

@@ -24,6 +24,8 @@ interface CommunitiesContentProps {
   memberCommunityIds: string[];
 }
 
+import { motion } from "framer-motion";
+
 export function CommunitiesContent({
   communities,
   memberCommunityIds,
@@ -98,56 +100,75 @@ export function CommunitiesContent({
   const otherCommunities = communities.filter((c) => !memberCommunityIds.includes(c.id));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Communities</h1>
+    <div className="mx-auto max-w-container-max px-4 py-8">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
+        <div>
+          <h1 className="font-display text-4xl lg:text-5xl font-extrabold text-foreground tracking-tight">Communities</h1>
+          <p className="text-muted-foreground text-sm mt-1 font-medium italic">Together, we can achieve more.</p>
+        </div>
       </div>
 
-      <Tabs defaultValue="my">
-        <TabsList>
-          <TabsTrigger value="my">My Communities</TabsTrigger>
-          <TabsTrigger value="browse">Browse</TabsTrigger>
+      <Tabs defaultValue="my" className="w-full">
+        <TabsList className="bg-muted/50 p-1 rounded-full border border-border/40 inline-flex">
+          <TabsTrigger value="my" className="rounded-full px-8 py-2 data-[state=active]:bg-card data-[state=active]:shadow-sm font-bold">My Circles</TabsTrigger>
+          <TabsTrigger value="browse" className="rounded-full px-8 py-2 data-[state=active]:bg-card data-[state=active]:shadow-sm font-bold">Explore</TabsTrigger>
         </TabsList>
-        <TabsContent value="my" className="mt-6">
+        <TabsContent value="my" className="mt-10 outline-none">
           {myCommunities.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-                <Users className="h-8 w-8 text-muted-foreground" />
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center justify-center py-24 text-center bg-card/50 rounded-[2.5rem] border border-dashed border-border/60"
+            >
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-primary/5 text-primary">
+                <Users className="h-10 w-10" />
               </div>
-              <h3 className="text-lg font-medium">No communities yet</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Join a community to see posts and participate!
+              <h3 className="font-display text-2xl font-bold">You haven&apos;t joined any communities</h3>
+              <p className="mt-2 text-muted-foreground max-w-xs mx-auto">
+                Discover and join groups that resonate with your passions to start sharing impact.
               </p>
-            </div>
+            </motion.div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {myCommunities.map((community) => (
-                <CommunityCard
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {myCommunities.map((community, i) => (
+                <motion.div
                   key={community.id}
-                  community={community}
-                  isMember={true}
-                  onLeave={handleLeave}
-                  memberActionLoading={loadingCommunities.has(community.id)}
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <CommunityCard
+                    community={community}
+                    isMember={true}
+                    onLeave={handleLeave}
+                    memberActionLoading={loadingCommunities.has(community.id)}
+                  />
+                </motion.div>
               ))}
             </div>
           )}
         </TabsContent>
-        <TabsContent value="browse" className="mt-6">
+        <TabsContent value="browse" className="mt-10 outline-none">
           {otherCommunities.length === 0 ? (
-            <div className="text-center py-20 text-muted-foreground">
-              No other communities available
+            <div className="flex flex-col items-center justify-center py-24 text-center bg-card/50 rounded-[2.5rem] border border-dashed border-border/60">
+              <p className="text-muted-foreground font-bold">You&apos;re part of every community available!</p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {otherCommunities.map((community) => (
-                <CommunityCard
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {otherCommunities.map((community, i) => (
+                <motion.div
                   key={community.id}
-                  community={community}
-                  isMember={false}
-                  onJoin={handleJoin}
-                  memberActionLoading={loadingCommunities.has(community.id)}
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <CommunityCard
+                    community={community}
+                    isMember={false}
+                    onJoin={handleJoin}
+                    memberActionLoading={loadingCommunities.has(community.id)}
+                  />
+                </motion.div>
               ))}
             </div>
           )}

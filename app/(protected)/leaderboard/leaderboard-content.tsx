@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Trophy, Medal, Award, Crown, Star, Heart } from "lucide-react";
+import { Trophy, Medal, Award, Crown, Star, Heart, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -49,214 +49,280 @@ export function LeaderboardContent({
   const rest = leaders.slice(3, 50); // Limit to top 50 for performance
 
   return (
-    <div className="mx-auto max-w-4xl space-y-12 px-4 py-8">
-      <header className="text-center space-y-4">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-2"
-        >
-          <Trophy className="h-8 w-8" />
-        </motion.div>
-        <motion.h1 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-display font-extrabold tracking-tight"
-        >
-          Community <span className="text-primary">Leaderboard</span>
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-muted-foreground"
-        >
-          Celebrating our top changemakers making an impact every day.
-        </motion.p>
-      </header>
-
-      {/* Top 3 Podium */}
-      <div className="flex flex-col md:flex-row items-end justify-center gap-6 lg:gap-12 pt-12 pb-8">
-        {/* Second Place */}
-        {topThree[1] && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
+    <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop py-12">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+        <div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, type: "spring" }}
-            className="order-2 md:order-1 flex flex-col items-center w-full md:w-auto"
+            className="font-display text-4xl lg:text-6xl font-extrabold text-foreground mb-2"
           >
-            <div className="relative mb-4 group">
-              <Link href={`/profile/${topThree[1].id}`}>
-                <Avatar className="h-24 w-24 border-4 border-slate-300 shadow-xl transition-transform group-hover:scale-105">
-                  <AvatarImage src={topThree[1].image || ""} />
-                  <AvatarFallback className="bg-slate-100 text-slate-600 text-xl font-bold">
-                    {topThree[1].name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-              <div className="absolute -top-3 -right-3 h-10 w-10 flex items-center justify-center rounded-full bg-slate-300 shadow-lg">
-                <Medal className="h-6 w-6 text-slate-700" />
-              </div>
-            </div>
-            <div className="text-center">
-              <h3 className="font-bold text-lg">{topThree[1].name || "Anonymous"}</h3>
-              <p className="text-primary font-bold">{topThree[1].points.toLocaleString()} GDCs</p>
-            </div>
-            <div className="mt-4 h-32 w-40 rounded-t-[2rem] bg-slate-200/50 border-x border-t border-slate-300/50 flex items-center justify-center">
-              <span className="text-4xl font-display font-black text-slate-400">2</span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* First Place */}
-        {topThree[0] && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, type: "spring", bounce: 0.5 }}
-            className="order-1 md:order-2 flex flex-col items-center w-full md:w-auto -mt-8"
-          >
-            <div className="relative mb-6 group">
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce">
-                <Crown className="h-10 w-10 text-yellow-500 fill-yellow-500" />
-              </div>
-              <Link href={`/profile/${topThree[0].id}`}>
-                <Avatar className="h-32 w-32 border-8 border-yellow-400 shadow-2xl transition-transform group-hover:scale-110">
-                  <AvatarImage src={topThree[0].image || ""} />
-                  <AvatarFallback className="bg-yellow-100 text-yellow-700 text-2xl font-bold">
-                    {topThree[0].name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-            </div>
-            <div className="text-center mb-4">
-              <h3 className="font-bold text-2xl">{topThree[0].name || "Anonymous"}</h3>
-              <div className="flex items-center justify-center gap-2">
-                <Star className="h-4 w-4 fill-primary text-primary" />
-                <p className="text-primary text-xl font-black">{topThree[0].points.toLocaleString()} GDCs</p>
-                <Star className="h-4 w-4 fill-primary text-primary" />
-              </div>
-            </div>
-            <div className="h-48 w-48 rounded-t-[2.5rem] bg-gradient-to-b from-yellow-400/20 to-primary/5 border-x border-t border-yellow-400/30 flex items-center justify-center shadow-[0_-10px_20px_rgba(234,179,8,0.1)]">
-              <span className="text-6xl font-display font-black text-yellow-500/50">1</span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Third Place */}
-        {topThree[2] && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
+            Top Impact Makers
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, type: "spring" }}
-            className="order-3 flex flex-col items-center w-full md:w-auto"
+            transition={{ delay: 0.1 }}
+            className="text-lg lg:text-xl text-muted-foreground"
           >
-            <div className="relative mb-4 group">
-              <Link href={`/profile/${topThree[2].id}`}>
-                <Avatar className="h-24 w-24 border-4 border-orange-300 shadow-xl transition-transform group-hover:scale-105">
-                  <AvatarImage src={topThree[2].image || ""} />
-                  <AvatarFallback className="bg-orange-50 text-orange-600 text-xl font-bold">
-                    {topThree[2].name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-              <div className="absolute -top-3 -right-3 h-10 w-10 flex items-center justify-center rounded-full bg-orange-300 shadow-lg">
-                <Award className="h-6 w-6 text-orange-800" />
-              </div>
-            </div>
-            <div className="text-center">
-              <h3 className="font-bold text-lg">{topThree[2].name || "Anonymous"}</h3>
-              <p className="text-primary font-bold">{topThree[2].points.toLocaleString()} GDCs</p>
-            </div>
-            <div className="mt-4 h-24 w-40 rounded-t-[2rem] bg-orange-200/50 border-x border-t border-orange-300/50 flex items-center justify-center">
-              <span className="text-3xl font-display font-black text-orange-400">3</span>
-            </div>
-          </motion.div>
-        )}
+            Celebrating the collective efforts shaping our community.
+          </motion.p>
+        </div>
+        <div className="relative">
+          <select className="appearance-none bg-card border border-border/40 rounded-full px-8 py-3 pr-12 font-bold text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary min-h-[48px] shadow-sm transition-all hover:bg-muted/50 cursor-pointer">
+            <option>All Time</option>
+            <option>This Month</option>
+            <option>This Week</option>
+          </select>
+        </div>
       </div>
 
-      {/* Your Rank Pin */}
-      {currentUserRank > 3 && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="sticky top-24 z-10"
-        >
-          <Card className="bg-primary text-on-primary shadow-xl rounded-2xl overflow-hidden border-none">
-            <CardContent className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center font-black text-xl">
-                  #{currentUserRank}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        {/* Left/Main Column */}
+        <div className="lg:col-span-8 flex flex-col gap-12">
+          {/* Podium Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-card rounded-[2.5rem] shadow-premium border border-border/40 p-8 md:p-12 relative overflow-hidden flex flex-col items-center"
+          >
+            {/* Decorative element */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+            
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-12 relative z-10">The Podium</h2>
+            
+            <div className="flex items-end justify-center gap-4 md:gap-12 h-full w-full max-w-2xl">
+              {/* Rank 2 */}
+              {topThree[1] && (
+                <div className="flex flex-col items-center w-1/3 group">
+                  <div className="relative mb-6">
+                    <Link href={`/profile/${topThree[1].id}`}>
+                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-slate-200 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
+                        <AvatarImage src={topThree[1].image || ""} />
+                        <AvatarFallback className="bg-slate-100 text-slate-600 font-bold text-xl">
+                          {topThree[1].name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-card rounded-full px-3 py-1 border border-border shadow-md">
+                      <span className="font-black text-xs text-muted-foreground">#2</span>
+                    </div>
+                  </div>
+                  <div className="text-center mb-6">
+                    <h3 className="font-bold text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors">{topThree[1].name}</h3>
+                    <div className="flex items-center justify-center gap-1 text-primary mt-1">
+                      <Star className="h-3 w-3 fill-primary" />
+                      <span className="font-black text-sm">{topThree[1].points} GDC</span>
+                    </div>
+                  </div>
+                  <div className="w-full h-24 md:h-32 bg-slate-100 dark:bg-slate-800/50 rounded-t-3xl flex items-start justify-center pt-4 shadow-inner border-t border-x border-slate-200/30">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Silver</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Rank 1 */}
+              {topThree[0] && (
+                <div className="flex flex-col items-center w-1/3 z-10 group">
+                  <div className="relative mb-8">
+                    <motion.div 
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ repeat: Infinity, duration: 3 }}
+                      className="absolute -top-12 left-1/2 -translate-x-1/2"
+                    >
+                      <Crown className="h-10 w-10 text-yellow-500 fill-yellow-500 drop-shadow-md" />
+                    </motion.div>
+                    <Link href={`/profile/${topThree[0].id}`}>
+                      <Avatar className="h-28 w-28 md:h-40 md:w-40 border-8 border-yellow-400 shadow-2xl transition-all group-hover:scale-110 group-hover:-translate-y-4 ring-8 ring-yellow-400/10">
+                        <AvatarImage src={topThree[0].image || ""} />
+                        <AvatarFallback className="bg-yellow-100 text-yellow-700 font-bold text-2xl">
+                          {topThree[0].name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-yellow-400 rounded-full px-4 py-1.5 shadow-lg border-2 border-card">
+                      <span className="font-black text-xs text-yellow-900">#1</span>
+                    </div>
+                  </div>
+                  <div className="text-center mb-8">
+                    <h3 className="font-black text-base md:text-xl line-clamp-1 group-hover:text-primary transition-colors">{topThree[0].name}</h3>
+                    <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-black mt-2">
+                      <Star className="h-3 w-3 fill-primary" />
+                      {topThree[0].points} GDC
+                    </div>
+                  </div>
+                  <div className="w-full h-32 md:h-48 bg-primary rounded-t-[2.5rem] flex items-start justify-center pt-6 shadow-inner relative overflow-hidden group-hover:bg-primary/90 transition-colors">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
+                    <span className="text-sm font-black text-white uppercase tracking-widest z-10">Gold</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Rank 3 */}
+              {topThree[2] && (
+                <div className="flex flex-col items-center w-1/3 group">
+                  <div className="relative mb-6">
+                    <Link href={`/profile/${topThree[2].id}`}>
+                      <Avatar className="h-20 w-20 md:h-28 md:w-28 border-4 border-orange-300 shadow-xl transition-all group-hover:scale-110 group-hover:-translate-y-2">
+                        <AvatarImage src={topThree[2].image || ""} />
+                        <AvatarFallback className="bg-orange-50 text-orange-600 font-bold text-xl">
+                          {topThree[2].name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-card rounded-full px-3 py-1 border border-border shadow-md">
+                      <span className="font-black text-xs text-muted-foreground">#3</span>
+                    </div>
+                  </div>
+                  <div className="text-center mb-6">
+                    <h3 className="font-bold text-sm md:text-base line-clamp-1 group-hover:text-primary transition-colors">{topThree[2].name}</h3>
+                    <div className="flex items-center justify-center gap-1 text-primary mt-1">
+                      <Star className="h-3 w-3 fill-primary" />
+                      <span className="font-black text-sm">{topThree[2].points} GDC</span>
+                    </div>
+                  </div>
+                  <div className="w-full h-20 md:h-28 bg-orange-100 dark:bg-orange-900/30 rounded-t-3xl flex items-start justify-center pt-4 shadow-inner border-t border-x border-orange-300/30">
+                    <span className="text-xs font-bold text-orange-400 uppercase tracking-widest">Bronze</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Full Leaderboard List */}
+          <div className="flex flex-col gap-6">
+            <h2 className="font-display text-2xl font-bold px-2">Full Leaderboard</h2>
+            <div className="space-y-4">
+              {rest.map((leader, index) => {
+                const rank = index + 4;
+                const isCurrentUser = leader.id === currentUserId;
+                return (
+                  <motion.div
+                    key={leader.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ x: 10, scale: 1.01 }}
+                    className={cn(
+                      "group flex items-center gap-4 p-5 rounded-[2rem] bg-card border border-border/40 shadow-sm transition-all hover:shadow-premium cursor-pointer",
+                      isCurrentUser && "ring-2 ring-primary bg-primary/5 border-primary/20"
+                    )}
+                  >
+                    <div className="w-12 text-center font-display font-black text-xl text-muted-foreground group-hover:text-primary transition-colors">
+                      {rank}
+                    </div>
+                    <Link href={`/profile/${leader.id}`}>
+                      <Avatar className="h-14 w-14 border-2 border-border group-hover:border-primary transition-colors">
+                        <AvatarImage src={leader.image || ""} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                          {leader.name?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn("font-bold text-lg truncate group-hover:text-primary transition-colors", isCurrentUser && "text-primary")}>
+                        {leader.name || "Anonymous"}
+                        {isCurrentUser && " (You)"}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                        <span className="flex items-center gap-1"><Award className="h-3.5 w-3.5" /> {leader._count.posts} posts</span>
+                        <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> {leader.likesReceived} likes</span>
+                      </div>
+                    </div>
+                    <div className="text-right pr-2">
+                      <p className={cn("font-black text-2xl", isCurrentUser ? "text-primary" : "text-foreground")}>
+                        {leader.points.toLocaleString()}
+                      </p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">GDCs Earned</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          {/* Your Rank Pin */}
+          {currentUserRank > 3 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-primary text-white p-8 rounded-[2.5rem] shadow-premium-hover relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
+              <div className="relative z-10 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center font-black text-3xl">
+                    #{currentUserRank}
+                  </div>
+                  <Award className="h-10 w-10 opacity-40" />
                 </div>
                 <div>
-                  <p className="font-bold text-lg">You are here!</p>
-                  <p className="text-sm opacity-80">Keep sharing kindness to climb higher</p>
-                </div>
-              </div>
-              <Link href="/create-post">
-                <Button variant="secondary" className="rounded-full font-bold">Post Impact</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      {/* Rest of the List */}
-      <motion.div 
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="space-y-3"
-      >
-        <h2 className="text-xl font-bold px-4 mb-4">Rankings</h2>
-        {rest.map((leader, index) => {
-          const rank = index + 4;
-          const isCurrentUser = leader.id === currentUserId;
-
-          return (
-            <motion.div
-              key={leader.id}
-              variants={itemVariants}
-              whileHover={{ x: 10, scale: 1.01 }}
-              className={cn(
-                "group flex items-center gap-4 p-4 rounded-[1.5rem] bg-card border border-border/40 shadow-sm transition-all hover:shadow-md",
-                isCurrentUser && "ring-2 ring-primary bg-primary/5 border-primary/20"
-              )}
-            >
-              <div className="w-10 text-center font-display font-black text-muted-foreground group-hover:text-primary transition-colors">
-                #{rank}
-              </div>
-              <Link href={`/profile/${leader.id}`}>
-                <Avatar className="h-12 w-12 border-2 border-border group-hover:border-primary transition-colors">
-                  <AvatarImage src={leader.image || ""} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                    {leader.name?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
-              <div className="flex-1 min-w-0">
-                <Link href={`/profile/${leader.id}`}>
-                  <p className={cn("font-bold truncate group-hover:text-primary transition-colors", isCurrentUser && "text-primary")}>
-                    {leader.name || "Anonymous"}
-                    {isCurrentUser && " (You)"}
+                  <h3 className="font-display text-2xl font-bold mb-2">You are here!</h3>
+                  <p className="opacity-80 text-sm leading-relaxed">
+                    You&apos;re doing amazing! Share more impact stories to climb the ranks and inspire others.
                   </p>
-                </Link>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Award className="h-3 w-3" /> {leader._count.posts} posts</span>
-                  <span className="flex items-center gap-1"><Heart className="h-3 w-3" /> {leader.likesReceived} likes</span>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className={cn("font-black text-lg", isCurrentUser ? "text-primary" : "text-foreground")}>
-                  {leader.points.toLocaleString()}
-                </p>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">GDCs</p>
+                <Link href="/create-post" className="block">
+                  <Button className="w-full rounded-full bg-white text-primary hover:bg-white/90 font-bold py-6">
+                    Post New Impact
+                  </Button>
+                </Link>
               </div>
             </motion.div>
-          );
-        })}
-      </motion.div>
+          )}
+
+          {/* Stats Cards */}
+          <div className="bg-card rounded-[2.5rem] p-8 border border-border/40 shadow-premium flex flex-col gap-8">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-muted-foreground uppercase tracking-widest text-[10px]">Total Initiatives</h3>
+                <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                  <Users className="h-5 w-5" />
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-4xl font-black">342</span>
+                <span className="text-xs font-bold text-primary">+12% this month</span>
+              </div>
+            </div>
+
+            <div className="h-0.5 bg-border/20 w-full" />
+
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-muted-foreground uppercase tracking-widest text-[10px]">Total GDCs Distributed</h3>
+                <div className="p-2 bg-yellow-400/10 rounded-xl text-yellow-600">
+                  <Star className="h-5 w-5 fill-yellow-600" />
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-4xl font-black">12.5k</span>
+                <span className="text-xs font-bold text-primary">+8% this month</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Promo Card */}
+          <div className="bg-secondary text-white p-8 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
+            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <Star className="h-12 w-12 mb-6 opacity-40 group-hover:scale-110 transition-transform" />
+              <h3 className="font-display text-2xl font-bold mb-4">Climb the ranks!</h3>
+              <p className="text-sm opacity-80 mb-8 leading-relaxed">
+                Participate in featured community events to earn bonus Good Deed Credits and rise to the top.
+              </p>
+              <Button variant="outline" className="w-full rounded-full border-white/40 text-white hover:bg-white/10 font-bold py-6">
+                Explore Initiatives
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

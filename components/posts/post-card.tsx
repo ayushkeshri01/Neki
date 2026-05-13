@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, FlagOff, EyeOff, Trash2 } from "lucide-react";
+import { MoreHorizontal, FlagOff, EyeOff, Trash2, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import { ReactionButton } from "@/components/posts/reaction-button";
 import type { ReactionType } from "@/lib/reactions";
 import { DB_TO_UI } from "@/lib/reactions";
 import { ImageLightbox } from "@/components/posts/image-lightbox";
+import { motion } from "framer-motion";
 
 interface PostLike {
   userId: string;
@@ -74,7 +75,7 @@ function getReactionState(
   };
 }
 
-import { motion } from "framer-motion";
+
 
 export function PostCard({
   post,
@@ -123,66 +124,79 @@ export function PostCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="w-full"
     >
       <Card className={cn(
-        "overflow-hidden border-border/40 shadow-premium transition-shadow hover:shadow-premium-hover", 
+        "relative overflow-hidden border-border/40 shadow-premium transition-all hover:shadow-premium-hover rounded-[2rem] bg-card", 
         isHidden && "opacity-60 grayscale-[0.5]"
       )}>
-        <div className="p-5">
+        {/* Top Accent Gradient */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
+        
+        <div className="p-6 md:p-8">
           {/* Header */}
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link href={`/profile/${post.author.id}`}>
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <Avatar className="h-11 w-11 border-2 border-primary/20 shadow-sm">
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} className="relative">
+                  <Avatar className="h-12 w-12 border-2 border-primary/20 shadow-sm ring-4 ring-primary/5">
                     <AvatarImage src={post.author.image || ""} />
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
                       {post.author.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
+                  {post.author.points > 1000 && (
+                    <div className="absolute -top-1 -right-1 bg-yellow-400 text-yellow-900 rounded-full p-0.5 shadow-sm">
+                      <Star className="h-3 w-3 fill-current" />
+                    </div>
+                  )}
                 </motion.div>
               </Link>
               <div>
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/profile/${post.author.id}`}
-                    className="font-bold hover:text-primary transition-colors"
+                    className="font-display font-black text-lg hover:text-primary transition-colors tracking-tight"
                   >
                     {post.author.name || "Anonymous"}
                   </Link>
-                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold px-2 py-0">
-                    {post.author.points}
-                  </Badge>
+                  <div className="hidden sm:block">
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold px-2 py-0 text-[10px] uppercase tracking-wider">
+                      {post.author.points} Impact Score
+                    </Badge>
+                  </div>
                 </div>
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-black">
                   {formatTimeAgo(post.createdAt)}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.05 }}
+                className="hidden sm:block"
               >
-                <Badge className="bg-primary-container text-on-primary-container hover:bg-primary-container/90 border-none font-black text-[10px] px-3 py-1 rounded-full shadow-sm">
-                  +{post.points} GDCs
-                </Badge>
+                <div className="bg-primary-container/20 text-primary-container px-4 py-1.5 rounded-full border border-primary/10 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="font-black text-xs">+{post.points} GDCs</span>
+                </div>
               </motion.div>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-muted">
-                    <MoreHorizontal className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hover:bg-muted transition-colors">
+                    <MoreHorizontal className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="rounded-xl">
+                <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[160px]">
                   {canDeletePost && (
                     <DropdownMenuItem
-                      className="text-destructive font-medium"
+                      className="text-destructive font-bold p-3 rounded-xl focus:bg-destructive/10 focus:text-destructive"
                       onClick={() => onDelete?.(post.id)}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -191,7 +205,7 @@ export function PostCard({
                   )}
                   {currentUserId !== post.author.id && (
                     <DropdownMenuItem
-                      className="font-medium"
+                      className="font-bold p-3 rounded-xl"
                       onClick={() => onReport?.(post.id)}
                     >
                       <FlagOff className="mr-2 h-4 w-4" />
@@ -204,26 +218,28 @@ export function PostCard({
           </div>
 
           {/* Communities */}
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {post.communities.map(({ community }) => (
               <Link key={community.id} href={`/communities/${community.slug}`}>
-                <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] font-bold hover:bg-primary/10 hover:text-primary border-none transition-all">
+                <span className="inline-flex items-center text-[11px] font-black uppercase tracking-widest text-primary hover:bg-primary/5 px-2 py-1 rounded-md transition-all">
                   #{community.slug}
-                </Badge>
+                </span>
               </Link>
             ))}
           </div>
 
           {/* Content */}
-          <div className="mt-5">
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">{post.content}</p>
+          <div className="mt-6">
+            <p className="whitespace-pre-wrap text-base leading-relaxed text-foreground/90 font-medium tracking-tight">
+              {post.content}
+            </p>
           </div>
 
           {/* Images */}
           {post.images.length > 0 && (
             <div
               className={cn(
-                "mt-5 grid gap-3",
+                "mt-6 grid gap-4",
                 post.images.length === 1 && "grid-cols-1",
                 post.images.length === 2 && "grid-cols-2",
                 post.images.length >= 3 && "grid-cols-2"
@@ -233,10 +249,10 @@ export function PostCard({
                 <motion.button
                   key={index}
                   type="button"
-                  whileHover={{ scale: 1.01, filter: "brightness(1.1)" }}
+                  whileHover={{ scale: 1.02, filter: "brightness(1.05)" }}
                   whileTap={{ scale: 0.98 }}
                   className={cn(
-                    "relative overflow-hidden rounded-2xl bg-muted cursor-pointer text-left shadow-sm border border-border/20",
+                    "relative overflow-hidden rounded-[1.5rem] bg-muted cursor-pointer text-left shadow-sm border border-border/20 group",
                     post.images.length === 1 && "aspect-video",
                     post.images.length === 2 && "aspect-square",
                     post.images.length >= 3 && index === 0 && "aspect-video col-span-2",
@@ -251,8 +267,9 @@ export function PostCard({
                     src={image}
                     alt={`Post image ${index + 1}`}
                     fill
-                    className="object-cover transition-transform duration-500 hover:scale-105"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                 </motion.button>
               ))}
             </div>
@@ -260,30 +277,52 @@ export function PostCard({
 
           {/* Status Badge */}
           {isHidden && (
-            <div className="mt-5 flex items-center gap-3 rounded-2xl bg-amber-500/10 p-4 text-amber-700 border border-amber-500/20">
-              <EyeOff className="h-5 w-5" />
-              <span className="text-xs font-bold italic leading-tight">This post has been hidden by the community for safety.</span>
+            <div className="mt-6 flex items-center gap-4 rounded-3xl bg-destructive/10 p-5 text-destructive border border-destructive/20">
+              <EyeOff className="h-6 w-6" />
+              <span className="text-sm font-bold leading-tight">This post has been hidden by the community for safety.</span>
             </div>
           )}
 
           {/* Actions */}
-          <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between">
-            <ReactionButton
-              reaction={reaction}
-              count={likeCount}
-              onChange={handleReactionChange}
-              disabled={!currentUserId}
-            />
+          <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <ReactionButton
+                reaction={reaction}
+                count={likeCount}
+                onChange={handleReactionChange}
+                disabled={!currentUserId}
+              />
+            </div>
             
-            {/* Social Proof placeholder - could show avatar group of likers */}
+            {/* Social Proof */}
             {likeCount > 0 && (
-              <div className="flex -space-x-2">
-                {[1, 2].slice(0, Math.min(likeCount, 2)).map((i) => (
-                  <div key={i} className="w-6 h-6 rounded-full border-2 border-background bg-muted overflow-hidden">
-                    <Image src={`https://i.pravatar.cc/150?u=${post.id}${i}`} alt="Liker" width={24} height={24} />
-                  </div>
-                ))}
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-3"
+              >
+                <div className="flex -space-x-3">
+                  {[1, 2, 3].slice(0, Math.min(likeCount, 3)).map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden ring-2 ring-primary/5 shadow-sm">
+                      <Image 
+                        src={`https://i.pravatar.cc/150?u=${post.id}${i}`} 
+                        alt="Liker" 
+                        width={32} 
+                        height={32} 
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                  {likeCount > 3 && (
+                    <div className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-[10px] font-black text-white shadow-sm ring-2 ring-primary/5">
+                      +{likeCount - 3}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs font-bold text-muted-foreground hidden sm:block">
+                  Celebrating impact
+                </span>
+              </motion.div>
             )}
           </div>
         </div>

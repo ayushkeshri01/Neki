@@ -15,15 +15,15 @@ const stats = [
     label: "Companies Joined",
     value: "1,250+",
     icon: Building2,
-    color: "bg-orange-500/10",
-    textColor: "text-orange-600",
+    color: "bg-primary/10",
+    textColor: "text-primary",
   },
   {
     label: "Hours Volunteered",
     value: "75k+",
     icon: Clock,
-    color: "bg-blue-500/10",
-    textColor: "text-blue-600",
+    color: "bg-primary/10",
+    textColor: "text-primary",
   },
 ];
 

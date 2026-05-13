@@ -311,220 +311,206 @@ async function DashboardData({
   const likesSpark = likesSeries.map((s) => s.value);
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-container-max px-4 py-8 space-y-10">
       {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-col md:flex-row items-end justify-between gap-6 bg-card/50 backdrop-blur-xl p-8 rounded-[2.5rem] border border-border/40 shadow-premium">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">Analytics</h2>
-          <p className="text-sm text-muted-foreground">
-            Welcome back, {session?.user?.name || "Admin"} — your platform at a glance.
+          <h1 className="font-display text-4xl font-black tracking-tight text-foreground">Analytics Overview</h1>
+          <p className="text-muted-foreground font-medium mt-1">
+            Impact intelligence and community growth metrics.
           </p>
         </div>
-        <Badge variant="secondary" className="gap-1.5">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-          </span>
-          Live data
-        </Badge>
+        <div className="flex items-center gap-4">
+          <Badge className="bg-primary/10 text-primary border-none font-black text-[10px] px-4 py-1.5 uppercase tracking-widest flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+            Real-time Insights
+          </Badge>
+          <DashboardFilters currentRange={String(rangeDays)} />
+        </div>
       </div>
 
-      {/* Filters */}
-      <DashboardFilters currentRange={String(rangeDays)} />
-
       {/* SECTION 1 — KPIs */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <KpiCard
           label="Total Users"
           value={formatNumber(totalUsers)}
           delta={totalUsersDelta}
           icon={Users}
-          iconColor="text-indigo-500"
+          iconColor="text-primary"
           trend={usersSpark}
-          trendColor="text-indigo-500"
+          trendColor="text-primary"
         />
         <KpiCard
           label="DAU"
           value={formatNumber(dau)}
           delta={dauDelta}
           icon={Activity}
-          iconColor="text-emerald-500"
+          iconColor="text-primary"
           trend={dauSpark}
-          trendColor="text-emerald-500"
+          trendColor="text-primary"
         />
         <KpiCard
           label="MAU"
           value={formatNumber(mau)}
           delta={mauDelta}
           icon={UsersRound}
-          iconColor="text-sky-500"
+          iconColor="text-primary"
           trend={mauSpark}
-          trendColor="text-sky-500"
+          trendColor="text-primary"
         />
         <KpiCard
           label="Total Posts"
           value={formatNumber(totalPosts)}
           delta={totalPostsDelta}
           icon={FileText}
-          iconColor="text-violet-500"
+          iconColor="text-primary"
           trend={postsSpark}
-          trendColor="text-violet-500"
+          trendColor="text-primary"
         />
         <KpiCard
-          label="Engagement Rate"
+          label="Engagement"
           value={`${engagementRate.toFixed(1)}%`}
           delta={engagementRateDelta}
           icon={UserCheck}
-          iconColor="text-rose-500"
-          helper="of MAU engaged"
+          iconColor="text-primary"
           trend={likesSpark}
-          trendColor="text-rose-500"
+          trendColor="text-primary"
+          helper="of MAU engaged"
         />
         <KpiCard
           label="Impact Actions"
           value={formatNumber(impactCurrent)}
           delta={impactDelta}
           icon={Sparkles}
-          iconColor="text-amber-500"
+          iconColor="text-primary"
           helper="posts + likes"
         />
       </div>
 
-      {/* SECTION 2 — User growth */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      {/* SECTION 2 — Data Visualization */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        <Card className="lg:col-span-2 rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
             <div>
-              <CardTitle className="text-base">User growth</CardTitle>
-              <CardDescription>New users over the selected period</CardDescription>
+              <CardTitle className="font-display text-xl font-black">User Growth</CardTitle>
+              <CardDescription className="font-medium">Acquisition trends over time</CardDescription>
             </div>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 pb-8">
             <LineChart
               area
               series={[
-                { name: "New users", color: "#6366f1", data: newUsersSeries },
+                { name: "New Users", color: "var(--color-primary)", data: newUsersSeries },
               ]}
             />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Acquisition sources</CardTitle>
-            <CardDescription>How users are reaching us</CardDescription>
+        <Card className="rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="p-8 pb-4">
+            <CardTitle className="font-display text-xl font-black">Acquisition</CardTitle>
+            <CardDescription className="font-medium">Traffic source distribution</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 pb-8">
             <DonutChart data={acquisition} />
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">DAU vs MAU</CardTitle>
-            <CardDescription>Daily and monthly active users</CardDescription>
+        <Card className="lg:col-span-3 rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="p-8 pb-4">
+            <CardTitle className="font-display text-xl font-black">Active Performance</CardTitle>
+            <CardDescription className="font-medium">Ratio of daily to monthly participation</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-8 pb-8">
             <LineChart
               area
               series={[
-                { name: "MAU", color: "#0ea5e9", data: mauSeries },
-                { name: "DAU", color: "#10b981", data: dauSeries },
+                { name: "Monthly Active", color: "#666666", data: mauSeries },
+                { name: "Daily Active", color: "var(--color-primary)", data: dauSeries },
               ]}
             />
           </CardContent>
         </Card>
       </div>
 
-      {/* SECTION 3 — Engagement */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Posts &amp; likes per day</CardTitle>
-            <CardDescription>Content creation and engagement cadence</CardDescription>
+      {/* SECTION 3 — Community Health */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        <Card className="lg:col-span-2 rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="p-8 pb-4">
+            <CardTitle className="font-display text-xl font-black">Content Cadence</CardTitle>
+            <CardDescription className="font-medium">Posts shared per day</CardDescription>
           </CardHeader>
-          <CardContent>
-            <BarChart data={postsSeries} color="#8b5cf6" />
+          <CardContent className="px-8 pb-8">
+            <BarChart data={postsSeries} color="var(--color-primary)" />
           </CardContent>
         </Card>
 
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+        <div className="flex flex-col gap-6">
           <MetricTile
             label="Avg posts / user"
             value={avgPostsPerUser.toFixed(2)}
             icon={FileText}
-            tone="violet"
+            tone="neutral"
           />
           <MetricTile
             label="Avg likes / post"
             value={avgLikesPerPost.toFixed(2)}
             icon={Heart}
-            tone="rose"
+            tone="neutral"
           />
           <MetricTile
-            label="Likes / active user"
+            label="Engagement / User"
             value={likesPerActiveUser.toFixed(2)}
             icon={UserCheck}
-            tone="sky"
-            sub={`${activeEngagers} active engagers${
-              engagersDelta !== undefined
-                ? ` (${engagersDelta >= 0 ? "+" : ""}${engagersDelta.toFixed(0)}%)`
-                : ""
-            }`}
+            tone="neutral"
+            sub={`${activeEngagers} active participants`}
           />
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         {/* Top posts */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Top 10 most engaged posts</CardTitle>
-            <CardDescription>Sorted by like count</CardDescription>
+        <Card className="rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="p-8 pb-4 border-b border-border/20">
+            <CardTitle className="font-display text-xl font-black">High-Impact Posts</CardTitle>
+            <CardDescription className="font-medium">Most celebrated community stories</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y">
+            <div className="divide-y divide-border/20">
               {topPosts.length === 0 && (
-                <p className="p-6 text-sm text-muted-foreground">No posts yet.</p>
+                <p className="p-12 text-center text-muted-foreground font-bold italic">No stories documented yet.</p>
               )}
               {topPosts.map((p, idx) => (
                 <Link
                   key={p.id}
                   href={`/admin/posts`}
-                  className="flex items-start gap-3 p-4 transition-colors hover:bg-muted/40"
+                  className="flex items-start gap-4 p-6 transition-colors hover:bg-muted/30 group"
                 >
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-semibold tabular-nums">
+                  <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-muted text-xs font-black group-hover:bg-primary group-hover:text-white transition-colors">
                     {idx + 1}
                   </span>
-                  <Avatar className="h-8 w-8 shrink-0">
+                  <Avatar className="h-10 w-10 shrink-0 border-2 border-border/40">
                     <AvatarImage src={p.author.image || ""} alt={p.author.name || ""} />
-                    <AvatarFallback className="text-xs">
-                      {p.author.name?.charAt(0).toUpperCase() || "U"}
+                    <AvatarFallback className="text-xs font-bold">
+                      {p.author.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {p.author.name || "Unknown"}
+                    <p className="truncate text-sm font-black group-hover:text-primary transition-colors">
+                      {p.author.name || "Anonymous"}
                     </p>
-                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                    <p className="line-clamp-1 text-sm text-muted-foreground font-medium">
                       {p.content || "—"}
                     </p>
-                    {p.communities[0]?.community.name && (
-                      <span className="mt-1 inline-block text-[10px] text-muted-foreground">
-                        in {p.communities[0].community.name}
-                      </span>
-                    )}
                   </div>
-                  <div className="flex shrink-0 flex-col items-end gap-0.5 text-xs">
-                    <span className="flex items-center gap-1 text-rose-500">
+                  <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+                    <span className="flex items-center gap-1.5 font-black text-primary bg-primary/5 px-3 py-1 rounded-full">
                       <Heart className="h-3 w-3 fill-current" /> {p._count.likes}
                     </span>
-                    {p._count.reports > 0 && (
-                      <span className="text-[10px] text-muted-foreground">
-                        {p._count.reports} reports
-                      </span>
-                    )}
                   </div>
                 </Link>
               ))}
@@ -533,40 +519,38 @@ async function DashboardData({
         </Card>
 
         {/* Top users */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Top active users</CardTitle>
-            <CardDescription>Ranked by Good Deed Credits</CardDescription>
+        <Card className="rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
+          <CardHeader className="p-8 pb-4 border-b border-border/20">
+            <CardTitle className="font-display text-xl font-black">Impact Champions</CardTitle>
+            <CardDescription className="font-medium">Ranked by verified Good Deed Credits</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y">
+            <div className="divide-y divide-border/20">
               {topUsers.length === 0 && (
-                <p className="p-6 text-sm text-muted-foreground">No users yet.</p>
+                <p className="p-12 text-center text-muted-foreground font-bold italic">No champions yet.</p>
               )}
               {topUsers.map((u, idx) => (
                 <Link
                   key={u.id}
                   href={`/admin/users`}
-                  className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/40"
+                  className="flex items-center gap-4 p-6 transition-colors hover:bg-muted/30 group"
                 >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-semibold tabular-nums">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-muted text-xs font-black group-hover:bg-primary group-hover:text-white transition-colors">
                     {idx + 1}
                   </span>
-                  <Avatar className="h-9 w-9 shrink-0">
+                  <Avatar className="h-12 w-12 shrink-0 border-2 border-border/40">
                     <AvatarImage src={u.image || ""} alt={u.name || ""} />
-                    <AvatarFallback className="text-xs">
-                      {u.name?.charAt(0).toUpperCase() || "U"}
+                    <AvatarFallback className="text-xs font-bold">
+                      {u.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{u.name || "Unknown"}</p>
-                    <p className="truncate text-xs text-muted-foreground">{u.email}</p>
+                    <p className="truncate text-sm font-black group-hover:text-primary transition-colors">{u.name || "Anonymous"}</p>
+                    <p className="truncate text-xs text-muted-foreground font-medium">{u.email}</p>
                   </div>
-                  <div className="flex shrink-0 flex-col items-end text-xs">
-                    <span className="font-semibold tabular-nums">{u.points}</span>
-                    <span className="text-muted-foreground">
-                      {u._count.posts} posts · {u._count.likes} likes
-                    </span>
+                  <div className="flex shrink-0 flex-col items-end">
+                    <span className="font-display text-xl font-black text-primary">{u.points}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Credits</span>
                   </div>
                 </Link>
               ))}
@@ -576,17 +560,17 @@ async function DashboardData({
       </div>
 
       {/* Footer summary */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryTile label="Communities" value={activeCommunities} />
-        <SummaryTile label="Memberships" value={totalCommunityMemberships} />
-        <SummaryTile label="Hidden posts" value={hiddenPostsCount} accent={hiddenPostsCount > 0} />
-        <SummaryTile label="Blacklisted users" value={bannedCount} accent={bannedCount > 0} />
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <SummaryTile label="Active Circles" value={activeCommunities} />
+        <SummaryTile label="Total Memberships" value={totalCommunityMemberships} />
+        <SummaryTile label="Moderated Content" value={hiddenPostsCount} accent={hiddenPostsCount > 0} />
+        <SummaryTile label="Restricted Users" value={bannedCount} accent={bannedCount > 0} />
       </div>
     </div>
   );
 }
 
-/* ---------- Inline tiles ---------- */
+/* ---------- Inline components with premium styling ---------- */
 
 function MetricTile({
   label,
@@ -598,27 +582,24 @@ function MetricTile({
   label: string;
   value: string;
   icon: typeof Users;
-  tone: "violet" | "rose" | "sky" | "emerald";
+  tone: "neutral";
   sub?: string;
 }) {
   const toneMap = {
-    violet: "bg-violet-500/10 text-violet-500",
-    rose: "bg-rose-500/10 text-rose-500",
-    sky: "bg-sky-500/10 text-sky-500",
-    emerald: "bg-emerald-500/10 text-emerald-500",
+    neutral: "bg-primary/10 text-primary",
   } as const;
   return (
-    <Card>
-      <CardContent className="flex items-center gap-3 p-5">
-        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${toneMap[tone]}`}>
-          <Icon className="h-5 w-5" />
+    <Card className="rounded-[1.5rem] border-border/40 shadow-sm overflow-hidden">
+      <CardContent className="flex items-center gap-4 p-6">
+        <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${toneMap[tone]}`}>
+          <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">
             {label}
           </p>
-          <p className="text-xl font-semibold tabular-nums">{value}</p>
-          {sub && <p className="truncate text-[11px] text-muted-foreground">{sub}</p>}
+          <p className="text-2xl font-black tabular-nums">{value}</p>
+          {sub && <p className="truncate text-[10px] font-bold text-primary italic mt-0.5">{sub}</p>}
         </div>
       </CardContent>
     </Card>
@@ -635,12 +616,12 @@ function SummaryTile({
   accent?: boolean;
 }) {
   return (
-    <Card>
-      <CardContent className="flex items-center justify-between p-4">
-        <span className="text-sm text-muted-foreground">{label}</span>
+    <Card className="rounded-[1.5rem] border-border/40 shadow-sm overflow-hidden">
+      <CardContent className="flex items-center justify-between p-6">
+        <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>
         <span
-          className={`text-lg font-semibold tabular-nums ${
-            accent ? "text-amber-500" : ""
+          className={`text-2xl font-black tabular-nums ${
+            accent ? "text-destructive" : "text-foreground"
           }`}
         >
           {value}

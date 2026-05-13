@@ -3,17 +3,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    @apply bg-background text-foreground font-sans;
   }
-  html {
-    @apply font-sans scroll-smooth;
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
@@ -24,9 +22,9 @@
 }
 
 @theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-plus-jakarta);
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   
@@ -57,12 +55,17 @@
   
   --color-primary-container: var(--primary-container);
   --color-on-primary-container: var(--on-primary-container);
-  
   --color-secondary-container: var(--secondary-container);
   --color-on-secondary-container: var(--on-secondary-container);
-
-  --color-surface-variant: var(--surface-variant);
-  --color-on-surface-variant: var(--on-surface-variant);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  
+  --spacing-section-gap: var(--section-gap);
+  --spacing-margin-desktop: var(--margin-desktop);
+  --spacing-margin-mobile: var(--margin-mobile);
+  --width-container-max: var(--container-max);
+  --max-width-container-max: var(--container-max);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -71,19 +74,19 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
 
-  --shadow-premium: 0 4px 20px rgba(26, 27, 46, 0.05);
-  --shadow-premium-hover: 0 8px 30px rgba(26, 27, 46, 0.12);
+  --shadow-premium: 0 10px 30px -10px rgba(0, 109, 55, 0.1), 0 4px 6px -4px rgba(0, 109, 55, 0.05);
+  --shadow-premium-hover: 0 20px 40px -15px rgba(0, 109, 55, 0.2), 0 8px 10px -6px rgba(0, 109, 55, 0.1);
 }
 
 :root {
-  --background: #fbf8ff;
-  --foreground: #191a2d;
-  
+  --background: #ffffff;
+  --foreground: #000000;
+
   --card: #ffffff;
-  --card-foreground: #191a2d;
+  --card-foreground: #000000;
   
   --popover: #ffffff;
-  --popover-foreground: #191a2d;
+  --popover-foreground: #000000;
   
   --primary: #006d37;
   --primary-foreground: #ffffff;
@@ -92,37 +95,37 @@
   
   --secondary: #53625c;
   --secondary-foreground: #ffffff;
-  --secondary-container: #d6e6de;
-  --on-secondary-container: #596861;
+  --secondary-container: #f0f4f2;
+  --on-secondary-container: #111e1a;
 
-  --surface-variant: #e1e0fb;
-  --on-surface-variant: #3d4a3e;
+  --surface-variant: #f0f4f2;
+  --on-surface-variant: #111e1a;
   
-  --muted: #f5f2ff;
+  --muted: #f0f4f2;
   --muted-foreground: #53625c;
   
-  --accent: #f5f2ff;
+  --accent: #f0f4f2;
   --accent-foreground: #006d37;
   
   --destructive: #ba1a1a;
   --destructive-foreground: #ffffff;
   
-  --border: #bbcbbb;
-  --input: #bbcbbb;
+  --border: #e2e8e4;
+  --input: #e2e8e4;
   --ring: #006d37;
   
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: #111e1a;
-  --foreground: #fbf8ff;
+  --background: #000000;
+  --foreground: #ffffff;
   
-  --card: #191a2d;
-  --card-foreground: #fbf8ff;
+  --card: #0a0a0a;
+  --card-foreground: #ffffff;
   
-  --popover: #191a2d;
-  --popover-foreground: #fbf8ff;
+  --popover: #0a0a0a;
+  --popover-foreground: #ffffff;
   
   --primary: #4ae183;
   --primary-foreground: #00210c;
@@ -130,24 +133,33 @@
   --on-primary-container: #6bfe9c;
   
   --secondary: #bacac3;
-  --secondary-foreground: #111e1a;
-  --secondary-container: #3c4a44;
-  --on-secondary-container: #d6e6de;
+  --secondary-foreground: #000000;
+  --secondary-container: #1a1a1a;
+  --on-secondary-container: #e2e8e4;
 
-  --surface-variant: #2e2f43;
-  --on-surface-variant: #bbcbbb;
+  --surface-variant: #1a1a1a;
+  --on-surface-variant: #e2e8e4;
   
-  --muted: #1e1f3a;
+  --muted: #1a1a1a;
   --muted-foreground: #bacac3;
   
-  --accent: #1e1f3a;
+  --accent: #1a1a1a;
   --accent-foreground: #4ae183;
   
   --destructive: #ffdad6;
   --destructive-foreground: #93000a;
   
-  --border: #3d4a3e;
-  --input: #3d4a3e;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
   --ring: #4ae183;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }
 

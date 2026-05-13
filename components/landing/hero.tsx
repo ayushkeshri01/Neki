@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, HeartHandshake } from "lucide-react";
+import { ArrowRight, Heart } from "lucide-react"; 
 import Link from "next/link";
 import Image from "next/image";
 
@@ -19,7 +19,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="bg-surface-variant text-foreground px-4 py-2 rounded-full font-display text-xs uppercase tracking-widest inline-flex items-center gap-2 border border-border/40"
+          className="bg-primary/10 text-primary px-4 py-2 rounded-full font-display text-xs uppercase tracking-widest inline-flex items-center gap-2 border border-primary/20"
         >
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
           Transform Workplace Giving
@@ -71,17 +71,16 @@ export function Hero() {
         >
           <div className="flex -space-x-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted overflow-hidden">
+              <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted overflow-hidden relative">
                 <Image 
                   src={`https://i.pravatar.cc/150?u=${i + 10}`} 
                   alt="User" 
-                  width={40} 
-                  height={40}
+                  fill
                   className="object-cover"
                 />
               </div>
             ))}
-            <div className="w-10 h-10 rounded-full border-2 border-background bg-primary-container flex items-center justify-center text-xs font-bold text-on-primary-container">
+            <div className="w-10 h-10 rounded-full border-2 border-background bg-primary-container flex items-center justify-center text-xs font-bold text-on-primary-container z-10 relative">
               +2k
             </div>
           </div>
@@ -114,7 +113,7 @@ export function Hero() {
           className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-premium-hover border border-border/40 flex items-center gap-4 max-w-xs"
         >
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-            <HeartHandshake className="w-6 h-6" />
+            <Heart className="w-6 h-6 fill-primary" />
           </div>
           <div>
             <div className="font-display font-bold text-sm">Tree Planting</div>

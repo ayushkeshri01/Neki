@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function About() {
   return (
-    <section className="bg-[#f0fae6] dark:bg-[#1a2e1d] py-24 lg:py-32 px-margin-mobile md:px-margin-desktop overflow-hidden">
+    <section className="bg-primary/5 py-24 lg:py-32 px-margin-mobile md:px-margin-desktop overflow-hidden">
       <div className="max-w-container-max mx-auto flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
@@ -16,7 +16,7 @@ export function About() {
           transition={{ duration: 0.8 }}
           className="lg:w-5/12 relative"
         >
-          <div className="absolute -inset-4 bg-background/40 rounded-[2rem] backdrop-blur-sm -z-10 transform rotate-3" />
+          <div className="absolute -inset-4 bg-background rounded-[2rem] -z-10 transform rotate-3" />
           <div className="relative rounded-3xl overflow-hidden shadow-premium aspect-[4/5]">
             <Image 
               src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" 
@@ -70,7 +70,7 @@ export function About() {
             transition={{ delay: 0.3 }}
           >
             <Link href="/about">
-              <Button variant="outline" className="rounded-full px-8 py-6 text-lg font-bold border-2 border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">
+              <Button variant="outline" className="rounded-full px-8 py-6 text-lg font-bold border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
                 Read Our Full Story
               </Button>
             </Link>
