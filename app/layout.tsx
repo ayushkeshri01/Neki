@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/layout/page-transition";
+import { NavigationRefresher } from "@/components/layout/navigation-refresher";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { auth } from "@/lib/auth";
 
@@ -105,6 +106,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <div className="relative flex min-h-screen flex-col">
+              <NavigationRefresher />
               <PageTransition>
                 {children}
               </PageTransition>

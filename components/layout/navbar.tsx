@@ -94,22 +94,22 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-20 items-center justify-between px-margin-desktop max-w-container-max mx-auto">
+      <div className="container flex h-20 items-center justify-between px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
         {/* Brand Logo */}
         <Link 
           href={displayUser ? "/feed" : "/"} 
-          className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
+          className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-premium-sm border border-primary/10">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-premium border border-primary/20 bg-primary/10 flex items-center justify-center p-1.5">
             <Image 
               src="/logo.png" 
               alt="Neki Logo" 
               fill
-              className="object-cover"
+              className="object-contain p-1"
               priority
             />
           </div>
-          <span className="font-display text-2xl font-extrabold text-primary tracking-tight">Neki</span>
+          <span className="font-display text-2xl font-black text-primary tracking-tighter">Neki</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -139,25 +139,20 @@ export function Navbar() {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex">
-            <ThemeToggle />
-          </div>
-
+        <div className="flex items-center gap-1 sm:gap-4">
           {isLoading ? (
             <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
           ) : displayUser ? (
-            <div className="flex items-center gap-4">
-              <Link href="/create-post">
-                <Button className="hidden sm:flex rounded-full px-6 font-bold shadow-premium hover:shadow-premium-hover gap-2">
+            <div className="flex items-center gap-1 sm:gap-4">
+              <Link href="/create-post" className="hidden sm:block">
+                <Button className="rounded-full px-6 font-bold shadow-premium hover:shadow-premium-hover gap-2">
                   <PlusCircle className="h-4 w-4" />
                   Create Post
                 </Button>
-                <Button size="icon" className="sm:hidden rounded-full shadow-premium">
-                  <PlusCircle className="h-5 w-5" />
-                </Button>
               </Link>
+              
               <NotificationsBell />
+              <ThemeToggle />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -168,7 +163,7 @@ export function Navbar() {
                   >
                     <Avatar className="h-full w-full">
                       <AvatarImage src={displayUser.image || ""} alt={displayUser.name || ""} />
-                      <AvatarFallback className="bg-primary/10 text-primary">
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold">
                         {displayUser.name?.charAt(0).toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
@@ -214,34 +209,51 @@ export function Navbar() {
               
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <Link href="/login">
-                <Button variant="ghost" className="rounded-full px-6">Log In</Button>
-              </Link>
-              <Link href="/login">
-                <Button className="rounded-full px-6 shadow-premium hover:shadow-premium-hover">
-                  Get Started
-                </Button>
-              </Link>
+            <div className="flex items-center gap-1 sm:gap-3">
+              <ThemeToggle />
+              <div className="hidden sm:flex items-center gap-3">
+                <Link href="/login">
+                  <Button variant="ghost" className="rounded-full px-6">Log In</Button>
+                </Link>
+                <Link href="/login">
+                  <Button className="rounded-full px-6 shadow-premium hover:shadow-premium-hover">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
 
           {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="md:hidden ml-1">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80">
+            <SheetContent side="right" className="w-80 flex flex-col">
               <SheetHeader>
-                <SheetTitle className="font-display text-left flex items-center gap-2">
-                  <Image src="/logo.png" alt="Neki" width={32} height={32} className="rounded-lg" />
-                  Neki
+                <SheetTitle className="font-display text-left flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Image src="/logo.png" alt="Neki" width={32} height={32} className="rounded-lg" />
+                    Neki
+                  </div>
+                  <ThemeToggle />
                 </SheetTitle>
                 <SheetDescription className="hidden">Navigation menu for mobile devices.</SheetDescription>
               </SheetHeader>
-              <div className="flex flex-col gap-2 pt-8">
+              <div className="flex flex-col gap-2 pt-8 flex-grow overflow-y-auto">
+                {displayUser && (
+                  <Link
+                    href="/create-post"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center py-4 px-4 mb-2 rounded-2xl bg-primary text-white text-lg font-bold shadow-lg shadow-primary/20"
+                  >
+                    <PlusCircle className="mr-3 h-5 w-5" />
+                    Create New Post
+                  </Link>
+                )}
+                
                 {displayUser && navItems.map((item) => {
                   const isActive = pathname === item.href;
                   return (
