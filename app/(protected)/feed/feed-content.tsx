@@ -57,7 +57,6 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin }: Fee
   const [filter, setFilter] = useState<"all" | "hidden">("all");
   const [reportPostId, setReportPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
-  const [allPosts, setAllPosts] = useState(initialPosts);
 
   const handleLike = async (postId: string, reaction: ReactionType | null) => {
     try {
@@ -132,8 +131,8 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin }: Fee
 
   const filteredPosts =
     filter === "all"
-      ? allPosts.filter((p) => p.status === "VISIBLE")
-      : allPosts.filter((p) => p.status === "HIDDEN");
+      ? initialPosts.filter((p) => p.status === "VISIBLE")
+      : initialPosts.filter((p) => p.status === "HIDDEN");
 
   return (
     <>

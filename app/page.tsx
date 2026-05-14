@@ -5,6 +5,7 @@ import { Stats } from "@/components/landing/stats";
 import { Process } from "@/components/landing/process";
 import { About } from "@/components/landing/about";
 import { getGlobalStats } from "@/lib/stats";
+import { PageTransition } from "@/components/layout/page-transition";
 
 export const dynamic = "force-dynamic";
 
@@ -14,12 +15,14 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow">
-        <Hero />
-        <Stats data={stats} />
-        <Process />
-        <About />
-      </main>
+      <PageTransition>
+        <main className="flex-grow">
+          <Hero />
+          <Stats data={stats} />
+          <Process />
+          <About />
+        </main>
+      </PageTransition>
       <Footer />
     </div>
   );

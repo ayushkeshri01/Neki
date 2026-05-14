@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { Navbar } from "@/components/layout/navbar";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { getUserAccessState } from "@/lib/user-access";
+import { PageTransition } from "@/components/layout/page-transition";
 
 export default async function ProtectedLayout({
   children,
@@ -32,7 +33,11 @@ export default async function ProtectedLayout({
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container py-6 px-4">{children}</main>
+      <main className="flex-grow">
+        <PageTransition>
+          {children}
+        </PageTransition>
+      </main>
     </div>
   );
 }
