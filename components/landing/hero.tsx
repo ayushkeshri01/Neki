@@ -67,29 +67,7 @@ export function Hero() {
           </Link>
         </motion.div>
         
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7, duration: 1 }}
-          className="mt-8 flex items-center gap-4"
-        >
-          <div className="flex -space-x-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted overflow-hidden relative">
-                <Image 
-                  src={`https://i.pravatar.cc/150?u=${i + 10}`} 
-                  alt="User" 
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ))}
-            <div className="w-10 h-10 rounded-full border-2 border-background bg-primary-container flex items-center justify-center text-xs font-bold text-on-primary-container z-10 relative">
-              +2k
-            </div>
-          </div>
-          <span className="text-sm font-medium text-muted-foreground">Active changemakers</span>
-        </motion.div>
+
       </motion.div>
       
       <motion.div 
@@ -101,8 +79,8 @@ export function Hero() {
         <div className="absolute inset-0 bg-primary/20 rounded-[3rem] blur-3xl -z-10 animate-pulse"></div>
         <div className="relative rounded-[2rem] overflow-hidden shadow-premium border border-border/20 aspect-[4/3] lg:aspect-square">
           <Image 
-            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000" 
-            alt="Team collaborating" 
+            src="/landing/tree-planting.png" 
+            alt="People planting trees" 
             fill
             className="object-cover"
             priority

@@ -1,33 +1,38 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Heart, Building2, Clock } from "lucide-react";
+import { Heart, ThumbsUp, Users } from "lucide-react";
 
-const stats = [
-  {
-    label: "Good Deeds Done",
-    value: "245k+",
-    icon: Heart,
-    color: "bg-primary/10",
-    textColor: "text-primary",
-  },
-  {
-    label: "Companies Joined",
-    value: "1,250+",
-    icon: Building2,
-    color: "bg-primary/10",
-    textColor: "text-primary",
-  },
-  {
-    label: "Hours Volunteered",
-    value: "75k+",
-    icon: Clock,
-    color: "bg-primary/10",
-    textColor: "text-primary",
-  },
-];
+interface StatData {
+  label: string;
+  value: string;
+  raw: number;
+}
 
-export function Stats() {
+interface StatsProps {
+  data?: StatData[];
+}
+
+const iconMap = {
+  "Good Deeds Shared": Heart,
+  "Hearts Touched": ThumbsUp,
+  "Volunteers Helping": Users,
+};
+
+export function Stats({ data }: StatsProps) {
+  const displayStats = data || [
+    { label: "Good Deeds Shared", value: "0", raw: 0 },
+    { label: "Hearts Touched", value: "0", raw: 0 },
+    { label: "Volunteers Helping", value: "0", raw: 0 },
+  ];
+
+  const statsWithIcons = displayStats.map((stat) => ({
+    ...stat,
+    icon: iconMap[stat.label as keyof typeof iconMap] || Heart,
+    color: "bg-primary/10",
+    textColor: "text-primary",
+  }));
+
   return (
     <section className="bg-muted/30 py-24 lg:py-32 px-margin-mobile md:px-margin-desktop">
       <div className="max-w-container-max mx-auto">
@@ -52,7 +57,7 @@ export function Stats() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat, i) => (
+          {statsWithIcons.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 30 }}
