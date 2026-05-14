@@ -7,6 +7,7 @@ interface StatData {
   label: string;
   value: string;
   raw: number;
+  growth?: number;
 }
 
 interface StatsProps {
@@ -14,16 +15,16 @@ interface StatsProps {
 }
 
 const iconMap = {
-  "Good Deeds Shared": Heart,
-  "Hearts Touched": ThumbsUp,
+  "Total Initiatives": Heart,
+  "GDCs Distributed": ThumbsUp,
   "Volunteers Helping": Users,
 };
 
 export function Stats({ data }: StatsProps) {
   const displayStats = data || [
-    { label: "Good Deeds Shared", value: "0", raw: 0 },
-    { label: "Hearts Touched", value: "0", raw: 0 },
-    { label: "Volunteers Helping", value: "0", raw: 0 },
+    { label: "Total Initiatives", value: "0", raw: 0, growth: 0 },
+    { label: "GDCs Distributed", value: "0", raw: 0, growth: 0 },
+    { label: "Volunteers Helping", value: "0", raw: 0, growth: 0 },
   ];
 
   const statsWithIcons = displayStats.map((stat) => ({
@@ -74,17 +75,24 @@ export function Stats({ data }: StatsProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="group bg-card rounded-[3rem] p-10 lg:p-14 shadow-premium border border-border/40 flex flex-col items-center text-center transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-2"
+              className="group bg-card rounded-[3.5rem] p-10 lg:p-14 shadow-premium border border-border/40 flex flex-col items-center text-center transition-all duration-500 hover:shadow-premium-hover hover:-translate-y-2"
             >
-              <div className={`w-20 h-20 lg:w-24 lg:h-24 rounded-[2rem] ${stat.color} ${stat.textColor} flex items-center justify-center mb-8 lg:mb-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+              <div className={`w-20 h-20 lg:w-24 lg:h-24 rounded-[2.5rem] ${stat.color} ${stat.textColor} flex items-center justify-center mb-8 lg:mb-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
                 <stat.icon className="w-10 h-10 lg:w-12 lg:h-12" />
               </div>
               <div className="font-display text-5xl lg:text-7xl font-black mb-3 tracking-tighter tabular-nums">
                 {stat.value}
               </div>
-              <div className="text-sm lg:text-base font-bold text-muted-foreground uppercase tracking-[0.15em]">
+              <div className="text-sm lg:text-base font-bold text-muted-foreground uppercase tracking-[0.15em] mb-4">
                 {stat.label}
               </div>
+              
+              {stat.growth !== undefined && stat.growth !== 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                  <span className="text-sm">↑</span>
+                  {stat.growth}% this month
+                </div>
+              )}
               
               <div className="mt-8 w-12 h-1 bg-primary/20 rounded-full group-hover:w-24 transition-all duration-500" />
             </motion.div>
