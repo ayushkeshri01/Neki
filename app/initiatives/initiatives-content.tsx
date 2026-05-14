@@ -21,7 +21,7 @@ const featuredInitiative = {
   category: "Environment",
   description: "Join our city-wide effort to plant 10,000 trees this quarter. Help us improve air quality, create green spaces, and foster community resilience.",
   image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop",
-  points: 500,
+  points: 50,
   joinedCount: 243,
 };
 
@@ -67,7 +67,11 @@ const moreInitiatives = [
   },
 ];
 
-export function InitiativesContent() {
+interface InitiativesContentProps {
+  initialVolunteerCount?: number;
+}
+
+export function InitiativesContent({ initialVolunteerCount = 243 }: InitiativesContentProps) {
   const [initiatives, setInitiatives] = useState(initialInitiatives);
   const [hasLoadedMore, setHasLoadedMore] = useState(false);
 
@@ -144,7 +148,7 @@ export function InitiativesContent() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-primary font-bold text-lg mt-8">
                 <Users2 className="h-5 w-5" />
-                {featuredInitiative.joinedCount} colleagues joined
+                {initialVolunteerCount.toLocaleString()} colleagues joined
               </div>
             </div>
           </div>

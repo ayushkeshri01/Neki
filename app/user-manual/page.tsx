@@ -33,7 +33,7 @@ export default function UserManualPage() {
       icon: Users,
       steps: [
         "Join specific communities based on your department, location, or interests.",
-        "Collaborate on community-wide initiatives and donation drives.",
+        "Collaborate on community-wide initiatives and impact drives.",
         "Engage with colleagues by liking and commenting on their impact posts.",
       ]
     },

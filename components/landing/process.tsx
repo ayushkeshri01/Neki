@@ -12,7 +12,7 @@ const steps = [
   },
   {
     title: "Take Initiative",
-    description: "Browse volunteer opportunities, donation drives, and community projects that match your interests.",
+    description: "Browse volunteer opportunities, impact drives, and community projects that match your interests.",
     image: "/images/landing/step2_v2.png",
   },
   {

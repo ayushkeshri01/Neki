@@ -50,7 +50,7 @@ export function About() {
             transition={{ delay: 0.1 }}
             className="text-base lg:text-xl text-muted-foreground mb-6 leading-relaxed"
           >
-            Neki was born from a simple idea: that the workplace is a powerful engine for social change. We are on a mission to transform corporate giving from a passive annual deduction into an active, engaging, and community-driven movement.
+            Neki was born from a simple idea: that the workplace is a powerful engine for social change. We are on a mission to transform workplace giving from a passive annual deduction into an active, engaging movement that <span className="text-primary font-bold">turns workplace giving into a culture, not a moment.</span>
           </motion.p>
           
           <motion.p 
