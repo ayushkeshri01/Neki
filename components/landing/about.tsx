@@ -68,11 +68,16 @@ export function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto flex flex-col sm:flex-row gap-4"
           >
-            <Link href="/about">
-              <Button variant="outline" className="w-full sm:w-auto rounded-full px-8 py-6 text-lg font-bold border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all">
+            <Link href="/about" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto rounded-full px-8 py-6 text-lg font-bold border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all shadow-premium-sm">
                 Read Our Full Story
+              </Button>
+            </Link>
+            <Link href="/user-manual" className="w-full sm:w-auto">
+              <Button variant="ghost" className="w-full sm:w-auto rounded-full px-8 py-6 text-lg font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all">
+                User Manual
               </Button>
             </Link>
           </motion.div>

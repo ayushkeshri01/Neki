@@ -6,6 +6,7 @@ import Image from "next/image";
 const footerLinks = {
   platform: [
     { label: "About Us", href: "/about" },
+    { label: "User Manual", href: "/user-manual" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy" },
