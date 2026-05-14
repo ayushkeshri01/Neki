@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { UserNoticeType } from "@prisma/client";
 
 export interface BadgeDefinition {
   id: string;
@@ -268,6 +269,22 @@ export async function checkAndAwardBadges(userId: string): Promise<string[]> {
         await tx.user.update({
           where: { id: userId },
           data: { badges: { push: actuallyNew } },
+        });
+
+        // Create notifications for each new badge
+        const badgeNotices = actuallyNew.map((badgeId) => {
+          const badge = BADGE_DEFINITIONS[badgeId];
+          return {
+            userId,
+            noticeType: UserNoticeType.BADGE_EARNED,
+            title: `Badge Earned: ${badge?.name || badgeId}`,
+            body: `Congratulations! You've earned the ${badge?.name || badgeId} badge: ${badge?.description || ""}`,
+            payload: { badgeId },
+          };
+        });
+
+        await tx.userNotice.createMany({
+          data: badgeNotices,
         });
       }
     });

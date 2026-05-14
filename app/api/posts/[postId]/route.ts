@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteFromS3 } from "@/lib/s3";
 import { isActiveUser } from "@/lib/user-access";
+import { recordModerationEvent } from "@/lib/moderation-events";
 
 export async function DELETE(
   _req: NextRequest,
@@ -51,18 +52,42 @@ export async function DELETE(
     // Delete images from S3
     await Promise.all(post.images.map(deleteFromS3));
 
-    // Revert points from the post author
-    if (post.points > 0) {
-      await prisma.user.update({
-        where: { id: post.authorId },
-        data: { points: { decrement: post.points } },
+    const isAdminDeleting = session.user.role === "ADMIN" && post.authorId !== session.user.id;
+
+    await prisma.$transaction(async (tx) => {
+      // Revert points from the post author
+      if (post.points > 0) {
+        await tx.user.update({
+          where: { id: post.authorId },
+          data: { points: { decrement: post.points } },
+        });
+      }
+
+      await tx.post.delete({
+        where: { id: postId },
       });
+
+      if (isAdminDeleting) {
+        await recordModerationEvent(tx, {
+          actionType: "ADMIN_REMOVE_POST",
+          actorUserId: session.user.id,
+          targetUserId: post.authorId,
+          targetPostId: postId,
+          reason: "Post deleted by administrator",
+          notice: {
+            userId: post.authorId,
+            noticeType: "POST_REMOVED",
+            title: "One of your posts was removed",
+            body: "An administrator has removed your post for violating community guidelines.",
+            visibleFromLoginAt: new Date(),
+          },
+        });
+      }
+    });
+
+    if (post.points > 0) {
       revalidatePath("/leaderboard");
     }
-
-    await prisma.post.delete({
-      where: { id: postId },
-    });
 
     revalidatePath("/feed");
     revalidatePath("/communities");

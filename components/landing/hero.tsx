@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Heart } from "lucide-react"; 
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export function Hero() {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
   return (
     <section className="px-margin-mobile md:px-margin-desktop py-20 lg:py-32 max-w-container-max mx-auto flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-24 overflow-hidden">
       <motion.div 
@@ -50,9 +54,9 @@ export function Hero() {
           transition={{ delay: 0.5, duration: 0.5 }}
           className="flex flex-wrap gap-4 mt-4"
         >
-          <Link href="/login">
+          <Link href={isLoggedIn ? "/feed" : "/login"}>
             <Button size="lg" className="rounded-full px-8 py-7 text-lg font-semibold shadow-premium hover:shadow-premium-hover transition-all group">
-              Get Started
+              {isLoggedIn ? "Go to Feed" : "Get Started"}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>

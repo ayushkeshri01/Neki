@@ -10,12 +10,12 @@ import { auth } from "@/lib/auth";
 
 const inter = Inter({ 
   subsets: ["latin"],
-  variable: "--font-sans"
+  variable: "--font-inter"
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-display"
+  variable: "--font-plus-jakarta"
 });
 
 export const metadata: Metadata = {
@@ -97,7 +97,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", plusJakarta.variable, inter.variable)}>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", inter.className)}>
+      <body suppressHydrationWarning className={cn("min-h-screen bg-background font-sans antialiased")}>
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"

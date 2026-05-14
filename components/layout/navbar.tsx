@@ -52,9 +52,14 @@ export function Navbar() {
   const { data: session, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileIdentity, setProfileIdentity] = useState<ProfileIdentityUpdate | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const isAdmin = session?.user?.role === "ADMIN";
-  const isLoading = status === "loading";
+  const isLoading = status === "loading" || !mounted;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleProfileUpdate(event: Event) {
@@ -91,15 +96,24 @@ export function Navbar() {
       <div className="container flex h-20 items-center justify-between px-margin-desktop max-w-container-max mx-auto">
         {/* Brand Logo */}
         <Link 
-          href="/feed" 
-          className="font-display text-2xl font-extrabold text-primary transition-opacity hover:opacity-80"
+          href={displayUser ? "/feed" : "/"} 
+          className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
         >
-          Neki
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-premium-sm border border-primary/10">
+            <Image 
+              src="/logo.png" 
+              alt="Neki Logo" 
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+          <span className="font-display text-2xl font-extrabold text-primary tracking-tight">Neki</span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8 h-full">
-          {navItems.map((item) => {
+          {displayUser && navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link 
@@ -219,11 +233,14 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
               <SheetHeader>
-                <SheetTitle className="font-display text-left">Neki</SheetTitle>
+                <SheetTitle className="font-display text-left flex items-center gap-2">
+                  <Image src="/logo.png" alt="Neki" width={32} height={32} className="rounded-lg" />
+                  Neki
+                </SheetTitle>
                 <SheetDescription className="hidden">Navigation menu for mobile devices.</SheetDescription>
               </SheetHeader>
               <div className="flex flex-col gap-2 pt-8">
-                {navItems.map((item) => {
+                {displayUser && navItems.map((item) => {
                   const isActive = pathname === item.href;
                   return (
                     <Link

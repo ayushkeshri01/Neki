@@ -42,7 +42,7 @@ const initialInitiatives = [
     id: "4",
     title: "Coastal Cleanup Day",
     description: "Join the weekend team to remove plastic waste from local beaches. Equipment and transportation provided.",
-    image: "/brain/68fc043e-06ba-4ae6-9121-5653a8cac7c4/coastal_cleanup_premium_1778698638672.png",
+    image: "/landing/coastal_cleanup.png",
   },
 ];
 
@@ -57,7 +57,7 @@ const moreInitiatives = [
     id: "6",
     title: "Animal Shelter Support",
     description: "Help our local animal shelter with walking dogs, cleaning facilities, and socializing animals.",
-    image: "/brain/68fc043e-06ba-4ae6-9121-5653a8cac7c4/animal_shelter_support_premium_1778698615875.png",
+    image: "/landing/animal_shelter.png",
   },
   {
     id: "7",

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import path from "path";
 import { prisma } from "@/lib/prisma";
 import { normalizeEmail } from "@/lib/registration-token";
 import { randomInt } from "crypto";
@@ -120,6 +121,13 @@ export async function POST(req: Request) {
           from: `"Neki" <${process.env.SMTP_FROM || "noreply@neki.example.com"}>`,
           to: normalizedEmail,
           subject: "Your Neki Login Code",
+          attachments: [
+            {
+              filename: 'logo.png',
+              path: path.join(process.cwd(), 'public', 'logo.png'),
+              cid: 'neki-logo'
+            }
+          ],
           html: `
             <!DOCTYPE html>
             <html>
@@ -139,8 +147,9 @@ export async function POST(req: Request) {
             </head>
             <body class="body-bg" style="margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc;">
               <div class="card-bg" style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-                <div style="background-color: #16a34a; padding: 30px; text-align: center;">
-                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; letter-spacing: -0.025em;">Neki</h1>
+                <div style="background-color: #16a34a; padding: 25px; text-align: center;">
+                  <img src="cid:neki-logo" alt="Neki Logo" style="width: 70px; height: 70px; border-radius: 15px; display: block; margin: 0 auto; background-color: #ffffff; padding: 2px;" />
+                  <div style="margin-top: 12px; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">Neki</div>
                 </div>
                 <div style="padding: 40px 30px; text-align: center;">
                   <h2 class="text-main" style="margin: 0 0 16px; font-size: 20px; color: #1e293b; font-weight: 600;">Verify your email</h2>

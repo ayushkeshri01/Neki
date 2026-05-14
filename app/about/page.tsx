@@ -221,7 +221,8 @@ export default function AboutPage() {
 
       <footer className="py-12 border-t border-border/40 bg-card">
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center">
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Image src="/logo.png" alt="Neki Logo" width={32} height={32} className="rounded-lg shadow-sm" />
             <span className="font-display text-2xl font-black text-primary">Neki</span>
           </div>
           <p className="text-muted-foreground font-medium text-sm">

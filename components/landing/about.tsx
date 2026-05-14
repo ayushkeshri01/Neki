@@ -19,8 +19,8 @@ export function About() {
           <div className="absolute -inset-4 bg-background rounded-[2rem] -z-10 transform rotate-3" />
           <div className="relative rounded-3xl overflow-hidden shadow-premium aspect-[4/5]">
             <Image 
-              src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000" 
-              alt="People planting trees" 
+              src="/landing/impact.png" 
+              alt="Corporate employee helping community" 
               fill
               className="object-cover"
             />
