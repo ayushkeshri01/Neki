@@ -34,19 +34,19 @@ export default function TermsPage() {
       title: "Content & Conduct",
       content: "All contributions must comply with our Community Guidelines and organizational policies. We strictly prohibit harassment, fraud, and the distribution of unauthorized or illegal content.",
       icon: FileCheck,
-      color: "bg-blue-500/10 text-blue-500"
+      color: "bg-primary/10 text-primary"
     },
     {
       title: "Moderation Authority",
       content: "Administrators reserve the right to hide, remove, or modify any content. We may also restrict or terminate accounts that violate our terms or pose a risk to the community's integrity.",
       icon: ShieldAlert,
-      color: "bg-red-500/10 text-red-500"
+      color: "bg-destructive/10 text-destructive"
     },
     {
       title: "Platform Evolution",
       content: "We continuously improve Neki. Your continued use of the platform indicates acceptance of these terms and any future updates. We will notify users of significant changes to our policies.",
       icon: RefreshCw,
-      color: "bg-purple-500/10 text-purple-500"
+      color: "bg-secondary/10 text-secondary"
     }
   ];
 

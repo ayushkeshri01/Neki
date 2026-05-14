@@ -32,19 +32,19 @@ export default function PrivacyPolicyPage() {
       title: "Usage & Purpose",
       content: "We use this information to provide community features, enforce platform rules, detect abuse, and keep an auditable record of moderation decisions.",
       icon: Eye,
-      color: "bg-blue-500/10 text-blue-500"
+      color: "bg-primary/10 text-primary"
     },
     {
       title: "Moderation Records",
       content: "If your account is moderated, we may store notices and audit entries describing the action and reason. These records are retained to support security and compliance.",
       icon: ShieldCheck,
-      color: "bg-red-500/10 text-red-500"
+      color: "bg-destructive/10 text-destructive"
     },
     {
       title: "Governance & Security",
       content: "By using Neki, you agree that your data may be processed for account security, fraud prevention, and community governance.",
       icon: Lock,
-      color: "bg-green-500/10 text-green-500"
+      color: "bg-secondary/10 text-secondary"
     }
   ];
 

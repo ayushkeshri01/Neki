@@ -322,6 +322,7 @@ export async function GET(req: NextRequest) {
         _count: { select: { likes: true } },
       },
       orderBy: { createdAt: "desc" },
+      take: 50,
     });
 
     return NextResponse.json(posts);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PostCard } from "@/components/posts/post-card";
 import type { ReactionType } from "@/lib/reactions";
@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileQuestion, Loader2 } from "lucide-react";
+import { FileQuestion } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -50,19 +50,14 @@ interface FeedContentProps {
   posts: Post[];
   currentUserId: string;
   isAdmin: boolean;
-  hasMore?: boolean;
-  nextCursor?: string;
 }
 
-export function FeedContent({ posts: initialPosts, currentUserId, isAdmin, hasMore: initialHasMore, nextCursor: initialNextCursor }: FeedContentProps) {
+export function FeedContent({ posts: initialPosts, currentUserId, isAdmin }: FeedContentProps) {
   const router = useRouter();
   const [filter, setFilter] = useState<"all" | "hidden">("all");
   const [reportPostId, setReportPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState("");
   const [allPosts, setAllPosts] = useState(initialPosts);
-  const [hasMore, setHasMore] = useState(initialHasMore ?? false);
-  const [nextCursor, setNextCursor] = useState(initialNextCursor);
-  const [loadingMore, setLoadingMore] = useState(false);
 
   const handleLike = async (postId: string, reaction: ReactionType | null) => {
     try {
@@ -135,28 +130,6 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin, hasMo
     }
   };
 
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !nextCursor) return;
-    setLoadingMore(true);
-    try {
-      const params = new URLSearchParams({ cursor: nextCursor });
-      const res = await fetch(`/api/posts?${params}`);
-      if (!res.ok) throw new Error("Failed to load more posts");
-      const data: Post[] = await res.json();
-      setAllPosts((prev) => [...prev, ...data]);
-      setHasMore(data.length > 0);
-      if (data.length > 0) {
-        setNextCursor(data[data.length - 1].id);
-      } else {
-        setNextCursor(undefined);
-      }
-    } catch {
-      toast.error("Failed to load more posts.");
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [loadingMore, nextCursor]);
-
   const filteredPosts =
     filter === "all"
       ? allPosts.filter((p) => p.status === "VISIBLE")
@@ -210,22 +183,6 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin, hasMo
                 onDelete={handleDelete}
               />
             ))}
-            {hasMore && (
-              <div className="flex justify-center pt-8">
-                <Button 
-                  onClick={loadMore} 
-                  disabled={loadingMore} 
-                  variant="outline"
-                  className="rounded-full px-8 py-6 font-bold border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all"
-                >
-                  {loadingMore ? (
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  ) : (
-                    "Load More Stories"
-                  )}
-                </Button>
-              </div>
-            )}
           </div>
         )}
       </div>

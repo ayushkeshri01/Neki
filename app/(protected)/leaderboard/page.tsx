@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { isActiveUser } from "@/lib/user-access";
 import { LeaderboardContent } from "./leaderboard-content";
 
+export const dynamic = "force-dynamic";
+
 interface LeaderRaw {
   id: string;
   name: string | null;

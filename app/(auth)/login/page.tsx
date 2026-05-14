@@ -641,7 +641,7 @@ function LoginContent() {
             Read full policies:
             <div className="mt-2 flex items-center gap-2">
               <Link
-                href="/privacy-policy"
+                href="/privacy"
                 className="text-primary underline underline-offset-2"
                 target="_blank"
                 rel="noreferrer"

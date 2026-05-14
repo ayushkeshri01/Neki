@@ -258,7 +258,7 @@ export function EditProfileDialog({
                   <Button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-1 right-1 h-10 w-10 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 transition-all"
+                    className="absolute bottom-1 right-1 h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all"
                   >
                     <Camera className="h-5 w-5" />
                   </Button>
@@ -294,7 +294,7 @@ export function EditProfileDialog({
                     <Label htmlFor="bio" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Bio</Label>
                     <span className={cn(
                       "text-[10px] font-black uppercase tracking-widest",
-                      bio.length >= 250 ? "text-red-500" : "text-muted-foreground"
+                      bio.length >= 250 ? "text-destructive" : "text-muted-foreground"
                     )}>
                       {bio.length} / 250
                     </span>
@@ -324,7 +324,7 @@ export function EditProfileDialog({
                 <Button 
                   type="submit" 
                   disabled={isLoading}
-                  className="flex-1 h-14 rounded-full font-black uppercase tracking-widest shadow-premium bg-primary text-white"
+                  className="flex-1 h-14 rounded-full font-black uppercase tracking-widest shadow-premium bg-primary text-primary-foreground"
                 >
                   {isLoading ? (
                     <>
@@ -343,7 +343,7 @@ export function EditProfileDialog({
               {/* Bento-style footer highlights */}
               <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-border/20">
                 <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-start gap-3">
-                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                  <div className="p-2 bg-card rounded-lg shadow-sm">
                     <Shield className="h-4 w-4 text-primary" />
                   </div>
                   <div>
@@ -351,12 +351,12 @@ export function EditProfileDialog({
                     <p className="text-[10px] text-muted-foreground font-medium">Verified profile</p>
                   </div>
                 </div>
-                <div className="p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10 flex items-start gap-3">
-                  <div className="p-2 bg-white rounded-lg shadow-sm">
-                    <Bell className="h-4 w-4 text-blue-500" />
+                <div className="p-4 bg-secondary/10 rounded-2xl border border-secondary/20 flex items-start gap-3">
+                  <div className="p-2 bg-card rounded-lg shadow-sm">
+                    <Bell className="h-4 w-4 text-secondary" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black uppercase text-blue-500">Notifications</p>
+                    <p className="text-[10px] font-black uppercase text-secondary">Notifications</p>
                     <p className="text-[10px] text-muted-foreground font-medium">Impact alerts</p>
                   </div>
                 </div>

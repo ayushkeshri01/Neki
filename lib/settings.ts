@@ -147,14 +147,24 @@ export function parseAdminSettingsInput(
 }
 
 export async function getOrCreateSettings() {
-  return prisma.appSettings.upsert({
-    where: { id: "default" },
-    update: {},
-    create: {
+  try {
+    return await prisma.appSettings.upsert({
+      where: { id: "default" },
+      update: {},
+      create: {
+        id: "default",
+        allowedDomains: [],
+        privacyPolicyVersion: DEFAULT_PRIVACY_POLICY_VERSION,
+        autoLogoutDays: null,
+      },
+    });
+  } catch (error) {
+    // During build or if DB is down, return default values
+    return {
       id: "default",
       allowedDomains: [],
       privacyPolicyVersion: DEFAULT_PRIVACY_POLICY_VERSION,
       autoLogoutDays: null,
-    },
-  });
+    };
+  }
 }

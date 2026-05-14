@@ -29,100 +29,75 @@ const steps = [
 
 export function Process() {
   return (
-    <section className="py-24 lg:py-32 px-margin-mobile md:px-margin-desktop relative overflow-hidden">
-      {/* Subtle Doodle Background */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-        <Image 
-          src="/images/landing/doodle.png" 
-          alt="Doodle Background" 
-          fill 
-          className="object-cover"
-        />
-      </div>
-
+    <section className="py-24 lg:py-40 px-margin-mobile md:px-margin-desktop relative overflow-hidden bg-background">
       <div className="max-w-container-max mx-auto relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-end mb-16 lg:mb-24 gap-8">
-          <div className="lg:w-1/2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center gap-2 mb-4 text-primary font-black text-xs uppercase tracking-widest"
-            >
-              <Sparkles className="h-4 w-4" />
-              The Journey to Impact
-            </motion.div>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="font-display text-4xl lg:text-7xl font-black mb-6 leading-tight"
-            >
-              How Neki <span className="text-primary italic">Works</span>
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-muted-foreground font-medium max-w-xl"
-            >
-              Building a culture of impact is a rewarding adventure. Follow these simple steps to start creating a difference.
-            </motion.p>
-          </div>
-          
+        <div className="flex flex-col items-center text-center mb-20 lg:mb-32">
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="hidden lg:block pb-2"
+            className="flex items-center gap-2 mb-6 text-primary font-bold text-xs uppercase tracking-[0.2em] bg-primary/5 px-4 py-2 rounded-full border border-primary/10"
           >
-            <div className="flex gap-2 bg-primary/5 p-3 rounded-2xl border border-primary/10">
-              <div className="w-12 h-1.5 bg-primary rounded-full"></div>
-              <div className="w-4 h-1.5 bg-primary/20 rounded-full"></div>
-              <div className="w-4 h-1.5 bg-primary/20 rounded-full"></div>
-            </div>
+            <Sparkles className="h-4 w-4" />
+            Simple & Rewarding
           </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="font-display text-4xl lg:text-8xl font-black mb-8 leading-[0.9] tracking-tighter"
+          >
+            How Neki <span className="text-primary italic">Works</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-muted-foreground font-medium max-w-2xl leading-relaxed"
+          >
+            Empowering your team to make a difference is just four simple steps away.
+          </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 relative">
+          {/* Connecting Line (Desktop) */}
+          <div className="hidden lg:block absolute top-[25%] left-0 w-full h-0.5 bg-border -z-10" />
+
           {steps.map((step, i) => (
             <motion.div
               key={step.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -10 }}
-              className="group bg-card p-8 rounded-[2.5rem] border border-border/40 shadow-premium hover:shadow-premium-hover transition-all duration-500"
+              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative flex flex-col items-center text-center"
             >
-              <div className="relative mb-8 h-44 sm:h-48 w-full">
-                <div className="absolute inset-0 bg-primary/5 rounded-3xl -rotate-6 transition-transform group-hover:rotate-0" />
-                <div className="absolute inset-0 bg-white dark:bg-black/20 rounded-3xl border border-border/40 shadow-inner overflow-hidden">
+              <div className="relative mb-10 w-full aspect-square max-w-[240px] mx-auto">
+                {/* Number Circle */}
+                <div className="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-background border-2 border-primary text-primary flex items-center justify-center font-display font-black text-xl z-20 shadow-lg group-hover:bg-primary group-hover:text-white transition-colors duration-500">
+                  {i + 1}
+                </div>
+                
+                <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] rotate-3 transition-transform group-hover:rotate-0 group-hover:bg-primary/10 duration-500" />
+                <div className="relative h-full w-full bg-card rounded-[2.5rem] border border-border/40 shadow-premium overflow-hidden transition-all duration-500 group-hover:shadow-premium-hover group-hover:-translate-y-2">
                   <Image 
                     src={step.image} 
                     alt={step.title} 
                     fill 
-                    className="object-contain p-6 transition-transform duration-700 group-hover:scale-110"
+                    className="object-contain p-8 transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="font-display text-2xl font-black group-hover:text-primary transition-colors">
+              <div className="space-y-4 px-4">
+                <h3 className="font-display text-2xl font-black group-hover:text-primary transition-colors tracking-tight">
                   {step.title}
                 </h3>
                 
-                <p className="text-muted-foreground font-medium leading-relaxed text-sm">
+                <p className="text-muted-foreground font-medium leading-relaxed text-sm lg:text-base">
                   {step.description}
                 </p>
-                
-                <motion.div 
-                  className="w-0 h-1.5 bg-primary rounded-full"
-                  whileInView={{ width: "100%" }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 + i * 0.1, duration: 0.8 }}
-                />
               </div>
             </motion.div>
           ))}

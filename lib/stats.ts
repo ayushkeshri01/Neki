@@ -42,8 +42,7 @@ export async function getGlobalStats() {
       }
     ];
   } catch (error) {
-    console.error("Error fetching global stats:", error);
-    // Return fallback "real" looking but zeroed data if error
+    // Return fallback data if DB is unavailable (e.g. during build)
     return [
       { label: "Good Deeds Done", value: "0", raw: 0 },
       { label: "Companies Joined", value: "0", raw: 0 },

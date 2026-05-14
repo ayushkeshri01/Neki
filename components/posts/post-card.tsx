@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MoreHorizontal, FlagOff, EyeOff, Trash2, Star, Pencil } from "lucide-react";
@@ -410,7 +410,7 @@ export function PostCard({
                 className="flex items-center gap-3"
               >
                 <div className="flex -space-x-3">
-                  {post.likes.slice(0, 3).map((like, i) => (
+                  {post.likes.slice(0, 3).map((like) => (
                     <div key={like.userId} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden ring-2 ring-primary/5 shadow-sm">
                       <Avatar className="h-full w-full">
                         <AvatarImage src={like.user?.image || ""} />
@@ -421,7 +421,7 @@ export function PostCard({
                     </div>
                   ))}
                   {likeCount > 3 && (
-                    <div className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-[10px] font-black text-white shadow-sm ring-2 ring-primary/5">
+                    <div className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center text-[10px] font-black text-secondary-foreground shadow-sm ring-2 ring-primary/5">
                       +{likeCount - 3}
                     </div>
                   )}

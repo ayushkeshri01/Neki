@@ -112,8 +112,8 @@ export function PublicProfileContent({ user, stats }: PublicProfileContentProps)
                   {user.name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute bottom-1 right-1 bg-primary p-1.5 rounded-full border-2 border-white shadow-lg">
-                <CheckCircle2 className="h-4 w-4 text-white fill-current" />
+              <div className="absolute bottom-1 right-1 bg-primary p-1.5 rounded-full border-2 border-background shadow-lg">
+                <CheckCircle2 className="h-4 w-4 text-primary-foreground fill-current" />
               </div>
             </motion.div>
           </div>
@@ -197,15 +197,15 @@ export function PublicProfileContent({ user, stats }: PublicProfileContentProps)
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Impact Stories</p>
           </div>
           <div className="bg-card border border-border/40 rounded-[2rem] p-6 text-center hover:bg-muted/30 transition-colors cursor-default shadow-sm group">
-            <div className="w-10 h-10 bg-red-500/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-              <Heart className="h-5 w-5 text-red-500 fill-current" />
+            <div className="w-10 h-10 bg-destructive/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <Heart className="h-5 w-5 text-destructive fill-current" />
             </div>
             <p className="font-display text-3xl font-black text-primary">{stats.totalLikes}</p>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Appreciation</p>
           </div>
           <div className="bg-card border border-border/40 rounded-[2rem] p-6 text-center hover:bg-muted/30 transition-colors cursor-default shadow-sm group">
-            <div className="w-10 h-10 bg-blue-500/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-              <Users className="h-5 w-5 text-blue-500" />
+            <div className="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <Users className="h-5 w-5 text-secondary" />
             </div>
             <p className="font-display text-3xl font-black text-primary">{stats.totalCommunities}</p>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Circles</p>

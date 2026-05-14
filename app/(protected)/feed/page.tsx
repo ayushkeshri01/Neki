@@ -4,15 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { FeedContent } from "./feed-content";
 import type { Post } from "./feed-content";
 
-const PAGE_SIZE = 10;
+export const dynamic = "force-dynamic";
 
-export default async function FeedPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ cursor?: string }>;
-}) {
+export default async function FeedPage() {
   const session = await auth();
-  const { cursor } = await searchParams;
 
   if (!session?.user) {
     redirect("/login");
@@ -75,20 +70,10 @@ export default async function FeedPage({
       },
     },
     orderBy: { createdAt: "desc" },
-    take: PAGE_SIZE + 1,
-    ...(cursor
-      ? {
-          cursor: { id: cursor },
-          skip: 1,
-        }
-      : {}),
+    take: 20,
   });
 
-  const hasMore = posts.length > PAGE_SIZE;
-  const visiblePosts = posts.slice(0, PAGE_SIZE);
-  const nextCursor = hasMore ? visiblePosts[visiblePosts.length - 1].id : undefined;
-
-  const serializedPosts = visiblePosts.map(({ createdAt, ...rest }) => ({
+  const serializedPosts = posts.map(({ createdAt, ...rest }) => ({
     ...rest,
     createdAt: createdAt.toISOString(),
   }));
@@ -98,8 +83,6 @@ export default async function FeedPage({
       posts={serializedPosts}
       currentUserId={session.user.id}
       isAdmin={isAdmin}
-      hasMore={hasMore}
-      nextCursor={nextCursor}
     />
   );
 }

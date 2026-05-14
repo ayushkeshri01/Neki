@@ -213,7 +213,7 @@ export function LineChart({
                 cy={pts[hover]?.y}
                 r="4"
                 fill={series[i].color}
-                stroke="white"
+                stroke="var(--background)"
                 strokeWidth="2"
               />
             ))}

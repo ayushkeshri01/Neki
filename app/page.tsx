@@ -6,6 +6,8 @@ import { Process } from "@/components/landing/process";
 import { About } from "@/components/landing/about";
 import { getGlobalStats } from "@/lib/stats";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const stats = await getGlobalStats();
 

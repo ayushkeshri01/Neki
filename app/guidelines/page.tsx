@@ -33,31 +33,31 @@ export default function GuidelinesPage() {
       title: "Zero Tolerance for Hate",
       description: "Neki is a safe space. Any form of hatred, discrimination, or religious intolerance is strictly prohibited and will result in immediate account suspension.",
       icon: ShieldCheck,
-      color: "bg-red-500/10 text-red-500"
+      color: "bg-destructive/10 text-destructive"
     },
     {
       title: "Respect Privacy",
       description: "Do not post sensitive personal information about yourself or others. Ensure you have consent before sharing photos of colleagues or community members.",
       icon: EyeOff,
-      color: "bg-orange-500/10 text-orange-500"
+      color: "bg-secondary/10 text-secondary"
     },
     {
       title: "Constructive Engagement",
       description: "Communicate with empathy and respect. Disagreements should be handled professionally. Avoid inflammatory language or harassment of any kind.",
       icon: MessageSquare,
-      color: "bg-blue-500/10 text-blue-500"
+      color: "bg-primary/10 text-primary"
     },
     {
       title: "Authentic Contributions",
       description: "Share real experiences and genuine initiatives. Spamming, misleading content, or promotional material unrelated to social good is not allowed.",
       icon: Heart,
-      color: "bg-pink-500/10 text-pink-500"
+      color: "bg-accent text-accent-foreground"
     },
     {
       title: "Fair Play",
       description: "Respect the points system and leaderboard. Any attempts to manipulate metrics or 'farm' GDCs through fake engagement will be moderated.",
       icon: Scale,
-      color: "bg-purple-500/10 text-purple-500"
+      color: "bg-muted text-muted-foreground"
     }
   ];
 
@@ -124,12 +124,12 @@ export default function GuidelinesPage() {
         <section className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop mt-24">
           <motion.div 
             {...fadeIn}
-            className="p-12 rounded-[3rem] bg-red-500/5 border border-red-500/10 flex flex-col items-center text-center gap-6"
+          className="p-12 rounded-[3rem] bg-destructive/5 border border-destructive/10 flex flex-col items-center text-center gap-6"
           >
-            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
-              <AlertTriangle className="h-8 w-8 text-red-500" />
+            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-8 w-8 text-destructive" />
             </div>
-            <h2 className="font-display text-3xl font-black text-red-500">Moderation Policy</h2>
+            <h2 className="font-display text-3xl font-black text-destructive">Moderation Policy</h2>
             <p className="text-muted-foreground font-medium text-lg leading-relaxed max-w-2xl">
               Our moderation team reviews reported content daily. Violating these guidelines may result in content removal, 
               point deduction, or permanent ban from the Neki platform. We reserve the right to act immediately on content 

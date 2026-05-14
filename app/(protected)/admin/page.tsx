@@ -293,9 +293,9 @@ async function DashboardData({
   const refShare = Math.round(totalUsers * 0.23);
   const socShare = Math.max(0, totalUsers - orgShare - refShare);
   const acquisition = [
-    { label: "Organic", value: orgShare, color: "#6366f1" },
-    { label: "Referral", value: refShare, color: "#10b981" },
-    { label: "Social Media", value: socShare, color: "#f59e0b" },
+    { label: "Organic", value: orgShare, color: "var(--color-primary)" },
+    { label: "Referral", value: refShare, color: "var(--color-tertiary)" },
+    { label: "Social Media", value: socShare, color: "var(--color-secondary)" },
   ];
 
   /* ---- Engagement metrics ---- */
@@ -413,7 +413,7 @@ async function DashboardData({
         <Card className="rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden">
           <CardHeader className="p-8 pb-4">
             <CardTitle className="font-display text-xl font-black">Acquisition</CardTitle>
-            <CardDescription className="font-medium">Traffic source distribution</CardDescription>
+            <CardDescription className="font-medium">Traffic source distribution (simulated)</CardDescription>
           </CardHeader>
           <CardContent className="px-8 pb-8">
             <DonutChart data={acquisition} />
@@ -429,7 +429,7 @@ async function DashboardData({
             <LineChart
               area
               series={[
-                { name: "Monthly Active", color: "#666666", data: mauSeries },
+                { name: "Monthly Active", color: "var(--color-muted-foreground)", data: mauSeries },
                 { name: "Daily Active", color: "var(--color-primary)", data: dauSeries },
               ]}
             />
