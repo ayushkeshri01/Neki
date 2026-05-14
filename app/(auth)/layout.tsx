@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { PageTransition } from "@/components/layout/page-transition";
 
 export default async function AuthLayout({
   children,
@@ -14,8 +13,8 @@ export default async function AuthLayout({
   }
 
   return (
-    <PageTransition>
+    <>
       {children}
-    </PageTransition>
+    </>
   );
 }

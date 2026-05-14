@@ -5,7 +5,8 @@ import { getUserAccessState } from "@/lib/user-access";
 import { AdminNoticesButton } from "@/components/layout/admin-notices-button";
 import { SidebarNav } from "@/components/admin/sidebar-nav";
 import { MobileAdminSidebar } from "@/components/admin/mobile-admin-sidebar";
-import { PageTransition } from "@/components/layout/page-transition";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({
   children,
@@ -61,9 +62,7 @@ export default async function AdminLayout({
 
           {/* Main Dashboard Content */}
           <main className="flex-1 min-w-0">
-            <PageTransition>
-              {children}
-            </PageTransition>
+            {children}
           </main>
         </div>
       </div>

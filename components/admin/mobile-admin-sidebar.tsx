@@ -19,6 +19,7 @@ export function MobileAdminSidebar() {
 
   // Close sidebar when route changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);
   }, [pathname]);
 

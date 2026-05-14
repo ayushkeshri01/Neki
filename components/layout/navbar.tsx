@@ -190,7 +190,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem asChild>
-                      <Link href="/admin" className="cursor-pointer">
+                      <Link href="/admin" className="cursor-pointer" prefetch={false}>
                         <Shield className="mr-2 h-4 w-4" />
                         Admin
                       </Link>
@@ -289,6 +289,7 @@ export function Navbar() {
                     {isAdmin && (
                       <Link
                         href="/admin"
+                        prefetch={false}
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           "flex items-center py-4 px-4 rounded-xl text-lg font-medium transition-colors hover:bg-muted",

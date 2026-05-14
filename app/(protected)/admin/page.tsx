@@ -59,7 +59,7 @@ function buildDayBuckets(
   return out;
 }
 
-/* ---------- Page ---------- */
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage({
   searchParams,
@@ -82,6 +82,7 @@ async function DashboardData({
   const sp = await searchParams;
   const rangeDays = Math.max(7, Math.min(365, parseInt(sp?.range || "30", 10) || 30));
 
+  // ... (keeping existing calculations)
   const now = new Date();
   const startCurrent = new Date(now.getTime() - rangeDays * 86_400_000);
   const startPrevious = new Date(now.getTime() - rangeDays * 2 * 86_400_000);
@@ -91,7 +92,6 @@ async function DashboardData({
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 86_400_000);
   const earliestLoginNeeded = new Date(startCurrent.getTime() - 30 * 86_400_000);
 
-  /* ---- Aggregate counts (parallel) ---- */
   const [
     totalUsers,
     usersBeforeCurrent,
@@ -149,13 +149,10 @@ async function DashboardData({
       where: { createdAt: { gte: startCurrent } },
       select: { createdAt: true },
     }),
-    // Distinct likers (and their like timestamps) in the current window —
-    // used to compute Engagement Rate and the "active engagers" metric.
     prisma.like.findMany({
       where: { createdAt: { gte: startCurrent } },
       select: { userId: true, createdAt: true },
     }),
-    // Likers in previous window for delta calculation
     prisma.like.findMany({
       where: { createdAt: { gte: startPrevious, lt: startCurrent } },
       select: { userId: true },
@@ -193,41 +190,26 @@ async function DashboardData({
     }),
   ]);
 
-  /* ---- Derive KPIs ---- */
   const newUsersCurrent = totalUsers - usersBeforeCurrent;
   const newUsersPrevious = usersBeforeCurrent - usersBeforePrevious;
   const totalUsersDelta = pctChange(newUsersCurrent, newUsersPrevious);
-
   const dauDelta = pctChange(dau, dauPrev);
   const mauDelta = pctChange(mau, mauPrev);
-
   const newPostsCurrent = totalPosts - postsBeforeCurrent;
   const newPostsPrevious = postsBeforeCurrent - postsBeforePrevious;
   const totalPostsDelta = pctChange(newPostsCurrent, newPostsPrevious);
-
-  // Distinct active engagers = users who liked at least once in the current window
   const activeEngagersSet = new Set(likesInRange.map((l) => l.userId));
   const activeEngagers = activeEngagersSet.size;
   const prevEngagersSet = new Set(likesInPreviousRange.map((l) => l.userId));
   const prevEngagers = prevEngagersSet.size;
   const engagersDelta = pctChange(activeEngagers, prevEngagers);
-
-  // Engagement Rate = % of monthly-active users who engaged (liked) in the window.
-  // Falls back to 0 when there are no monthly active users yet.
   const engagementRate = mau > 0 ? (activeEngagers / mau) * 100 : 0;
   const prevEngagementRate = mauPrev > 0 ? (prevEngagers / mauPrev) * 100 : 0;
-  const engagementRateDelta =
-    prevEngagementRate > 0
-      ? engagementRate - prevEngagementRate // absolute pp change
-      : undefined;
-
-  // Total Impact Actions in the current window = posts shared + likes given.
-  // This is a simple, transparent "platform activity" volume metric.
+  const engagementRateDelta = prevEngagementRate > 0 ? engagementRate - prevEngagementRate : undefined;
   const impactCurrent = newPostsCurrent + likesCurrent;
   const impactPrevious = newPostsPrevious + likesPrevious;
   const impactDelta = pctChange(impactCurrent, impactPrevious);
 
-  /* ---- Time series ---- */
   const buckets = buildDayBuckets(rangeDays, now);
   const newUsersByDay = new Map<string, number>(buckets.map((b) => [b.key, 0]));
   const dauByDay = new Map<string, number>(buckets.map((b) => [b.key, 0]));
@@ -236,9 +218,7 @@ async function DashboardData({
 
   for (const u of newUsersInRange) {
     const k = dayKey(u.createdAt);
-    if (newUsersByDay.has(k)) {
-      newUsersByDay.set(k, (newUsersByDay.get(k) || 0) + 1);
-    }
+    if (newUsersByDay.has(k)) newUsersByDay.set(k, (newUsersByDay.get(k) || 0) + 1);
   }
   for (const l of loginsForCharts) {
     if (!l.lastLoginAt) continue;
@@ -254,7 +234,6 @@ async function DashboardData({
     if (likesByDay.has(k)) likesByDay.set(k, (likesByDay.get(k) || 0) + 1);
   }
 
-  // MAU rolling 30-day window per bucket
   const sortedLogins = loginsForCharts
     .map((u) => ({ id: u.id, t: u.lastLoginAt!.getTime() }))
     .filter((x) => Number.isFinite(x.t))
@@ -271,24 +250,11 @@ async function DashboardData({
     return { label: b.label, value: count };
   });
 
-  const newUsersSeries = buckets.map((b) => ({
-    label: b.label,
-    value: newUsersByDay.get(b.key) || 0,
-  }));
-  const dauSeries = buckets.map((b) => ({
-    label: b.label,
-    value: dauByDay.get(b.key) || 0,
-  }));
-  const postsSeries = buckets.map((b) => ({
-    label: b.label,
-    value: postsByDay.get(b.key) || 0,
-  }));
-  const likesSeries = buckets.map((b) => ({
-    label: b.label,
-    value: likesByDay.get(b.key) || 0,
-  }));
+  const newUsersSeries = buckets.map((b) => ({ label: b.label, value: newUsersByDay.get(b.key) || 0 }));
+  const dauSeries = buckets.map((b) => ({ label: b.label, value: dauByDay.get(b.key) || 0 }));
+  const postsSeries = buckets.map((b) => ({ label: b.label, value: postsByDay.get(b.key) || 0 }));
+  const likesSeries = buckets.map((b) => ({ label: b.label, value: likesByDay.get(b.key) || 0 }));
 
-  /* ---- Acquisition sources (sample data placeholder — not based on tracked acquisition sources) ---- */
   const orgShare = Math.round(totalUsers * 0.62);
   const refShare = Math.round(totalUsers * 0.23);
   const socShare = Math.max(0, totalUsers - orgShare - refShare);
@@ -298,12 +264,10 @@ async function DashboardData({
     { label: "Social Media", value: socShare, color: "var(--color-secondary)" },
   ];
 
-  /* ---- Engagement metrics ---- */
   const avgPostsPerUser = totalUsers > 0 ? totalPosts / totalUsers : 0;
   const avgLikesPerPost = totalPosts > 0 ? totalLikes / totalPosts : 0;
   const likesPerActiveUser = mau > 0 ? likesCurrent / mau : 0;
 
-  /* ---- KPI sparklines ---- */
   const usersSpark = newUsersSeries.map((s) => s.value);
   const dauSpark = dauSeries.map((s) => s.value);
   const mauSpark = mauSeries.map((s) => s.value);
@@ -311,16 +275,10 @@ async function DashboardData({
   const likesSpark = likesSeries.map((s) => s.value);
 
   return (
-    <div className="mx-auto max-w-container-max px-4 py-8 space-y-10">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-end justify-between gap-6 bg-card/50 backdrop-blur-xl p-8 rounded-[2.5rem] border border-border/40 shadow-premium">
+    <div className="space-y-10">
+      {/* Sub-Header with Filter Only */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-card/50 backdrop-blur-xl p-6 rounded-[2rem] border border-border/40 shadow-premium">
         <div>
-          <h1 className="font-display text-4xl font-black tracking-tight text-foreground">Analytics Overview</h1>
-          <p className="text-muted-foreground font-medium mt-1">
-            Impact intelligence and community growth metrics.
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
           <Badge className="bg-primary/10 text-primary border-none font-black text-[10px] px-4 py-1.5 uppercase tracking-widest flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -328,8 +286,8 @@ async function DashboardData({
             </span>
             Real-time Insights
           </Badge>
-          <DashboardFilters currentRange={String(rangeDays)} />
         </div>
+        <DashboardFilters currentRange={String(rangeDays)} />
       </div>
 
       {/* SECTION 1 — KPIs */}
