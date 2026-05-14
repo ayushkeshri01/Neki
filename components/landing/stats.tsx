@@ -41,7 +41,7 @@ export function Stats({ data }: StatsProps) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-display text-3xl lg:text-5xl font-bold mb-4"
+            className="font-display text-2xl sm:text-3xl lg:text-5xl font-bold mb-4"
           >
             The Impact We&apos;re Creating Together
           </motion.h2>
@@ -50,7 +50,7 @@ export function Stats({ data }: StatsProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto"
           >
             Real numbers from real people making a tangible difference in their communities.
           </motion.p>
@@ -65,13 +65,13 @@ export function Stats({ data }: StatsProps) {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
               whileHover={{ y: -10 }}
-              className="bg-card rounded-[2.5rem] p-10 shadow-premium border border-border/40 flex flex-col items-center text-center transition-shadow hover:shadow-premium-hover"
+              className="bg-card rounded-[2.5rem] p-8 sm:p-10 shadow-premium border border-border/40 flex flex-col items-center text-center transition-shadow hover:shadow-premium-hover"
             >
-              <div className={`w-20 h-20 rounded-2xl ${stat.color} ${stat.textColor} flex items-center justify-center mb-8`}>
-                <stat.icon className="w-10 h-10" />
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl ${stat.color} ${stat.textColor} flex items-center justify-center mb-6 sm:mb-8`}>
+                <stat.icon className="w-8 h-8 sm:w-10 sm:h-10" />
               </div>
-              <div className="font-display text-5xl font-extrabold mb-2">{stat.value}</div>
-              <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
+              <div className="font-display text-4xl sm:text-5xl font-extrabold mb-2">{stat.value}</div>
+              <div className="text-xs sm:text-sm font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
             </motion.div>
           ))}
         </div>

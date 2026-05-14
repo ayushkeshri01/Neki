@@ -8,22 +8,22 @@ const steps = [
   {
     title: "Join Your Community",
     description: "Sign up with your company email and instantly connect with your colleagues in your exclusive community.",
-    image: "/images/landing/step1.png",
+    image: "/images/landing/step1_v2.png",
   },
   {
     title: "Take Initiative",
     description: "Browse volunteer opportunities, donation drives, and community projects that match your interests.",
-    image: "/images/landing/step2.png",
+    image: "/images/landing/step2_v2.png",
   },
   {
     title: "Share Your Impact",
     description: "Post about your contributions, share photos, and inspire others. Every deed counts towards your score.",
-    image: "/images/landing/step3.png",
+    image: "/images/landing/step3_v2.png",
   },
   {
     title: "Earn & Climb",
     description: "Accumulate Good Deed Credits (GDCs) and see your name rise on the leaderboard as a top impact maker.",
-    image: "/images/landing/step4.png",
+    image: "/images/landing/step4_v2.png",
   },
 ];
 
@@ -96,7 +96,7 @@ export function Process() {
               whileHover={{ y: -10 }}
               className="group bg-card p-8 rounded-[2.5rem] border border-border/40 shadow-premium hover:shadow-premium-hover transition-all duration-500"
             >
-              <div className="relative mb-8 h-48 w-full">
+              <div className="relative mb-8 h-44 sm:h-48 w-full">
                 <div className="absolute inset-0 bg-primary/5 rounded-3xl -rotate-6 transition-transform group-hover:rotate-0" />
                 <div className="absolute inset-0 bg-white dark:bg-black/20 rounded-3xl border border-border/40 shadow-inner overflow-hidden">
                   <Image 

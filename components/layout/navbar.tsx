@@ -58,6 +58,7 @@ export function Navbar() {
   const isLoading = status === "loading" || !mounted;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -139,8 +140,9 @@ export function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          {/* Theme Toggle */}
-          <ThemeToggle />
+          <div className="hidden sm:flex">
+            <ThemeToggle />
+          </div>
 
           {isLoading ? (
             <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />

@@ -44,6 +44,7 @@ export function AdminNoticesButton() {
   }, [session?.user?.id]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNotices();
   }, [fetchNotices]);
 
