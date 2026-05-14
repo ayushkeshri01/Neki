@@ -23,6 +23,7 @@ interface LeaderboardContentProps {
   leaders: Leader[];
   currentUserId: string;
   currentUserRank: number;
+  globalStats: any[];
 }
 
 const containerVariants = {
@@ -44,9 +45,13 @@ export function LeaderboardContent({
   leaders,
   currentUserId,
   currentUserRank,
+  globalStats,
 }: LeaderboardContentProps) {
   const topThree = leaders.slice(0, 3);
   const rest = leaders.slice(3, 50); // Limit to top 50 for performance
+
+  const initiativeStat = globalStats.find(s => s.label === "Total Initiatives") || { value: "0", growth: 0 };
+  const gdcStat = globalStats.find(s => s.label === "GDCs Distributed") || { value: "0", growth: 0 };
 
   return (
     <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop py-12">
@@ -289,8 +294,10 @@ export function LeaderboardContent({
                 </div>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-4xl font-black">342</span>
-                <span className="text-xs font-bold text-primary">+12% this month</span>
+                <span className="font-display text-4xl font-black">{initiativeStat.value}</span>
+                {initiativeStat.growth > 0 && (
+                  <span className="text-xs font-bold text-primary">+{initiativeStat.growth}% this month</span>
+                )}
               </div>
             </div>
 
@@ -304,8 +311,10 @@ export function LeaderboardContent({
                 </div>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-display text-4xl font-black">12.5k</span>
-                <span className="text-xs font-bold text-primary">+8% this month</span>
+                <span className="font-display text-4xl font-black">{gdcStat.value}</span>
+                {gdcStat.growth > 0 && (
+                  <span className="text-xs font-bold text-primary">+{gdcStat.growth}% this month</span>
+                )}
               </div>
             </div>
           </div>

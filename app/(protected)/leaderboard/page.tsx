@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { isActiveUser } from "@/lib/user-access";
 import { LeaderboardContent } from "./leaderboard-content";
+import { getGlobalStats } from "@/lib/stats";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ interface LeaderRaw {
 
 export default async function LeaderboardPage() {
   const session = await auth();
+  const globalStats = await getGlobalStats();
 
   if (!session?.user) {
     redirect("/login");
@@ -79,6 +81,7 @@ export default async function LeaderboardPage() {
       leaders={leaders}
       currentUserId={session.user.id}
       currentUserRank={currentUserRank}
+      globalStats={globalStats}
     />
   );
 }
