@@ -6,6 +6,24 @@ import { requireCommunityScopedPost } from "../../access";
 import { UserNoticeType } from "@prisma/client";
 
 async function notifyAdmins(postId: string, reason: string) {
+  // Find post and author details
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: {
+      content: true,
+      author: {
+        select: { name: true, email: true }
+      }
+    }
+  });
+
+  if (!post) return;
+
+  const authorName = post.author.name || post.author.email || "Anonymous";
+  const contentSnippet = post.content.length > 50 
+    ? post.content.substring(0, 50) + "..." 
+    : post.content;
+
   // Find all admins
   const admins = await prisma.user.findMany({
     where: { role: "ADMIN" },
@@ -19,10 +37,10 @@ async function notifyAdmins(postId: string, reason: string) {
     data: admins.map((admin) => ({
       userId: admin.id,
       noticeType: UserNoticeType.POST_REPORTED,
-      title: "Post Reported",
-      body: `Post has been reported: ${reason}`,
-      payload: { postId, reason },
-      auditId: postId,
+      title: "Impact Story Reported",
+      body: `A post by ${authorName} was reported for: "${reason}".\n\nContent preview: "${contentSnippet}"`,
+      payload: { postId, reason, authorName, contentSnippet },
+      auditId: `${postId}_${Date.now()}`, // Make auditId unique to allow multiple reports
     })),
   });
 }

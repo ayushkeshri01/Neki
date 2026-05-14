@@ -25,13 +25,7 @@ export default async function LeaderboardPage() {
   }
 
   const rawLeaders = await prisma.$queryRaw<LeaderRaw[]>`
-    SELECT
-      u.id,
-      u.name,
-      u.image,
-      u.points,
-      CAST(COUNT(DISTINCT p.id) AS INTEGER) as postcount,
-      CAST(COUNT(DISTINCT l.id) AS INTEGER) as likesreceived
+    SELECT u.id, u.name, u.image, u.points, COUNT(DISTINCT p.id) as postcount, COUNT(DISTINCT l.id) as likesreceived
     FROM "User" u
     LEFT JOIN "Post" p ON p."authorId" = u.id AND p.status = 'VISIBLE'
     LEFT JOIN "Like" l ON l."postId" = p.id AND p.status = 'VISIBLE'

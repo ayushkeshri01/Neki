@@ -1,6 +1,6 @@
 # Neki
 
-Neki is a company community platform for sharing social work, donations, and volunteer activities.
+Neki is a company community platform for sharing social work, community impact, and volunteer activities.
 
 ## Features
 

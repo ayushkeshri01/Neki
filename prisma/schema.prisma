@@ -240,6 +240,7 @@ enum UserNoticeType {
   ACCOUNT_REINSTATED
   ADMIN_MESSAGE
   ACHIEVEMENT_FIRST_POST
+  BADGE_EARNED
 }
 
 model RegistrationToken {

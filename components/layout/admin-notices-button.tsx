@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface AdminNotice {
   id: string;
@@ -20,6 +21,7 @@ interface AdminNotice {
   body: string;
   noticeType: string;
   createdAt: string;
+  acknowledgedAt: string | null;
 }
 
 export function AdminNoticesButton() {
@@ -28,18 +30,23 @@ export function AdminNoticesButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
+  const fetchNotices = useCallback(async () => {
     if (!session?.user?.id) return;
-
-    fetch("/api/me/notices")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.notices)) {
-          setNotices(data.notices);
-        }
-      })
-      .catch((err) => console.error("Failed to fetch admin notices:", err));
+    try {
+      const res = await fetch("/api/me/notices");
+      const data = await res.json();
+      if (Array.isArray(data.notices)) {
+        setNotices(data.notices);
+      }
+    } catch (err) {
+      console.error("Failed to fetch admin notices:", err);
+    }
   }, [session?.user?.id]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchNotices();
+  }, [fetchNotices]);
 
   const activeNotice = notices[0];
 
@@ -55,7 +62,12 @@ export function AdminNoticesButton() {
       });
 
       if (!res.ok) throw new Error();
-      setNotices((prev) => prev.filter((n) => n.id !== noticeId));
+      const now = new Date().toISOString();
+      setNotices((prev) =>
+        prev.map((n) => (n.id === noticeId ? { ...n, acknowledgedAt: now } : n))
+      );
+      // Re-fetch to ensure sync
+      fetchNotices();
     } catch {
       toast.error("Failed to acknowledge");
     } finally {
@@ -64,18 +76,28 @@ export function AdminNoticesButton() {
   }
 
   async function acknowledgeAllNotices() {
-    if (isSubmitting || notices.length === 0) return;
+    const unreadNotices = notices.filter(n => !n.acknowledgedAt);
+    if (isSubmitting || unreadNotices.length === 0) return;
     setIsSubmitting(true);
 
     try {
+      const noticeIds = unreadNotices.map((n) => n.id);
       const res = await fetch("/api/me/notices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ noticeIds: notices.map((n) => n.id) }),
+        body: JSON.stringify({ noticeIds }),
       });
 
       if (!res.ok) throw new Error();
-      setNotices([]);
+      
+      const now = new Date().toISOString();
+      setNotices((prev) => 
+        prev.map((n) => 
+          noticeIds.includes(n.id) ? { ...n, acknowledgedAt: now } : n
+        )
+      );
+      // Re-fetch to ensure sync
+      fetchNotices();
     } catch {
       toast.error("Failed to acknowledge");
     } finally {
@@ -83,20 +105,20 @@ export function AdminNoticesButton() {
     }
   }
 
-  if (notices.length === 0) return null;
+  const unreadCount = notices.filter(n => !n.acknowledgedAt).length;
 
   return (
     <>
       <Button
         variant="ghost"
         size="icon"
-        className="relative"
+        className="relative ml-2"
         onClick={() => setIsOpen(true)}
       >
         <Bell className="h-5 w-5" />
-        {notices.length > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground">
-            {notices.length}
+        {unreadCount > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+            {unreadCount}
           </span>
         )}
       </Button>
@@ -116,10 +138,18 @@ export function AdminNoticesButton() {
             {notices.map((notice) => (
               <div
                 key={notice.id}
-                className="rounded-lg border p-3 text-sm"
+                className={cn(
+                  "rounded-lg border p-3 text-sm transition-colors",
+                  !notice.acknowledgedAt ? "bg-primary/5 border-primary/50" : "opacity-70"
+                )}
               >
-                <p className="font-medium">{notice.title}</p>
-                <p className="text-muted-foreground">{notice.body}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-bold">{notice.title}</p>
+                  {!notice.acknowledgedAt && (
+                    <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                  )}
+                </div>
+                <p className="text-muted-foreground mt-1">{notice.body}</p>
               </div>
             ))}
           </div>
@@ -127,7 +157,7 @@ export function AdminNoticesButton() {
           <DialogFooter>
             <Button
               onClick={acknowledgeAllNotices}
-              disabled={isSubmitting}
+              disabled={isSubmitting || unreadCount === 0}
             >
               Acknowledge All
             </Button>

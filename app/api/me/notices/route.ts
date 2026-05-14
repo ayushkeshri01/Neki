@@ -12,12 +12,11 @@ export async function GET() {
     const notices = await prisma.userNotice.findMany({
       where: {
         userId: session.user.id,
-        acknowledgedAt: null,
       },
       orderBy: {
-        createdAt: "asc",
+        createdAt: "desc",
       },
-      take: 20,
+      take: 50,
     });
 
     return NextResponse.json({ notices });
@@ -59,14 +58,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (result.count === 0) {
-      return NextResponse.json(
-        { error: "No matching notices were acknowledged" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, count: result.count });
   } catch (error) {
     console.error("Error acknowledging user notices:", error);
     return NextResponse.json(

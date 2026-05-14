@@ -74,7 +74,18 @@ export default async function CommunityPage({ params }: Props) {
           },
         },
       },
-      likes: { select: { userId: true, type: true } },
+      likes: { 
+        select: { 
+          userId: true, 
+          type: true,
+          user: {
+            select: {
+              name: true,
+              image: true,
+            }
+          }
+        } 
+      },
       _count: { select: { likes: true } },
     },
     orderBy: { createdAt: "desc" },

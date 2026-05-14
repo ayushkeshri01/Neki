@@ -146,7 +146,7 @@ export function CreatePostForm({ communities }: CreatePostFormProps) {
         )}
         <div className="space-y-1">
           <Textarea
-            placeholder="Share your social work, donation, or volunteer activity..."
+            placeholder="Share your social work, impact, or volunteer activity..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="min-h-[120px] resize-none"

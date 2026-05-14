@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { FileQuestion, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 export interface Post {
   id: string;
@@ -41,7 +43,7 @@ export interface Post {
   _count: {
     likes: number;
   };
-  likes: { userId: string; type: string }[];
+  likes: { userId: string; type: string; user: { name: string | null; image: string | null } }[];
 }
 
 interface FeedContentProps {
@@ -162,47 +164,65 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin, hasMo
 
   return (
     <>
-      <div className="mx-auto max-w-2xl space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Feed</h1>
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
-            <TabsList>
-              <TabsTrigger value="all">All Posts</TabsTrigger>
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
+          <div>
+            <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight">Feed</h1>
+            <p className="text-muted-foreground text-sm mt-1 font-medium">Discover impact stories from your community.</p>
+          </div>
+          <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)} className="w-full md:w-auto">
+            <TabsList className="bg-muted/50 p-1 rounded-full border border-border/40">
+              <TabsTrigger value="all" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm">All Posts</TabsTrigger>
               {isAdmin && (
-                <TabsTrigger value="hidden">Hidden</TabsTrigger>
+                <TabsTrigger value="hidden" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm">Hidden</TabsTrigger>
               )}
             </TabsList>
           </Tabs>
         </div>
 
         {filteredPosts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <FileQuestion className="h-8 w-8 text-muted-foreground" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center justify-center py-24 text-center bg-card/50 rounded-[2.5rem] border border-dashed border-border/60"
+          >
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[1.5rem] bg-primary/5 text-primary">
+              <FileQuestion className="h-10 w-10" />
             </div>
-            <h3 className="text-lg font-medium">No posts yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Be the first to share your social work!
+            <h3 className="font-display text-2xl font-bold">No posts yet</h3>
+            <p className="mt-2 text-muted-foreground max-w-xs">
+              Be the first to share your social work and inspire others!
             </p>
-          </div>
+            <Button asChild className="mt-8 rounded-full px-8 py-6 font-bold shadow-premium">
+              <Link href="/create-post">Share Impact</Link>
+            </Button>
+          </motion.div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {filteredPosts.map((post) => (
               <PostCard
                 key={post.id}
                 post={post}
                 currentUserId={currentUserId}
                 isAdmin={isAdmin}
-                  onLike={handleLike}
-                  onReport={handleReport}
+                onLike={handleLike}
+                onReport={handleReport}
                 onDelete={handleDelete}
               />
             ))}
             {hasMore && (
-              <div className="flex justify-center pt-4">
-                <Button onClick={loadMore} disabled={loadingMore} variant="outline">
-                  {loadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {loadingMore ? "Loading..." : "Load More"}
+              <div className="flex justify-center pt-8">
+                <Button 
+                  onClick={loadMore} 
+                  disabled={loadingMore} 
+                  variant="outline"
+                  className="rounded-full px-8 py-6 font-bold border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all"
+                >
+                  {loadingMore ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    "Load More Stories"
+                  )}
                 </Button>
               </div>
             )}

@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/layout/page-transition";
+import { SessionProvider } from "@/components/providers/session-provider";
+import { auth } from "@/lib/auth";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-inter"
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-plus-jakarta"
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -17,11 +27,10 @@ export const metadata: Metadata = {
     template: "%s | Neki",
   },
   description:
-    "Join your company's community to share social work, donations, and make a positive impact together. Earn Good Deed Credits (GDCs), climb the leaderboard, and inspire others.",
+    "Join your company's community to share social work and make a positive impact together. Earn Good Deed Credits (GDCs), climb the leaderboard, and inspire others.",
   keywords: [
     "social work",
     "community",
-    "donations",
     "volunteer",
     "company",
     "team building",
@@ -43,7 +52,7 @@ export const metadata: Metadata = {
     siteName: "Neki",
     title: "Neki | Community Social Work Platform",
     description:
-      "Join your company's community to share social work, donations, and make a positive impact together.",
+      "Join your company's community to share social work and make a positive impact together.",
     images: [
       {
         url: "/og-image.png",
@@ -57,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Neki | Community Social Work Platform",
     description:
-      "Join your company's community to share social work, donations, and make a positive impact together.",
+      "Join your company's community to share social work and make a positive impact together.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -78,23 +87,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster position="bottom-right" />
-        </ThemeProvider>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", plusJakarta.variable, inter.variable)}>
+      <body suppressHydrationWarning className={cn("min-h-screen bg-background font-sans antialiased")}>
+        <SessionProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="relative flex min-h-screen flex-col">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </div>
+            <Toaster position="bottom-right" />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

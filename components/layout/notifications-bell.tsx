@@ -17,7 +17,22 @@ export function NotificationsBell() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.notices)) {
-          setUnreadCount(data.notices.length);
+          const unread = data.notices.filter((n: any) => !n.acknowledgedAt).length;
+          setUnreadCount(unread);
+          
+          // Browser integration
+          const title = document.title.replace(/^\(\d+\)\s*/, "");
+          if (unread > 0) {
+            document.title = `(${unread}) ${title}`;
+            if ("setAppBadge" in navigator) {
+              (navigator as any).setAppBadge(unread).catch(() => {});
+            }
+          } else {
+            document.title = title;
+            if ("clearAppBadge" in navigator) {
+              (navigator as any).clearAppBadge().catch(() => {});
+            }
+          }
         }
       })
       .catch(() => {});
