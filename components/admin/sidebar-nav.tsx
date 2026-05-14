@@ -15,11 +15,11 @@ const navItems = [
 
 import { motion } from "framer-motion";
 
-export function SidebarNav() {
+export function SidebarNav({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="sticky top-24 space-y-2 pr-4">
+    <div className={cn("space-y-2", className)}>
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
