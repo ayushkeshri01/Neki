@@ -61,10 +61,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Rate limiting: 10 attempts per minute per IP, 5 per minute per email
         const clientIp = getClientIp(req as any);
         if (!checkRateLimit(`login-ip-${clientIp}`, 10, 60000)) {
-          throw new AuthClientError("Too many login attempts from this IP. Please wait a minute.");
+          throw new AuthClientError("RateLimit:Too many login attempts from this IP. Please wait a minute.");
         }
         if (!checkRateLimit(`login-email-${email}`, 5, 60000)) {
-          throw new AuthClientError("Too many login attempts for this email. Please wait a minute.");
+          throw new AuthClientError("RateLimit:Too many login attempts for this email. Please wait a minute.");
         }
 
         const user = await prisma.user.findUnique({ 

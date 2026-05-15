@@ -81,6 +81,13 @@ function parseBlockedAuthMessage(value?: string | null): { title: string; messag
     };
   }
 
+  if (decoded.startsWith("RateLimit:")) {
+    return {
+      title: "Too Many Attempts",
+      message: decoded.split(":").slice(1).join(":") || "Please wait a minute before trying again.",
+    };
+  }
+
   return null;
 }
 

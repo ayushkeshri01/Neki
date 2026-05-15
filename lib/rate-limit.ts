@@ -3,7 +3,17 @@ interface RateLimitRecord {
   resetAt: number;
 }
 
-const rateLimitMap = new Map<string, RateLimitRecord>();
+// Use globalThis to persist the rate limit map across HMR in development
+const globalForRateLimit = globalThis as unknown as {
+  rateLimitMap: Map<string, RateLimitRecord> | undefined;
+};
+
+const rateLimitMap =
+  globalForRateLimit.rateLimitMap ?? new Map<string, RateLimitRecord>();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForRateLimit.rateLimitMap = rateLimitMap;
+}
 
 /**
  * Simple in-memory rate limiter
