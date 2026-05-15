@@ -5,27 +5,10 @@ import nodemailer from "nodemailer";
 import path from "path";
 import { normalizeEmail } from "@/lib/registration-token";
 
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 3;
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-  
-  if (!record || now > record.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
-  }
-  
-  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
-  
-  record.count++;
-  return true;
-}
 
 function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
@@ -119,11 +102,9 @@ export async function POST(req: Request) {
 
     const normalizedEmail = normalizeEmail(email);
 
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() 
-      || req.headers.get("x-real-ip") 
-      || "unknown";
+    const clientIp = getClientIp(req);
     
-    if (!checkRateLimit(clientIp)) {
+    if (!checkRateLimit(clientIp, MAX_REQUESTS_PER_WINDOW, RATE_LIMIT_WINDOW_MS)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }

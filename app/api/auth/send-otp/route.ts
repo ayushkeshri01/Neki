@@ -7,27 +7,10 @@ import { randomInt } from "crypto";
 import { getOrCreateSettings } from "@/lib/settings";
 import { isSignupEmailDomainAllowed } from "@/lib/user-access";
 
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 3;
-
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-  
-  if (!record || now > record.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
-  }
-  
-  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
-  
-  record.count++;
-  return true;
-}
 
 function getDomainFromEmail(email: string): string {
   return email.split("@")[1] || "";
@@ -41,11 +24,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() 
-      || req.headers.get("x-real-ip") 
-      || "unknown";
+    const clientIp = getClientIp(req);
 
-    if (!checkRateLimit(clientIp)) {
+    if (!checkRateLimit(clientIp, MAX_REQUESTS_PER_WINDOW, RATE_LIMIT_WINDOW_MS)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }

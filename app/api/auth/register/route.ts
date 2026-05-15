@@ -12,6 +12,7 @@ import { getOrCreateSettings } from "@/lib/settings";
 import { isAccountActive } from "@/lib/account-status";
 import { isSignupEmailDomainAllowed } from "@/lib/user-access";
 import { checkAndAwardBadges } from "@/lib/badges";
+import { checkRateLimit, getClientIp as getIp } from "@/lib/rate-limit";
 
 type RegisterAction = "verify_otp" | "accept_policy_and_register" | "reject_policy";
 
@@ -446,6 +447,14 @@ async function handleRejectPolicy(body: Record<string, unknown>) {
 
 export async function POST(req: Request) {
   try {
+    const clientIp = getIp(req);
+    if (!checkRateLimit(`register-${clientIp}`, 10, 60000)) {
+      return NextResponse.json(
+        { error: "Too many registration attempts. Please wait a minute.", code: "RATE_LIMIT_EXCEEDED" },
+        { status: 429 }
+      );
+    }
+
     const body = (await req.json()) as Record<string, unknown>;
     const action = String(body.action || "") as RegisterAction;
 

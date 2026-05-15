@@ -7,6 +7,7 @@ import { prisma } from "./prisma";
 import { getAccountBlockMessage, isAccountActive } from "./account-status";
 import { normalizeEmail } from "./registration-token";
 import { CredentialsSignin } from "@auth/core/errors";
+import { checkRateLimit, getClientIp } from "./rate-limit";
 
 class AuthClientError extends CredentialsSignin {
   constructor(message: string) {
@@ -49,13 +50,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
         const email = normalizeEmail(credentials.email as string);
         const password = credentials.password as string;
+
+        // Rate limiting: 10 attempts per minute per IP, 5 per minute per email
+        const clientIp = getClientIp(req as any);
+        if (!checkRateLimit(`login-ip-${clientIp}`, 10, 60000)) {
+          throw new AuthClientError("Too many login attempts from this IP. Please wait a minute.");
+        }
+        if (!checkRateLimit(`login-email-${email}`, 5, 60000)) {
+          throw new AuthClientError("Too many login attempts for this email. Please wait a minute.");
+        }
 
         const user = await prisma.user.findUnique({ 
           where: { email },
