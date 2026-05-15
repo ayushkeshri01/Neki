@@ -22,6 +22,9 @@ const nextConfig = {
       static: 180,
     },
   },
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 module.exports = nextConfig;
