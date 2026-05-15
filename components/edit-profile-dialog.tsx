@@ -68,6 +68,8 @@ export function EditProfileDialog({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [tempImage, setTempImage] = useState<string | null>(null);
+  const [isApplyingCrop, setIsApplyingCrop] = useState(false);
+
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -78,7 +80,9 @@ export function EditProfileDialog({
       setImageFile(null);
       setIsCropping(false);
       setTempImage(null);
+      setIsApplyingCrop(false);
     }
+
   }, [open, initialName, initialBio, initialImage]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -101,6 +105,7 @@ export function EditProfileDialog({
   const handleApplyCrop = async () => {
     if (!tempImage || !croppedAreaPixels) return;
 
+    setIsApplyingCrop(true);
     try {
       const croppedBlob = await getCroppedImg(tempImage, croppedAreaPixels);
       if (croppedBlob) {
@@ -114,6 +119,8 @@ export function EditProfileDialog({
     } catch (e) {
       console.error(e);
       toast.error("Failed to crop image");
+    } finally {
+      setIsApplyingCrop(false);
     }
   };
 
@@ -172,6 +179,20 @@ export function EditProfileDialog({
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2.5rem] border-none shadow-premium bg-background">
+        {(isLoading || isApplyingCrop) && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px] transition-all duration-300">
+            <div className="relative">
+              <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-primary animate-pulse" />
+              </div>
+            </div>
+            <p className="mt-4 text-sm font-black uppercase tracking-[0.2em] text-primary animate-pulse">
+              {isLoading ? "Saving Changes..." : "Processing Photo..."}
+            </p>
+          </div>
+        )}
+
         {isCropping && tempImage ? (
           <div className="flex flex-col h-[600px]">
             <div className="flex items-center justify-between p-6 border-b border-border/40">
@@ -221,10 +242,24 @@ export function EditProfileDialog({
                 <Button variant="outline" onClick={() => setIsCropping(false)} className="rounded-full px-6 font-bold">
                   Cancel
                 </Button>
-                <Button onClick={handleApplyCrop} className="rounded-full px-8 font-bold shadow-premium">
-                  <Check className="h-4 w-4 mr-2" />
-                  Apply
+                <Button 
+                  onClick={handleApplyCrop} 
+                  disabled={isApplyingCrop}
+                  className="rounded-full px-8 font-bold shadow-premium"
+                >
+                  {isApplyingCrop ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Applying...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Apply
+                    </>
+                  )}
                 </Button>
+
               </div>
             </div>
           </div>

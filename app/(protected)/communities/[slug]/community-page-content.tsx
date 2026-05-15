@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Users, Plus, Loader2 } from "lucide-react";
+import { Users, Plus, Loader2, FileQuestion, MessageSquare, Award, Calendar } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { PostCard } from "@/components/posts/post-card";
 import type { ReactionType } from "@/lib/reactions";
-import { FileQuestion } from "lucide-react";
+import { formatDate, cn } from "@/lib/utils";
+
 import { toast } from "sonner";
 
 interface Community {
@@ -54,23 +57,36 @@ interface Post {
   likes: { userId: string; type: string; user: { name: string | null; image: string | null } }[];
 }
 
+interface Member {
+  id: string;
+  name: string | null;
+  image: string | null;
+  points: number;
+  joinedAt: string;
+}
+
 interface CommunityPageContentProps {
   community: Community;
   posts: Post[];
+  members: Member[];
   isMember: boolean;
   currentUserId: string;
   isAdmin: boolean;
 }
 
+
 export function CommunityPageContent({
   community,
   posts,
+  members,
   isMember,
   currentUserId,
   isAdmin,
 }: CommunityPageContentProps) {
   const router = useRouter();
   const [memberActionLoading, setMemberActionLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("posts");
+
 
   const handleJoin = async () => {
     setMemberActionLoading(true);
@@ -249,43 +265,115 @@ export function CommunityPageContent({
         </div>
       </div>
 
-      {/* Posts */}
-      {isMember ? (
-        posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <FileQuestion className="h-8 w-8 text-muted-foreground" />
+      {/* Content Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="posts" className="gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Impact Stories
+            <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 rounded-full font-black">
+              {community._count.posts}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger value="members" className="gap-2">
+            <Users className="h-4 w-4" />
+            Members
+            <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 rounded-full font-black">
+              {community._count.members}
+            </span>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="posts" className="space-y-6 focus-visible:ring-0">
+          {isMember ? (
+            posts.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-3xl border border-dashed border-border/60">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted/50">
+                  <FileQuestion className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-black text-primary">No stories shared yet</h3>
+                <p className="mt-2 text-sm text-muted-foreground font-medium max-w-[250px]">
+                  Be the first to share an impact story in this community!
+                </p>
+                <Link href="/create-post" className="mt-6">
+                  <Button className="rounded-full px-8 shadow-premium font-bold">
+                    Start Your Story
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {posts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    currentUserId={currentUserId}
+                    isAdmin={isAdmin}
+                    onLike={handleLike}
+                    onReport={handleReport}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            )
+          ) : (
+            <div className="rounded-3xl border bg-card p-12 text-center shadow-premium flex flex-col items-center gap-4">
+              <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black text-primary">Join to view stories</h3>
+                <p className="text-muted-foreground font-medium mt-1">
+                  Connect with this community to see their collective impact.
+                </p>
+              </div>
+              <Button onClick={handleJoin} disabled={memberActionLoading} className="rounded-full px-8 font-bold mt-2">
+                Join Community
+              </Button>
             </div>
-            <h3 className="text-lg font-medium">No posts yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Be the first to share in this community!
-            </p>
-            <Link href="/create-post" className="mt-4">
-              <Button>Create Post</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                currentUserId={currentUserId}
-                isAdmin={isAdmin}
-                onLike={handleLike}
-                onReport={handleReport}
-                onDelete={handleDelete}
-              />
+          )}
+        </TabsContent>
+
+        <TabsContent value="members" className="space-y-4 focus-visible:ring-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {members.map((member) => (
+              <Link key={member.id} href={`/profile/${member.id}`}>
+                <div className="bg-card border border-border/40 rounded-2xl p-4 flex items-center gap-4 hover:border-primary/20 hover:bg-primary/5 transition-all group">
+                  <Avatar className="h-12 w-12 border-2 border-primary/10 group-hover:border-primary/30 transition-all">
+                    <AvatarImage src={member.image || ""} className="object-cover" />
+                    <AvatarFallback className="font-black text-primary bg-primary/5">
+                      {member.name?.charAt(0).toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-sm text-primary truncate group-hover:text-primary/80 transition-colors">
+                        {member.name || "Anonymous Member"}
+                      </p>
+                      <div className="flex items-center gap-1 text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0">
+                        <Award className="h-3 w-3" />
+                        {member.points}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <Calendar className="h-3 w-3 text-muted-foreground" />
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                        Joined {formatDate(member.joinedAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
-        )
-      ) : (
-        <div className="rounded-lg border bg-card p-8 text-center">
-          <p className="text-muted-foreground">
-            Join this community to see posts and participate!
-          </p>
-        </div>
-      )}
+          {members.length === 0 && (
+            <div className="text-center py-20 bg-muted/10 rounded-3xl border-2 border-dashed border-border/40">
+              <p className="text-muted-foreground font-bold italic">No members found.</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
     </div>
   );
 }

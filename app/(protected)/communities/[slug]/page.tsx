@@ -92,6 +92,21 @@ export default async function CommunityPage({ params }: Props) {
     take: 50,
   });
 
+  const members = await prisma.communityMember.findMany({
+    where: { communityId: community.id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          points: true,
+        },
+      },
+    },
+    orderBy: { joinedAt: "desc" },
+  });
+
   const serializedCommunity = {
     ...community,
     createdAt: community.createdAt.toISOString(),
@@ -102,13 +117,23 @@ export default async function CommunityPage({ params }: Props) {
     createdAt: createdAt.toISOString(),
   }));
 
+  const serializedMembers = members.map((m) => ({
+    id: m.user.id,
+    name: m.user.name,
+    image: m.user.image,
+    points: m.user.points,
+    joinedAt: m.joinedAt.toISOString(),
+  }));
+
   return (
     <CommunityPageContent
       community={serializedCommunity}
       posts={serializedPosts}
+      members={serializedMembers}
       isMember={isMember}
       currentUserId={session.user.id}
       isAdmin={session.user.role === "ADMIN"}
     />
   );
 }
+
