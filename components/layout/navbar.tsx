@@ -9,7 +9,6 @@ import {
   Home,
   Users,
   Trophy,
-  PlusCircle,
   User,
   LogOut,
   Menu,
@@ -144,16 +143,6 @@ export function Navbar() {
             <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
           ) : displayUser ? (
             <div className="flex items-center gap-1 sm:gap-4">
-              <Link href="/create-post" className="hidden sm:block">
-                <Button className="rounded-full px-6 font-bold shadow-premium hover:shadow-premium-hover gap-2">
-                  <PlusCircle className="h-4 w-4" />
-                  Create Post
-                </Button>
-              </Link>
-
-
-
-              
               <NotificationsBell />
               <ThemeToggle />
               
