@@ -106,6 +106,8 @@ function buildS3PublicUrl(key: string): string {
   return `https://${bucket}.s3.${region}.amazonaws.com/${encodeKeyPath(normalizedKey)}`;
 }
 
+export { getS3ObjectKey };
+
 export const s3Provider: StorageProvider = {
   async upload(file: Buffer, fileName: string, contentType: string): Promise<UploadResult> {
     const key = `uploads/${Date.now()}-${sanitizeFileName(fileName)}`;

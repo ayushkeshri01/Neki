@@ -1,6 +1,6 @@
 import { StorageProvider } from "./provider";
 import { localProvider } from "./local";
-import { s3Provider, getS3Client as s3GetClient } from "./s3";
+import { s3Provider, getS3Client as s3GetClient, getS3ObjectKey as s3GetObjectKey } from "./s3";
 
 export type StorageBackend = "local" | "s3";
 
@@ -65,8 +65,8 @@ export function buildS3PublicUrl(key: string): string {
   return getProvider().getUrl(key);
 }
 
-export function getS3ObjectKey(_imageUrlOrKey: string): string | null {
-  return null;
+export function getS3ObjectKey(imageUrlOrKey: string): string | null {
+  return s3GetObjectKey(imageUrlOrKey);
 }
 
 export function getS3Client() {

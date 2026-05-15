@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { randomBytes, createHash } from "crypto";
 import nodemailer from "nodemailer";
+import path from "path";
 import { normalizeEmail } from "@/lib/registration-token";
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
@@ -53,19 +54,53 @@ async function sendResetEmail(email: string, resetToken: string) {
   });
 
   await transporter.sendMail({
-    from: process.env.SMTP_FROM,
+    from: `"Neki" <${process.env.SMTP_FROM || "noreply@neki.example.com"}>`,
     to: email,
     subject: "Reset your Neki password",
+    attachments: [
+      {
+        filename: 'logo.png',
+        path: path.join(process.cwd(), 'public', 'logo.png'),
+        cid: 'neki-logo'
+      }
+    ],
     html: `
-      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
-        <h2>Reset Your Password</h2>
-        <p>Click the button below to reset your password:</p>
-        <a href="${resetUrl}" style="display: inline-block; background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 16px 0;">
-          Reset Password
-        </a>
-        <p>Or copy this link: ${resetUrl}</p>
-        <p style="color: #666; font-size: 12px;">This link expires in 15 minutes.</p>
-      </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          @media (prefers-color-scheme: dark) {
+            .body-bg { background-color: #0f172a !important; }
+            .card-bg { background-color: #1e293b !important; border-color: #334155 !important; }
+            .text-main { color: #f1f5f9 !important; }
+            .text-muted { color: #94a3b8 !important; }
+            .footer-bg { background-color: #1e293b !important; border-top-color: #334155 !important; }
+          }
+        </style>
+      </head>
+      <body class="body-bg" style="margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc;">
+        <div class="card-bg" style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+          <div style="background-color: #16a34a; padding: 25px; text-align: center;">
+            <img src="cid:neki-logo" alt="Neki Logo" style="width: 70px; height: 70px; border-radius: 15px; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px;" />
+            <div style="margin-top: 12px; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">Neki</div>
+          </div>
+          <div style="padding: 40px 30px; text-align: center;">
+            <h2 class="text-main" style="margin: 0 0 16px; font-size: 20px; color: #1e293b; font-weight: 600;">Reset your password</h2>
+            <p class="text-muted" style="margin: 0 0 32px; font-size: 16px; line-height: 24px; color: #475569;">We received a request to reset your password. Click the button below to choose a new one. This link is valid for 15 minutes.</p>
+            
+            <a href="${resetUrl}" style="display: inline-block; background-color: #16a34a; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; transition: background-color 0.2s;">
+              Reset Password
+            </a>
+            
+            <p class="text-muted" style="margin: 32px 0 0; font-size: 14px; color: #94a3b8;">If you didn't request a password reset, you can safely ignore this email.</p>
+          </div>
+          <div class="footer-bg" style="background-color: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
+            <p class="text-muted" style="margin: 0; font-size: 12px; color: #64748b;">&copy; ${new Date().getFullYear()} Neki. Empowering community impact.</p>
+          </div>
+        </div>
+      </body>
+      </html>
     `,
   });
 }

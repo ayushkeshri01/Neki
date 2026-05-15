@@ -68,7 +68,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             statusReason: true,
             lastLoginAt: true,
             banned: true,
-            banReason: true
+            banReason: true,
+            name: true,
+            image: true
           }
         });
         
@@ -106,7 +108,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // Non-critical — login succeeds regardless
         }
 
-        return { id: user.id, email: user.email, role: user.role, status: user.status };
+        return { id: user.id, email: user.email, name: user.name, image: user.image, role: user.role, status: user.status };
       }
     }),
   ],
@@ -118,6 +120,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.sub = userId;
         token.role = user.role;
         token.status = user.status;
+        token.name = user.name;
+        token.image = user.image;
 
         const dbUser = await prisma.user.findUnique({
           where: { id: userId },
@@ -166,9 +170,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             points: true,
             lastLoginAt: true,
             adminMessage: true,
+            name: true,
+            image: true,
           },
         });
         if (dbUser) {
+          session.user.name = dbUser.name;
+          session.user.image = dbUser.image;
           session.user.statusReason = dbUser.statusReason;
           session.user.points = dbUser.points;
           session.user.lastLoginAt = dbUser.lastLoginAt?.toISOString() || null;

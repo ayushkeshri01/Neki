@@ -23,14 +23,11 @@ if __name__ == "__main__":
         "android-chrome-512x512.png": (512, 512),
         "icon.png": (512, 512)
     }
-    resize_icon("public/logo_transparent.png", sizes)
+    resize_icon("public/logo.png", sizes)
+    print("Generated all icons from public/logo.png")
 
-    # Overwrite logo.png with the PERFECT transparent one
-    img = Image.open("public/logo_transparent.png")
-    img.save("public/logo.png", "PNG")
-    print("Overwrote logo.png with perfect AI transparent version.")
-
-    # Create og-image centered on a 1200x630 white/transparent background
+    # Create og-image centered on a 1200x630 white background
+    img = Image.open("public/logo.png")
     og_img = Image.new("RGBA", (1200, 630), (255, 255, 255, 255))
     
     aspect = img.width / img.height

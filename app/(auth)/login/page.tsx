@@ -384,8 +384,8 @@ function LoginContent() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-background p-4 font-sans">
         <Card className="w-full max-w-md shadow-xl border-primary/10">
           <CardHeader className="text-center space-y-6 pb-4">
-            <div className="mx-auto relative h-20 w-20 overflow-hidden rounded-[22px] shadow-premium-lg border border-primary/10 bg-background p-1">
-              <Image src="/logo.png" alt="Neki Logo" fill className="object-cover rounded-[18px]" priority />
+            <div className="mx-auto relative h-20 w-20 overflow-hidden rounded-[22px] shadow-premium-lg border border-primary/10 bg-white p-1">
+              <Image src="/logo.png" alt="Neki Logo" fill className="object-contain p-1" priority />
             </div>
             <div className="space-y-2">
               <CardTitle className="text-4xl font-black tracking-tight text-primary drop-shadow-sm">Neki</CardTitle>

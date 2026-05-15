@@ -100,12 +100,12 @@ export function Navbar() {
           href={displayUser ? "/feed" : "/"} 
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
-          <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-premium border border-primary/20 bg-primary/10 flex items-center justify-center p-1.5">
+          <div className="relative h-10 w-10 overflow-hidden rounded-xl shadow-premium border border-primary/20 bg-white flex items-center justify-center p-1">
             <Image 
               src="/logo.png" 
               alt="Neki Logo" 
               fill
-              className="object-contain p-1"
+              className="object-contain"
               priority
             />
           </div>
@@ -235,7 +235,9 @@ export function Navbar() {
               <SheetHeader>
                 <SheetTitle className="font-display text-left flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Image src="/logo.png" alt="Neki" width={32} height={32} className="rounded-lg" />
+                    <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-white flex items-center justify-center p-0.5 shadow-sm border border-border/10">
+                      <Image src="/logo.png" alt="Neki" width={28} height={28} className="object-contain" />
+                    </div>
                     Neki
                   </div>
                   <ThemeToggle />

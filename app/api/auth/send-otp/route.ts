@@ -148,7 +148,7 @@ export async function POST(req: Request) {
             <body class="body-bg" style="margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc;">
               <div class="card-bg" style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
                 <div style="background-color: #16a34a; padding: 25px; text-align: center;">
-                  <img src="cid:neki-logo" alt="Neki Logo" style="width: 70px; height: 70px; border-radius: 15px; display: block; margin: 0 auto; background-color: #ffffff; padding: 2px;" />
+                  <img src="cid:neki-logo" alt="Neki Logo" style="width: 70px; height: 70px; border-radius: 15px; display: block; margin: 0 auto; background-color: #ffffff; padding: 4px;" />
                   <div style="margin-top: 12px; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">Neki</div>
                 </div>
                 <div style="padding: 40px 30px; text-align: center;">

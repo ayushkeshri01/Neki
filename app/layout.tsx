@@ -73,8 +73,6 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ef4444" />
-        <meta name="msapplication-TileColor" content="#ef4444" />
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased selection:bg-primary/10 selection:text-primary">

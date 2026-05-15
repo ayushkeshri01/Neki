@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "neki-uploads.s3.us-east-1.amazonaws.com",
+      },
     ],
   },
   experimental: {

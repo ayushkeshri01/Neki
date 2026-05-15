@@ -24,7 +24,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-gutter">
           <div className="lg:col-span-4 flex flex-col gap-6">
             <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
-              <Image src="/logo.png" alt="Neki" width={48} height={48} className="rounded-xl shadow-sm" />
+              <div className="relative h-12 w-12 overflow-hidden rounded-xl bg-white flex items-center justify-center p-1 shadow-sm border border-border/10">
+                <Image src="/logo.png" alt="Neki" width={40} height={40} className="object-contain" />
+              </div>
               <span className="font-display text-3xl font-extrabold text-primary">Neki</span>
             </Link>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
