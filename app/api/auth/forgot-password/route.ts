@@ -100,11 +100,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const normalizedEmail = normalizeEmail(email);
-
     const clientIp = getClientIp(req);
+    const normalizedEmail = normalizeEmail(email);
     
     if (!checkRateLimit(clientIp, MAX_REQUESTS_PER_WINDOW, RATE_LIMIT_WINDOW_MS)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+    if (!checkRateLimit(`forgot-email-${normalizedEmail}`, 2, RATE_LIMIT_WINDOW_MS)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
