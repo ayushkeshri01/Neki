@@ -150,6 +150,9 @@ export function Navbar() {
                   Create Post
                 </Button>
               </Link>
+
+
+
               
               <NotificationsBell />
               <ThemeToggle />
@@ -245,16 +248,7 @@ export function Navbar() {
                 <SheetDescription className="hidden">Navigation menu for mobile devices.</SheetDescription>
               </SheetHeader>
               <div className="flex flex-col gap-2 pt-8 flex-grow overflow-y-auto">
-                {displayUser && (
-                  <Link
-                    href="/create-post"
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center py-4 px-4 mb-2 rounded-2xl bg-primary text-white text-lg font-bold shadow-lg shadow-primary/20"
-                  >
-                    <PlusCircle className="mr-3 h-5 w-5" />
-                    Create New Post
-                  </Link>
-                )}
+
                 
                 {displayUser && navItems.map((item) => {
                   const isActive = pathname === item.href;

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Users, FileText } from "lucide-react";
+import { toast } from "sonner";
+
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,6 +36,27 @@ export function CommunityCard({
   memberActionLoading,
 }: CommunityCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+
+  const handleButtonClick = () => {
+    if (isMember) {
+      if (!confirmLeave) {
+        setConfirmLeave(true);
+        toast.warning(`Are you sure you want to leave ${community.name}?`, {
+          description: "Click again to confirm.",
+        });
+        // Reset after 4 seconds
+        setTimeout(() => setConfirmLeave(false), 4000);
+        return;
+      }
+
+      onLeave?.(community.id);
+      setConfirmLeave(false);
+    } else {
+      onJoin?.(community.id);
+    }
+  };
+
   return (
     <Card className="bg-card rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500 flex flex-col h-full group border-border/40">
       <div className="h-48 relative overflow-hidden">
@@ -80,35 +103,52 @@ export function CommunityCard({
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-8 border-t border-border/40 pt-6">
-          <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Members</p>
+          <Link 
+            href={`/communities/${community.slug}?tab=members`}
+            className="space-y-1 p-2 rounded-xl hover:bg-primary/5 transition-all group/stat"
+          >
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover/stat:text-primary transition-colors">Members</p>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
               <p className="font-display text-xl font-black">{community._count.members.toLocaleString()}</p>
             </div>
-          </div>
-          <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Posts</p>
+          </Link>
+          <Link 
+            href={`/communities/${community.slug}?tab=posts`}
+            className="space-y-1 p-2 rounded-xl hover:bg-primary/5 transition-all group/stat"
+          >
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover/stat:text-primary transition-colors">Posts</p>
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
               <p className="font-display text-xl font-black">{community._count.posts.toLocaleString()}</p>
             </div>
-          </div>
+          </Link>
         </div>
 
+
+
         <Button
-          onClick={() => isMember ? onLeave?.(community.id) : onJoin?.(community.id)}
+          onClick={handleButtonClick}
           disabled={memberActionLoading}
           variant={isMember ? "outline" : "default"}
           className={cn(
             "w-full py-7 rounded-2xl font-black text-xs uppercase tracking-widest transition-all duration-300",
             isMember 
-              ? "border-2 border-primary/20 text-primary hover:bg-primary/5" 
+              ? confirmLeave 
+                ? "border-2 border-destructive/50 text-destructive bg-destructive/5" 
+                : "border-2 border-primary/20 text-primary hover:bg-primary/5" 
               : "bg-primary text-white hover:bg-primary/90 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
           )}
         >
-          {memberActionLoading ? "Processing..." : (isMember ? "Leave Community" : "Join Community")}
+          {memberActionLoading 
+            ? "Processing..." 
+            : isMember 
+              ? confirmLeave 
+                ? "Confirm Leave?" 
+                : "Leave Community" 
+              : "Join Community"}
         </Button>
+
       </CardContent>
     </Card>
   );

@@ -15,7 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, PlusCircle } from "lucide-react";
+
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -138,19 +139,32 @@ export function FeedContent({ posts: initialPosts, currentUserId, isAdmin }: Fee
     <>
       <div className="mx-auto max-w-2xl px-4 py-8">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
-          <div>
-            <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight">Feed</h1>
-            <p className="text-muted-foreground text-sm mt-1 font-medium">Discover impact stories from your community.</p>
+          <div className="flex-1">
+            <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight text-primary">Feed</h1>
+            <p className="text-muted-foreground text-sm mt-1 font-medium italic">Discover impact stories from your community.</p>
           </div>
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)} className="w-full md:w-auto">
-            <TabsList className="bg-muted/50 p-1 rounded-full border border-border/40">
-              <TabsTrigger value="all" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm">All Posts</TabsTrigger>
-              {isAdmin && (
-                <TabsTrigger value="hidden" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm">Hidden</TabsTrigger>
-              )}
-            </TabsList>
-          </Tabs>
+          <div className="flex items-center justify-between gap-4 w-full md:w-auto">
+            <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)} className="flex-1 sm:flex-none">
+              <TabsList className="bg-muted/50 p-1 rounded-full border border-border/40 w-full sm:w-auto">
+                <TabsTrigger value="all" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm flex-1 sm:flex-none">All Posts</TabsTrigger>
+                {isAdmin && (
+                  <TabsTrigger value="hidden" className="rounded-full px-6 data-[state=active]:bg-card data-[state=active]:shadow-sm flex-1 sm:flex-none">Hidden</TabsTrigger>
+                )}
+              </TabsList>
+            </Tabs>
+            <Link href="/create-post" className="shrink-0">
+              <Button size="icon" className="h-11 w-11 rounded-full shadow-premium sm:hidden">
+                <PlusCircle className="h-6 w-6" />
+              </Button>
+              <Button className="hidden sm:flex rounded-full px-6 font-black shadow-premium hover:shadow-premium-hover gap-2 bg-primary text-white">
+                <PlusCircle className="h-4 w-4" />
+                Create Post
+              </Button>
+            </Link>
+          </div>
+
         </div>
+
 
         {filteredPosts.length === 0 ? (
           <motion.div 

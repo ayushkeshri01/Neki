@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import Link from "next/link";
 import { Users, Plus, Loader2, FileQuestion, MessageSquare, Award, Calendar } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -84,8 +85,14 @@ export function CommunityPageContent({
   isAdmin,
 }: CommunityPageContentProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") || "posts";
+  
   const [memberActionLoading, setMemberActionLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("posts");
+  const [activeTab, setActiveTab] = useState(initialTab === "members" ? "members" : "posts");
+  const [confirmLeave, setConfirmLeave] = useState(false);
+
+
 
 
   const handleJoin = async () => {
@@ -113,6 +120,16 @@ export function CommunityPageContent({
   };
 
   const handleLeave = async () => {
+    if (!confirmLeave) {
+      setConfirmLeave(true);
+      toast.warning("Are you sure you want to leave this community?", {
+        description: "Click again to confirm.",
+      });
+      // Reset after 4 seconds
+      setTimeout(() => setConfirmLeave(false), 4000);
+      return;
+    }
+
     setMemberActionLoading(true);
     try {
       const res = await fetch(`/api/communities/${community.id}/leave`, {
@@ -121,6 +138,7 @@ export function CommunityPageContent({
 
       if (res.ok) {
         toast.success(`Left ${community.name}.`);
+        setConfirmLeave(false);
         router.refresh();
         return;
       }
@@ -135,6 +153,7 @@ export function CommunityPageContent({
       setMemberActionLoading(false);
     }
   };
+
 
   const handleLike = async (postId: string, reaction: ReactionType | null) => {
     try {
@@ -244,9 +263,12 @@ export function CommunityPageContent({
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Leaving...
                     </>
+                  ) : confirmLeave ? (
+                    "Confirm Leave?"
                   ) : (
                     "Leave"
                   )}
+
                 </Button>
               </div>
             ) : (
