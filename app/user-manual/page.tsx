@@ -79,7 +79,7 @@ export default function UserManualPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Link href="https://drive.google.com/file/d/1tXUzi8ipSDE3c12BW0PRTAZR8X7IKKwT/view?usp=sharing" target="_blank">
+              <Link href="https://drive.google.com/file/d/1qmpG035DrPPykf2T-P3Jee89SF4bIDE-/view" target="_blank">
                 <Button variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 gap-2 font-bold transition-all">
                   <ExternalLink className="w-4 h-4" />
                   View Document Version
