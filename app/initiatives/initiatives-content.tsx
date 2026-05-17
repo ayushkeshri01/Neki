@@ -108,25 +108,27 @@ export function InitiativesContent({ initialVolunteerCount = 243 }: InitiativesC
         transition={{ delay: 0.2 }}
         className="grid grid-cols-1 lg:grid-cols-12 gap-8"
       >
-        <Card className="lg:col-span-8 bg-card rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden group cursor-pointer relative min-h-[500px]">
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" 
-            style={{ backgroundImage: `url(${featuredInitiative.image})` }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-          <div className="absolute inset-0 p-10 flex flex-col justify-end">
-            <div className="flex items-center gap-3 mb-6">
-              <Star className="h-4 w-4 text-primary fill-current" />
-              <span className="text-xs font-black uppercase tracking-widest text-white/80">Featured Initiative</span>
+        <Link href="/login" className="lg:col-span-8">
+          <Card className="h-full bg-card rounded-[2.5rem] border-border/40 shadow-premium overflow-hidden group cursor-pointer relative min-h-[500px]">
+            <div 
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" 
+              style={{ backgroundImage: `url(${featuredInitiative.image})` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+            <div className="absolute inset-0 p-10 flex flex-col justify-end">
+              <div className="flex items-center gap-3 mb-6">
+                <Star className="h-4 w-4 text-primary fill-current" />
+                <span className="text-xs font-black uppercase tracking-widest text-white/80">Featured Initiative</span>
+              </div>
+              <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
+                {featuredInitiative.title}
+              </h2>
+              <p className="text-lg text-gray-200 font-medium max-w-2xl">
+                {featuredInitiative.description}
+              </p>
             </div>
-            <h2 className="font-display text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-              {featuredInitiative.title}
-            </h2>
-            <p className="text-lg text-gray-200 font-medium max-w-2xl">
-              {featuredInitiative.description}
-            </p>
-          </div>
-        </Card>
+          </Card>
+        </Link>
 
         <Card className="lg:col-span-4 bg-primary/5 dark:bg-primary/10 rounded-[2.5rem] p-10 border-border/40 shadow-premium flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute -right-10 -top-10 h-40 w-40 bg-primary/10 rounded-full blur-3xl" />

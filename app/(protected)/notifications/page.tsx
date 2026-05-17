@@ -88,7 +88,7 @@ export default function NotificationsPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-2xl py-10 text-center">
+      <div className="mx-auto max-w-2xl px-margin-mobile md:px-margin-desktop py-10 text-center">
         Loading...
       </div>
     );
@@ -97,7 +97,7 @@ export default function NotificationsPage() {
   const unreadCount = notices.filter(n => !n.acknowledgedAt).length;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-2xl px-margin-mobile md:px-margin-desktop py-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Bell className="h-6 w-6" />

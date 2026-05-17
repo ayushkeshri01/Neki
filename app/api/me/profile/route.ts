@@ -8,7 +8,13 @@ const MAX_BIO_LENGTH = 500;
 const MAX_NAME_LENGTH = 100;
 
 export function sanitizeInput(input: string): string {
-  return input.trim();
+  return input
+    .trim()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }
 
 export function normalizeProfileField(input: string): string | null {

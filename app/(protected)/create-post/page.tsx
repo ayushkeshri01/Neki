@@ -30,7 +30,7 @@ export default async function CreatePostPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl px-margin-mobile md:px-margin-desktop py-8">
       <h1 className="mb-6 text-2xl font-bold">Create Post</h1>
       <CreatePostForm communities={communities} />
     </div>

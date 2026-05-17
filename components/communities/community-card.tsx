@@ -59,7 +59,7 @@ export function CommunityCard({
 
   return (
     <Card className="bg-card rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-premium-hover transition-all duration-500 flex flex-col h-full group border-border/40">
-      <div className="h-48 relative overflow-hidden">
+      <Link href={`/communities/${community.slug}`} className="h-48 relative overflow-hidden block cursor-pointer">
         {/* Background Image / Gradient */}
         <div 
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
@@ -76,7 +76,7 @@ export function CommunityCard({
             {community.name.charAt(0).toUpperCase()}
           </div>
         </div>
-      </div>
+      </Link>
 
       <CardContent className="p-8 flex-grow flex flex-col">
         <Link href={`/communities/${community.slug}`}>
@@ -95,7 +95,7 @@ export function CommunityCard({
           {community.description && community.description.length > 120 && (
             <button 
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mb-6"
+              className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mb-6 cursor-pointer"
             >
               {isExpanded ? "Show Less" : "Read More"}
             </button>

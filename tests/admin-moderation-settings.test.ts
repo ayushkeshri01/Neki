@@ -74,6 +74,7 @@ test("admin settings helpers normalize domains and accept valid input", () => {
     value: {
       allowedDomains: ["example.com", "team.org"],
       privacyPolicyVersion: "v2",
+      autoLogoutDays: null,
     },
   });
 
