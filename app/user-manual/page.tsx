@@ -3,7 +3,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { motion } from "framer-motion";
-import { Book, CheckCircle2, UserPlus, Heart, Trophy, Users, Shield, ExternalLink } from "lucide-react";
+import { Book, CheckCircle2, UserPlus, Smartphone, Heart, Trophy, Users, Shield, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -17,6 +17,15 @@ export default function UserManualPage() {
         "Sign up using your official company email address.",
         "Verify your account through the OTP sent to your inbox.",
         "Complete your profile by adding a picture and a short bio.",
+      ]
+    },
+    {
+      title: "Mobile App Setup",
+      icon: Smartphone,
+      steps: [
+        "On iOS (Safari): Tap the 'Share' icon at the bottom of the screen, scroll down, and select 'Add to Home Screen'.",
+        "On Android (Chrome): Tap the three dots menu icon at the top right and select 'Install app' or 'Add to Home Screen'.",
+        "Open Neki directly from your home screen for a seamless, immersive, full-screen mobile app experience.",
       ]
     },
     {
@@ -79,7 +88,7 @@ export default function UserManualPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Link href="https://drive.google.com/file/d/1qmpG035DrPPykf2T-P3Jee89SF4bIDE-/view" target="_blank">
+              <Link href="https://drive.google.com/file/d/1Gur4kRwa5wLJc4cSepv-vCRvVvEAlX2b/view" target="_blank">
                 <Button variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 gap-2 font-bold transition-all">
                   <ExternalLink className="w-4 h-4" />
                   View Document Version
